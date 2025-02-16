@@ -1,5 +1,4 @@
 <x-navbar-layout>
-
     <!-- About Section -->
     <div class="max-w-5xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
         <div class="text-center mb-6">
@@ -19,19 +18,23 @@
                 </h3>
                 <p class="text-gray-600">
                     Discover a healthcare experience like no other at Centralians Clinic.
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                    et dolore magna aliqua.
                 </p>
                 <ul class="mt-4 space-y-2 text-gray-700">
-                    <li class="flex items-center"><span class="text-teal-500 mr-2">✔</span> Unparalleled commitment to patient care and satisfaction.</li>
-                    <li class="flex items-center"><span class="text-teal-500 mr-2">✔</span> Expert doctor providing personalized medical services.</li>
-                    <li class="flex items-center"><span class="text-teal-500 mr-2">✔</span> State-of-the-art facilities for comprehensive healthcare.</li>
+                    <li class="flex items-center"><span class="text-teal-500 mr-2">✔</span> Unparalleled commitment to
+                        patient care and satisfaction.</li>
+                    <li class="flex items-center"><span class="text-teal-500 mr-2">✔</span> Expert doctor providing
+                        personalized medical services.</li>
+                    <li class="flex items-center"><span class="text-teal-500 mr-2">✔</span> State-of-the-art facilities
+                        for comprehensive healthcare.</li>
                 </ul>
                 <p class="text-gray-600 mt-4">
-                    At ANA FATIMA BARROSO Dental Clinic, we strive to create a welcoming and healing environment for our patients.
+                    At ANA FATIMA BARROSO Dental Clinic, we strive to create a welcoming and healing environment for our
+                    patients.
                     Our dedicated team works tirelessly to provide the best care possible.
                 </p>
             </div>
         </div>
     </div>
-
 </x-navbar-layout>

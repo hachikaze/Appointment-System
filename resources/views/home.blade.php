@@ -16,13 +16,14 @@
             <p class="text-lg text-gray-600">
                 Discover a seamless healthcare experience with Doctors Appointment. Your wellness journey begins here.
             </p>
-            <a href="#" class="mt-6 inline-block bg-teal-500 text-white px-6 py-3 rounded-md text-lg font-semibold hover:bg-teal-600">
+            <a href="#"
+                class="mt-6 inline-block shadow-xl bg-teal-500 text-white px-6 py-3 rounded-md text-lg font-semibold hover:bg-teal-600">
                 Read More
             </a>
         </div>
         <div class="my-10 flex justify-center">
-            <img src="{{ asset('images/clinic.jpg') }}" alt="Doctor operating in a clinic" class="max-w-full rounded-lg shadow-lg mx-auto">
+            <img src="{{ asset('images/clinic.jpg') }}" alt="Doctor operating in a clinic"
+                class="max-w-full rounded-lg shadow-lg mx-auto">
         </div>
     </section>
-
 </x-navbar-layout>

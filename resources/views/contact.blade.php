@@ -1,5 +1,4 @@
 <x-navbar-layout>
-
     {{-- Contact Section --}}
     <div class="max-w-4xl mx-auto my-10 bg-white p-8 rounded-lg shadow-md">
         <div class="text-center mb-6">
@@ -24,14 +23,18 @@
 
         {{-- Contact Form --}}
         <form class="flex flex-col gap-4">
-            <input type="text" placeholder="Your Name" required class="w-full p-3 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500">
-            <input type="email" placeholder="Your Email" required class="w-full p-3 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500">
-            <input type="text" placeholder="Subject" required class="w-full p-3 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500">
-            <textarea placeholder="Message" rows="5" required class="w-full p-3 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500"></textarea>
-            <button type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-3 rounded-md text-lg">
+            <input type="text" placeholder="Your Name" required
+                class="w-full p-3 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <input type="email" placeholder="Your Email" required
+                class="w-full p-3 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <input type="text" placeholder="Subject" required
+                class="w-full p-3 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <textarea placeholder="Message" rows="5" required
+                class="w-full p-3 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500"></textarea>
+            <button type="submit"
+                class="bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-3 rounded-md text-lg">
                 Send Message
             </button>
         </form>
     </div>
-
 </x-navbar-layout>

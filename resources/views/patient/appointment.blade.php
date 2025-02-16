@@ -1,12 +1,11 @@
-<x-navbar-layout>
-
-<div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md mt-10 mb-10">
-        <img src="{{ asset('images/logo.png') }}" alt="Clinic Logo" class="w-24 mx-auto mb-4">
+<x-patientnav-layout>
+    <div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md mt-10 mb-10">
+        <img src="{{ asset('images/logo.png') }}" alt="Clinic Logo" class="w-26 mx-auto mb-4">
         <h2 class="text-center text-xl font-bold mb-4">Make an Appointment</h2>
-        
+
         <form id="appointmentForm" action="{{ route('appointment.store') }}" method="POST" class="space-y-4">
             @csrf
-            <div>
+            <!-- <div>
                 <label class="block font-semibold">Full Name:</label>
                 <input type="text" name="patient_name" required class="w-full border p-2 rounded">
             </div>
@@ -14,16 +13,17 @@
             <div>
                 <label class="block font-semibold">Email:</label>
                 <input type="email" name="email" required class="w-full border p-2 rounded">
-            </div>
+            </div> -->
 
             <div>
                 <label class="block font-semibold">Phone Number:</label>
-                <input type="text" name="phone" required class="w-full border p-2 rounded">
+                <input type="text" name="phone" required class="w-full border p-2 rounded" maxlength="11">
             </div>
 
             <div>
                 <label class="block font-semibold">Doctor:</label>
-                <input type="text" name="doctor" value="Ana Fatima Barroso" readonly class="w-full border p-2 rounded bg-gray-100">
+                <input type="text" name="doctor" value="Ana Fatima Barroso" readonly
+                    class="w-full border p-2 rounded bg-gray-100">
             </div>
 
             <div>
@@ -49,8 +49,8 @@
                 </select>
             </div>
 
-            <button type="submit" class="bg-teal-500 text-white w-full py-2 rounded hover:bg-teal-700">Submit Appointment</button>
+            <button type="submit" class="bg-teal-500 text-white w-full py-2 rounded hover:bg-teal-700">Submit
+                Appointment</button>
         </form>
     </div>
-
-</x-navbar-layout>
+</x-patientnav-layout>
