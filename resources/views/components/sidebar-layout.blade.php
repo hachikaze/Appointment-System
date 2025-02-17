@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pasig River Ferry</title>
+    <title>ANA FATIMA BARROSO Dental Clinic Appointment</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
@@ -12,16 +12,16 @@
 <body class="font-inter">
     <div class="flex flex-col md:flex-row">
         <!-- Sidebar for desktop, collapsible on mobile -->
-        <aside class="fixed top-0 left-0 w-52 h-screen px-3 py-6 bg-white border-r dark:bg-teal-900 dark:border-teal-700 flex flex-col justify-between">
+        <aside class="fixed top-0 left-0 w-52 h-screen px-3 py-6 bg-white border-r flex flex-col justify-between rounded">
             <!-- Logo Section -->
             <div>
                 <div class="flex items-center justify-center mb-4">
-                    <img class="w-28 h-28" src="/Images/doctor1.jpg" alt="PRF Logo">
+                    <img class="h-16" src="/Images/logo.png" alt="PRF Logo">
                 </div>
 
                 <!-- Navigation Links -->
                 <nav class="mt-4">
-                    <x-nav-link href="" :active="request()->is('dashboard')" class="flex items-center">
+                    <x-nav-link href="{{ route('admin.dashboard') }}" :active="request()->is('dashboard')" class="flex items-center">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
                             <path d="M13 12C13 11.4477 13.4477 11 14 11H19C19.5523 11 20 11.4477 20 12V19C20 19.5523 19.5523 20 19 20H14C13.4477 20 13 19.5523 13 19V12Z" stroke="#9ca3af" stroke-width="2" stroke-linecap="round"></path>
                             <path d="M4 5C4 4.44772 4.44772 4 5 4H9C9.55228 4 10 4.44772 10 5V12C10 12.5523 9.55228 13 9 13H5C4.44772 13 4 12.5523 4 12V5Z" stroke="#9ca3af" stroke-width="2" stroke-linecap="round"></path>
@@ -31,38 +31,52 @@
                         <span class="mx-3 font-medium">Dashboard</span>
                     </x-nav-link>
 
-                    <x-nav-link href="" :active="request()->is('patientrecords')" class="flex items-center">
+                    <x-nav-link href="" :active="request()->is('boats')" class="flex items-center">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
                             <path d="M4 17.5L3 12L12 9L21 12L20 17.5M5 11.3333V7C5 5.89543 5.89543 5 7 5H17C18.1046 5 19 5.89543 19 7V11.3333M10 5V3C10 2.44772 10.4477 2 11 2H13C13.5523 2 14 2.44772 14 3V5M2 21C3 22 6 22 8 20C10 22 14 22 16 20C18 22 21 22 22 21" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                        <span class="mx-3 font-medium">Calendar</span>
+                    </x-nav-link>
+
+                    <x-nav-link href="" :active="request()->is('map')" class="flex items-center">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
+                            <path d="M9 20L3 17V4L9 7M9 20L15 17M9 20V7M15 17L21 20V7L15 4M15 17V4M9 7L15 4" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
                         </svg>
                         <span class="mx-3 font-medium">Patient Records</span>
                     </x-nav-link>
 
-                    <x-nav-link href="" :active="request()->is('graphs')" class="flex items-center">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
-                            <path d="M9 20L3 17V4L9 7M9 20L15 17M9 20V7M15 17L21 20V7L15 4M15 17V4M9 7L15 4" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                        </svg>
-                        <span class="mx-3 font-medium">Graphs</span>
-                    </x-nav-link>
-
-                        <hr class="my-4 border-teal-200 dark:border-teal-600" />
-                        <x-nav-link href="" :active="request()->is('calendar')" class="flex items-center">
+                    <div class="relative group">
+                        <x-nav-link href="#" onclick="toggleDropdown(event)" :active="request()->is('reports')" class="flex items-center cursor-pointer">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" class="w-5 h-5">
-                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                <g id="SVGRepo_iconCarrier">
-                                    <rect x="6.48" y="18" width="5.76" height="11.52" rx="1" ry="1" 
-                                        fill="#9ca3af"></rect>
-                                    <rect x="15.12" y="6.48" width="5.76" height="23.04" rx="1" ry="1" 
-                                        fill="#9ca3af"></rect>
-                                    <rect x="23.76" y="14.16" width="5.76" height="15.36" rx="1" ry="1" 
-                                        fill="#9ca3af"></rect>
-                                </g>
+                                <rect x="6.48" y="18" width="5.76" height="11.52" rx="1" ry="1" fill="#9ca3af"></rect>
+                                <rect x="15.12" y="6.48" width="5.76" height="23.04" rx="1" ry="1" fill="#9ca3af"></rect>
+                                <rect x="23.76" y="14.16" width="5.76" height="15.36" rx="1" ry="1" fill="#9ca3af"></rect>
                             </svg>
-                            <span class="mx-3 font-medium">Calendar</span>
+                            <span class="mx-3 font-medium">Graphs</span>
                         </x-nav-link>
 
-                    <x-nav-link href="" :active="request()->is('loghistory')" class="flex items-center">
+                        <div class="absolute left-0 w-full bg-white shadow-xl z-50 hidden" id="graphsDropdown">
+                            <ul class="py-2 border-2 border-solid rounded-md">
+                                <li>
+                                    <a href="" class="block px-3 py-2 text-sm text-gray-700 transition duration-300 hover:bg-gray-400 rounded-md">
+                                        Daily Graph
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="" class="block px-3 py-2 text-sm text-gray-700 transition duration-300 hover:bg-gray-400 rounded-md">
+                                        Monthly Graph
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="" class="block px-3 py-2 text-sm text-gray-700 transition duration-300 hover:bg-gray-400 rounded-md">
+                                        Yearly Graph
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <x-nav-link href="" :active="request()->is('users')" class="flex items-center">
                         <svg fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
                             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                             <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -78,7 +92,7 @@
                         <span class="mx-3 font-medium">Log History</span>
                     </x-nav-link>
 
-                    <x-nav-link href="" :active="request()->is('users')" class="flex items-center">
+                    <x-nav-link href="" :active="request()->is('schedules')" class="flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="#9ca3af" viewBox="0 0 24 24" class="w-5 h-5">
                             <g id="SVGRepo_bgCarrier" stroke-width="2"></g>
                             <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -90,10 +104,10 @@
                     </x-nav-link>
 
                     <div>
-                        <hr class="my-4 border-teal-200 dark:border-teal-600" />
+                        <hr class="my-4 border-gray-200 dark:border-gray-600" />
                         <form id="logout-form" method="POST" action="/logout">
                             @csrf
-                            <button type="button" class="flex items-center pl-3.5 pr-16 py-2 text-gray-600 dark:text-gray-400 hover:bg-teal-100 dark:hover:bg-teal-800 hover:text-teal-700 dark:hover:text-teal-200 transition-colors duration-300 transform rounded-md" onclick="showLogoutModal()">
+                            <button type="button" class="flex items-center pl-3.5 pr-16 py-2 text-gray-600 dark:text-gray-400 hover:bg-teal-100 dark:hover:bg-teal-800 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-300 transform rounded-md" onclick="showLogoutModal()">
                                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
                                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                     <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -118,7 +132,13 @@
         </aside>
         
         <!-- Main Content -->
-        <main class="flex-auto bg-white">
+        <main class="flex-auto bg-white ml-52">
+            <header class="bg-white shadow-md rounded-b-md">
+                <div class="p-4 md:p-6 text-center">
+                    <h1 class="text-lg md:text-2xl font-bold tracking-tight text-gray-900">{{ $heading }}</h1>
+                </div>
+            </header>
+
             <div>
                 {{ $slot }}
             </div>
@@ -131,7 +151,7 @@
         <p class="mb-3">Are you sure you want to log out?</p>
         <div class="flex justify-end">
             <button class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-3 rounded mr-2" onclick="confirmLogout()">Log Out</button>
-            <button class="bg-teal-300 hover:bg-teal-400 text-teal-800 font-semibold py-2 px-3 rounded" onclick="hideLogoutModal()">Cancel</button>     
+            <button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-3 rounded" onclick="hideLogoutModal()">Cancel</button>     
         </div>
     </x-modal-layout>
     
@@ -147,6 +167,24 @@
         function confirmLogout() {
             document.getElementById('logout-form').submit();
         }
+    </script>
+
+    <script>
+        function toggleDropdown(event) {
+            event.preventDefault();
+            const dropdown = document.getElementById('graphsDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close the dropdown if clicked outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('graphsDropdown');
+            const isClickInside = dropdown.parentElement.contains(event.target);
+
+            if (!isClickInside) {
+                dropdown.classList.add('hidden');
+            }
+        });
     </script>
     
     @stack('scripts')

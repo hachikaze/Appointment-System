@@ -39,7 +39,7 @@
         </form>
 
         <div class="text-center mt-3">
-            <a href="" class="text-sm text-gray-500">Forgot password?</a>
+            <a href="{{ route('forgot-password') }}" class="text-sm text-gray-500">Forgot password?</a>
         </div>
     </div>
 
