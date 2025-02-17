@@ -1,6 +1,6 @@
 <x-navbar-layout>
     <div class="flex items-center justify-center min-h-screen bg-gray-100">
-        <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md ">
+        <div class="bg-white my-4 p-8 rounded-lg shadow-md w-full max-w-md ">
             <h2 class="text-2xl font-semibold mb-6 text-center">Register</h2>
             @if (session('success'))
                 <div class="text-green-500 mb-3">{{ session('success') }}</div>

@@ -24,6 +24,19 @@ Route::get('/contact', function () {
     return view('contact');
 });
 
+//FOR ADMIN
+Route::get('/create', function () {
+    return view('admin.create');
+});
+
+Route::get('/records', function () {
+    return view('admin.records');
+});
+
+Route::get('/reports', function () {
+    return view('admin.reports');
+});
+
 // FOR LOGIN
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
@@ -31,8 +44,6 @@ Route::post('/login', [LoginController::class, 'login']);
 // FOR REGISTER
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
-
-
 
 // GROUPED ROUTES FOR PATIENT WITH MIDDLEWARE
 Route::middleware(['auth', 'patientMiddleware'])->group(function () {

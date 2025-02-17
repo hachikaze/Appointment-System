@@ -25,7 +25,7 @@ class AppointmentController extends Controller
         // Insert into database
         $appointment = Appointment::create($validated);
 
-        return redirect()->route(route: 'patient.calendar')->with('success', 'Appointment booked successfully!');
+        return redirect()->route(route: 'calendar')->with('success', 'Appointment booked successfully!');
 
 
         //     if ($appointment) {
