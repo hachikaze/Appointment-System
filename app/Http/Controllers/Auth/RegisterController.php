@@ -40,6 +40,6 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route(route: 'dashboard');
+        return redirect()->route('login')->with('success', 'Registration successful. Please verify your email.');
     }
 }

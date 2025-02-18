@@ -1,11 +1,11 @@
 <?php
 
-use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\ForgotPasswordController;
-use App\Http\Controllers\PatientCalendarController;
+use App\Http\Controllers\ForgotPasswordController;  
+use App\Http\Controllers\PatientController;
 use App\Http\Middleware\PreventBackHistory;
 use App\Mail\ForgotPassword;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -64,7 +64,7 @@ Route::middleware(['auth', 'patientMiddleware'])->group(function () {
         return view('patient.appointment');
     })->name('appointment');
 
-    Route::get('/patient/calendar', action: [PatientCalendarController::class, 'index'])->name('calendar');
+    Route::get('/patient/calendar', action: [PatientController::class, 'index'])->name('calendar');
 
 
     Route::get('/patient/notifications', function () {
@@ -140,9 +140,9 @@ Route::post('/email/verification-notification', function (Request $request) {
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(function() {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('patient.dashboard');
 
-    Route::get('/admin_dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    //FOR PATIENT USERS
+    Route::get('/patient_dashboard', [PatientController::class, 'index'])->name('patient.dashboard');
+
+    Route::get('/admin_dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 });

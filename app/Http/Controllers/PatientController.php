@@ -6,9 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
 
-class PatientCalendarController extends Controller
+class PatientController extends Controller
 {
     public function index()
+    {
+        return view('dashboard');
+    }
+
+    public function appointment()
     {
         // Retrieve all appointments
         $appointments = Appointment::all();
