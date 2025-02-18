@@ -5,14 +5,25 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ForgotPasswordController;
-use App\Http\Controllers\PatientController;
+use App\Http\Controllers\PatientCalendarController;
+use App\Http\Middleware\PreventBackHistory;
 use App\Mail\ForgotPassword;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('test', function () {
-    return view('forgot-password.new-password');
+    try {
+        Mail::raw('This is a test email.', function ($message) {
+            $message->to('recipient@example.com')->subject('Test Email');
+        });
+
+        return "Email sent successfully!";
+    } catch (\Exception $e) {
+        return "Failed to send email: " . $e->getMessage();
+    }
 });
 
 Route::get('/forgot-password', function () {
@@ -43,23 +54,22 @@ Route::post('/login', [LoginController::class, 'store']);
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('patient.dashboard');
-
-Route::get('/admin_dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
-
 // GROUPED ROUTES FOR PATIENT WITH MIDDLEWARE
 Route::middleware(['auth', 'patientMiddleware'])->group(function () {
 
+    
+    
+    // FOR APPOINTMENT
     Route::get('/patient/appointment', function () {
         return view('patient.appointment');
     })->name('appointment');
 
     // Route::get('/patient/appointment', [AppointmentController::class, 'showAppointments'])->name('appointment');
 
-    Route::get('/patient/calendar', action: [PatientController::class, 'index'])->name('calendar');
-    Route::delete('/patient/appointments/{id}', [PatientController::class, 'destroy'])->name('appointments.destroy');
+    Route::get('/patient/calendar', action: [PatientCalendarController::class, 'index'])->name('calendar');
+
+
+    Route::delete('/patient/appointments/{id}', [PatientCalendarController::class, 'destroy'])->name('appointments.destroy');
 
     Route::get('/patient/notifications', function () {
         return view('patient.notifications');
@@ -75,7 +85,8 @@ Route::middleware(['auth', 'patientMiddleware'])->group(function () {
 });
 
 Route::middleware(['auth', 'adminMiddleware'])->group(function () {
-
+    
+    
 
     Route::get('/create', function () {
         return view('admin.create');
@@ -108,3 +119,34 @@ Route::post('/forgot-password-post', [ForgotPasswordController::class, 'forgotPa
 Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'resetPassword'])->name('reset-password');
 Route::post('/reset-password', [ForgotPasswordController::class, 'resetPasswordPost'])->name('reset-password-post');
 Route::post('/resend-password-reset-link', [ForgotPasswordController::class, 'resendPasswordResetLink'])->name('resend-password-reset-link');
+
+//EMAIL VERIFICATION
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
+
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+    switch ($request->user()->user_type) {
+        case 'admin':
+            return redirect()->route('admin.dashboard')->with('success', 'Your email has been successfully verified.');
+        case 'patient':
+            return redirect()->route('patient.dashboard')->with('success', 'Your email has been successfully verified.');
+        default:
+            return redirect()->route('patient.dashboard')->with('success', 'Your email has been successfully verified.');
+    }
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::post('/email/verification-notification', function (Request $request) {
+    Auth::user()->sendEmailVerificationNotification();
+
+    return redirect('/email/verify')->with('success', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(function() {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('patient.dashboard');
+
+    Route::get('/admin_dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+});

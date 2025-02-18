@@ -16,7 +16,9 @@ class LoginController extends Controller
     {
         // Redirect authenticated users to the dashboard
         if (Auth::check()) {
-            switch ($request->user()->user_type) {
+            $user = Auth::user(); // Use Auth::user() to get the authenticated user
+
+            switch ($user->user_type) {
                 case 'admin':
                     return redirect()->route('admin.dashboard');
                 case 'patient':
@@ -28,7 +30,6 @@ class LoginController extends Controller
 
         return view('login');
     }
-
 
     public function store(Request $request)
     {
@@ -48,8 +49,13 @@ class LoginController extends Controller
         // Regenerate session to prevent session fixation
         $request->session()->regenerate();
 
+        // Handle email verification
+        if (!Auth::user()->hasVerifiedEmail()) {
+            return view('auth.verify-email');
+        }
+
         // Role-based redirection
-        switch ($request->user()->user_type) {
+        switch (Auth::user()->user_type) {
             case 'admin':
                 return redirect()->route('admin.dashboard')->withHeaders([
                     'Cache-Control' => 'no-cache, no-store, must-revalidate',

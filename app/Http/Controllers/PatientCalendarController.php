@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
 
-class PatientController extends Controller
+class PatientCalendarController extends Controller
 {
     public function index()
     {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pasig River Ferry</title>
+    <title>Ana Fatima Barroso Dental Clinic</title>
     @vite('resources/css/app.css') 
 </head>
 <body class="h-full">

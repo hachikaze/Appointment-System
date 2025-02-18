@@ -13,12 +13,20 @@ class ForgotPassword extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $token;
+
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($token)
     {
-        //
+        $this->token = $token;
+    }
+
+    public function build()
+    {
+        return $this->view('mail.password-reset-sent')
+                    ->with(['token' => $this->token]);
     }
 
     /**
