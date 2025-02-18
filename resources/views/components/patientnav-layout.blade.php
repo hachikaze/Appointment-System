@@ -20,15 +20,15 @@
         </a>
         <nav class="flex space-x-4 items-center">
             <!-- <a href="/" class="text-gray-600 hover:text-blue-500">Home</a> -->
-            <a href="{{ route('calendar') }}" class="text-gray-600 hover:text-blue-500">Calendar Schedules</a>
+            <!-- <a href="{{ route('calendar') }}" class="text-gray-600 hover:text-blue-500">Calendar Schedules</a>
             <a href="{{ route('notifications') }}" class="text-gray-600 hover:text-blue-500">Notifications</a>
-            <a href="{{ route('history') }}" class="text-gray-600 hover:text-blue-500">History</a>
+            <a href="{{ route('history') }}" class="text-gray-600 hover:text-blue-500">History</a> -->
         </nav>
 
         <div class="flex items-center justify-between space-x-4">
-            <a href="{{ route('appointment') }}" class="bg-teal-500 text-white px-3 py-2 rounded-md hover:bg-teal-700">
+            <!-- <a href="{{ route('appointment') }}" class="bg-teal-500 text-white px-3 py-2 rounded-md hover:bg-teal-700">
                 Make a Reservation
-            </a>
+            </a> -->
             <button id="dropdownDividerButton" data-dropdown-toggle="dropdownDivider" class="text-white bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 
                    font-medium rounded-lg text-sm px-5 p-4 py-4 text-center inline-flex items-start w-15
                    dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">

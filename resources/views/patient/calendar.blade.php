@@ -46,8 +46,7 @@
             </div>
 
             <div class="flex items-center  justify-center ">
-                <div class=" bg-teal-200 p-4 content-center rounded-lg shadow-lg grid grid-cols-7 gap-2 "
-                    id="calendar">
+                <div class=" bg-teal-200 p-4 content-center rounded-lg shadow-lg grid grid-cols-7 gap-2 " id="calendar">
                     <div
                         class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-grays-200 p-2 rounded">
                         Sun</div>
@@ -76,11 +75,11 @@
         </div>
 
 
-        <div class="flex items-center  justify-center  mt-10 bg-gray-200 ">
+        <div class="flex items-center  justify-center m-10  mt-10  ">
 
             <div class="relative overflow-x-auto  my-12 container shadow-lg sm:rounded-lg p-5 pt-0 pr-0 pl-0 mx-auto">
                 <table class="w-full rounded-lg text-lg text-left rtl:text-right text-white dark:text-gray-400">
-                    <thead class="text-lg text-black uppercase bg-teal-600  dark:text-white">
+                    <thead class="text-lg text-white uppercase bg-teal-600  dark:text-white">
                         <tr>
                             <th scope="col" class="px-6 py-3">Patient Name</th>
                             <th scope="col" class="px-6 py-3">Phone Number</th>
@@ -125,8 +124,7 @@
                                                     class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                                                     data-modal-hide="default-modal">
                                                     <svg class="w-3 h-3 text-white" aria-hidden="true"
-                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                        viewBox="0 0 14 14">
+                                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                                         <path stroke="currentColor" stroke-linecap="round"
                                                             stroke-linejoin="round" stroke-width="2"
                                                             d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
@@ -171,7 +169,7 @@
     </html>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const appointments = @json($appointments);
 
             const calendar = document.querySelector('#calendar');
@@ -288,11 +286,11 @@
                 }
             }
 
-            monthSelect.addEventListener('change', function() {
+            monthSelect.addEventListener('change', function () {
                 renderCalendar(parseInt(monthSelect.value), parseInt(yearSelect.value));
             });
 
-            yearSelect.addEventListener('change', function() {
+            yearSelect.addEventListener('change', function () {
                 renderCalendar(parseInt(monthSelect.value), parseInt(yearSelect.value));
             });
             renderCalendar(currentMonth, currentYear);
