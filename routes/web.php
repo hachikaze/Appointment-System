@@ -67,6 +67,8 @@ Route::middleware(['auth', 'patientMiddleware'])->group(function () {
     Route::get('/patient/calendar', action: [PatientController::class, 'index'])->name('calendar');
 
 
+    Route::delete('/patient/appointments/{id}', [PatientController::class, 'destroy'])->name('appointments.destroy');
+
     Route::get('/patient/notifications', function () {
         return view('patient.notifications');
     })->name('notifications');
@@ -91,11 +93,11 @@ Route::middleware(['auth', 'adminMiddleware'])->group(function () {
     Route::get('/records', function () {
         return view('admin.records');
     });
-    
+
     Route::get('/reports', function () {
         return view('admin.reports');
     });
-    
+
     Route::get('/approved_appointments', function () {
         return view('admin.approved_appointments');
     });
