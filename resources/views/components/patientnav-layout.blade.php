@@ -15,7 +15,7 @@
 <body class="bg-gray-100">
     <!-- Header -->
     <header class="bg-white shadow-md p-4 flex justify-between items-center">
-        <a href="/">
+        <a href="/patient/dashboard">
             <img src="{{ asset('images/logo.png') }}" alt="Clinic Logo" class="h-16">
         </a>
         <nav class="flex space-x-4 items-center">

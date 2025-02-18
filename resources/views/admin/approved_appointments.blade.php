@@ -1,26 +1,29 @@
 <x-sidebar-layout>
+    <x-slot:heading>
+        Approved Appointments
+    </x-slot:heading>
 
-<div class="flex justify-items-center items-center">
-    <div class="flex flex-wrap justify-center gap-6">
-        <!-- Today's Approved Appointments -->
-        <div class="w-full md:w-1/2 bg-white p-6 shadow-md rounded-lg">
-            <canvas id="pieChartToday"></canvas>
-            <div class="text-center font-semibold mt-2">Today's Approved Appointments</div>
-        </div>
+    <div class="flex justify-items-center items-center">
+        <div class="flex flex-wrap justify-center gap-6">
+            <!-- Today's Approved Appointments -->
+            <div class="w-full md:w-1/2 bg-white p-6 shadow-md rounded-lg">
+                <canvas id="pieChartToday"></canvas>
+                <div class="text-center font-semibold mt-2">Today's Approved Appointments</div>
+            </div>
 
-        <!-- Monthly Approved Appointments -->
-        <div class="w-full md:w-1/2 bg-white p-6 shadow-md rounded-lg">
-            <canvas id="pieChartMonthly"></canvas>
-            <div class="text-center font-semibold mt-2">Monthly Approved Appointments</div>
-        </div>
+            <!-- Monthly Approved Appointments -->
+            <div class="w-full md:w-1/2 bg-white p-6 shadow-md rounded-lg">
+                <canvas id="pieChartMonthly"></canvas>
+                <div class="text-center font-semibold mt-2">Monthly Approved Appointments</div>
+            </div>
 
-        <!-- Total Approved Appointments Over Time -->
-        <div class="w-full bg-white p-6 shadow-md rounded-lg">
-            <canvas id="lineChartTotal"></canvas>
-            <div class="text-center font-semibold mt-2">Total Approved Appointments Over Time</div>
+            <!-- Total Approved Appointments Over Time -->
+            <div class="w-full bg-white p-6 shadow-md rounded-lg">
+                <canvas id="lineChartTotal"></canvas>
+                <div class="text-center font-semibold mt-2">Total Approved Appointments Over Time</div>
+            </div>
         </div>
     </div>
-</div>
 
 <script>
     $(document).ready(function () {
