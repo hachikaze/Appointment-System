@@ -5,7 +5,7 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ForgotPasswordController;
-use App\Http\Controllers\PatientCalendarController;
+use App\Http\Controllers\PatientController;
 use App\Mail\ForgotPassword;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -51,14 +51,15 @@ Route::get('/admin_dashboard', [AdminDashboardController::class, 'index'])->name
 
 // GROUPED ROUTES FOR PATIENT WITH MIDDLEWARE
 Route::middleware(['auth', 'patientMiddleware'])->group(function () {
-    
-    // FOR APPOINTMENT
+
     Route::get('/patient/appointment', function () {
         return view('patient.appointment');
     })->name('appointment');
 
-    Route::get('/patient/calendar', action: [PatientCalendarController::class, 'index'])->name('calendar');
+    // Route::get('/patient/appointment', [AppointmentController::class, 'showAppointments'])->name('appointment');
 
+    Route::get('/patient/calendar', action: [PatientController::class, 'index'])->name('calendar');
+    Route::delete('/patient/appointments/{id}', [PatientController::class, 'destroy'])->name('appointments.destroy');
 
     Route::get('/patient/notifications', function () {
         return view('patient.notifications');
@@ -74,7 +75,7 @@ Route::middleware(['auth', 'patientMiddleware'])->group(function () {
 });
 
 Route::middleware(['auth', 'adminMiddleware'])->group(function () {
-    
+
 
     Route::get('/create', function () {
         return view('admin.create');
@@ -83,11 +84,11 @@ Route::middleware(['auth', 'adminMiddleware'])->group(function () {
     Route::get('/records', function () {
         return view('admin.records');
     });
-    
+
     Route::get('/reports', function () {
         return view('admin.reports');
     });
-    
+
     Route::get('/approved_appointments', function () {
         return view('admin.approved_appointments');
     });

@@ -3,6 +3,17 @@
         <img src="{{ asset('images/logo.png') }}" alt="Clinic Logo" class="w-26 mx-auto mb-4">
         <h2 class="text-center text-xl font-bold mb-4">Make an Appointment</h2>
 
+        @if ($errors->any())
+            <div class="bg-red-500 border border-red-400 text-white px-4 py-3 mb-3 rounded">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+
         <form id="appointmentForm" action="{{ route('appointment.store') }}" method="POST" class="space-y-4">
             @csrf
             <!-- <div>

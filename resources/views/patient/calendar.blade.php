@@ -21,9 +21,11 @@
     </head>
 
     <body class="bg-gray-100 min-h-screen flex items-center justify-center">
-        <div class="container mx-auto p-4">
-            <div class="mb-4 flex justify-center items-center">
-                <select id="monthSelect" class="border p-2 rounded mx-2 bg-white shadow">
+        <div class="container mx-auto p-4 pr-0 pl-0">
+
+            <div class="mb-4 flex justify-end my-12 pr-4 items-center">
+                <select id="monthSelect"
+                    class="border border-2 border-teal-300  font-bold p-2 mr-4 rounded mx-4 bg-white shadow pr-12">
                     <option value="0">January</option>
                     <option value="1">February</option>
                     <option value="2">March</option>
@@ -37,41 +39,139 @@
                     <option value="10">November</option>
                     <option value="11">December</option>
                 </select>
-                <select id="yearSelect" class="border p-2 rounded mx-2 bg-white shadow">
+                <select id="yearSelect"
+                    class="border border-2 border-teal-300  font-bold p-2 mr-4 rounded mx-4 bg-white shadow pr-12">
                     <!-- JavaScript will populate the years here -->
                 </select>
             </div>
-            <div class=" bg-white p-4 rounded-lg shadow-lg grid grid-cols-7 gap-2" id="calendar">
-                <div
-                    class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
-                    Sun</div>
-                <div
-                    class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
-                    Mon</div>
-                <div
-                    class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
-                    Tue</div>
-                <div
-                    class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
-                    Wed</div>
-                <div
-                    class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
-                    Thu</div>
-                <div
-                    class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
-                    Fri</div>
-                <div
-                    class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
-                    Sat</div>
+
+            <div class="flex items-center  justify-center ">
+                <div class=" bg-teal-200 p-4 content-center rounded-lg shadow-lg grid grid-cols-7 gap-2 "
+                    id="calendar">
+                    <div
+                        class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-grays-200 p-2 rounded">
+                        Sun</div>
+                    <div
+                        class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
+                        Mon</div>
+                    <div
+                        class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
+                        Tue</div>
+                    <div
+                        class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
+                        Wed</div>
+                    <div
+                        class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
+                        Thu</div>
+                    <div
+                        class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
+                        Fri</div>
+                    <div
+                        class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
+                        Sat</div>
+                </div>
             </div>
 
+
         </div>
+
+
+        <div class="flex items-center  justify-center  mt-10 bg-gray-200 ">
+
+            <div class="relative overflow-x-auto  my-12 container shadow-lg sm:rounded-lg p-5 pt-0 pr-0 pl-0 mx-auto">
+                <table class="w-full rounded-lg text-lg text-left rtl:text-right text-white dark:text-gray-400">
+                    <thead class="text-lg text-black uppercase bg-teal-600  dark:text-white">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Patient Name</th>
+                            <th scope="col" class="px-6 py-3">Phone Number</th>
+                            <th scope="col" class="px-6 py-3">Date</th>
+                            <th scope="col" class="px-6 py-3">Time</th>
+                            <th scope="col" class="px-6 py-3">Status</th>
+                            <th scope="col" class="px-6 py-3"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white">
+                        @foreach ($appointments as $appointment)
+                            <tr class="border-b text-black hover:bg-teal-200 ">
+                                <td class="px-6 py-4">{{ $appointment->patient_name }}</td>
+                                <td class="px-6 py-4">{{ $appointment->phone }}</td>
+                                <td class="px-6 py-4">{{ $appointment->date }}</td>
+                                <td class="px-6 py-4">{{ $appointment->time }}</td>
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
+                                        {{ $appointment->status }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <button data-modal-target="default-modal" data-modal-toggle="default-modal"
+                                        class="bg-red-500 hover:bg-red-700 text-white font-bold p-2 rounded-xl shadow-lg">
+                                        Cancel
+                                    </button>
+                                </td>
+                                <!-- Main modal -->
+                                <div id="default-modal" tabindex="-1" aria-hidden="true"
+                                    class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-20 justify-center items-center w-full md:inset-0 h-screen max-h-full bg-black bg-opacity-50">
+                                    <div class="relative p-4 w-full max-w-2xl max-h-full">
+                                        <!-- Modal content -->
+                                        <div class="relative bg-gray-100 rounded-lg shadow-sm ">
+                                            <!-- Modal header -->
+                                            <div
+                                                class="flex bg-teal-500 items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
+                                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                                    Cancel Appointment?
+                                                </h3>
+                                                <button type="button"
+                                                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                                    data-modal-hide="default-modal">
+                                                    <svg class="w-3 h-3 text-white" aria-hidden="true"
+                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                        viewBox="0 0 14 14">
+                                                        <path stroke="currentColor" stroke-linecap="round"
+                                                            stroke-linejoin="round" stroke-width="2"
+                                                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                                    </svg>
+                                                    <span class="sr-only">Close modal</span>
+                                                </button>
+                                            </div>
+                                            <!-- Modal body -->
+                                            <div class="p-4 my-5 md:p-5 space-y-4">
+                                                <p class="text-xl text-center   text-black ">
+                                                    Are you sure you want to cancel this appointment?
+                                                </p>
+                                            </div>
+                                            <!-- Modal footer -->
+                                            <div
+                                                class="flex items-center justify-end p-4  md:p-5  rounded-b dark:border-gray-600">
+                                                <form
+                                                    action="{{ route('appointments.destroy', ['id' => $appointment->id]) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button data-modal-hide="default-modal" type="submit"
+                                                        class="text-white bg-green-600 p-3 font-bold shadow-lg rounded-lg">
+                                                        Confirm
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+
     </body>
 
     </html>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const appointments = @json($appointments);
 
             const calendar = document.querySelector('#calendar');
@@ -97,17 +197,18 @@
 
             function renderCalendar(month, year) {
                 calendar.innerHTML = `
-                <div class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-300 p-2 rounded-md">Sun</div>
-                <div class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-300 p-2 rounded-md">Mon</div>
-                <div class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-300 p-2 rounded-md">Tue</div>
-                <div class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-300 p-2 rounded-md">Wed</div>
-                <div class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-300 p-2 rounded-md">Thu</div>
-                <div class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-300 p-2 rounded-md">Fri</div>
-                <div class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-300 p-2 rounded-md">Sat</div>
-            `;
+                    <div class="text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Sun</div>
+                    <div class="text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Mon</div>
+                    <div class="text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Tue</div>
+                    <div class="text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Wed</div>
+                    <div class="text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Thu</div>
+                    <div class="text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Fri</div>
+                    <div class="text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Sat</div>
+                `;
 
                 const firstDayOfMonth = new Date(year, month, 1).getDay();
                 const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const today = new Date();
 
                 for (let i = 0; i < firstDayOfMonth; i++) {
                     const emptySlot = document.createElement('div');
@@ -117,56 +218,64 @@
 
                 for (let day = 1; day <= daysInMonth; day++) {
                     const daySlot = document.createElement('div');
-                    daySlot.className = "flex flex-col items-center justify-center border border-blue-300 rounded-lg text-lg font-semibold text-blue-700 transition-all duration-300 hover:bg-blue-400 hover:text-white cursor-pointer shadow-md \
-                        w-16 h-16 sm:w-20 sm:h-20 md:w-32 md:h-24 lg:w-32 lg:h-28 xl:w-48 xl:h-28";
+                    const currentDate = new Date(year, month, day);
+                    daySlot.className =
+                        "flex flex-col items-center content-center justify-center bg-white shadow-lg border-2 border-teal-300 rounded-lg text-xl font-semibold text-teal-700 transition-all duration-300 hover:bg-blue-400 hover:text-white cursor-pointer shadow-md w-16 h-16 sm:w-20 sm:h-20 md:w-32 md:h-24 lg:w-32 lg:h-28 xl:w-48 xl:h-28";
 
                     const dayNumber = document.createElement('span');
                     dayNumber.className = "xl:text-3xl lg:text-2xl font-bold";
                     dayNumber.innerText = day;
 
-                    if (day === currentDate.getDate() && month === currentMonth && year === currentYear) {
+                    if (currentDate < today.setHours(0, 0, 0, 0)) {
+                        daySlot.classList.remove("border-teal-300");
+                        daySlot.classList.remove("text-teal-700");
+
+                        daySlot.classList.add("border-red-500");
+                        daySlot.classList.add("bg-gray-250");
+                        daySlot.classList.add("text-red-500");
+                    }
+
+                    if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
                         daySlot.classList.add("text-black", "ring-4", "ring-green-500");
 
                         const todayLabel = document.createElement('span');
-                        todayLabel.className = "text-md font-bold text-white bg-green-500 px-2 py-0.5 rounded-md mt-1";
+                        todayLabel.className =
+                            "text-sm font-bold text-white bg-green-500 px-2 py-0.5 rounded-md mt-1";
                         todayLabel.innerText = "Today";
 
                         daySlot.appendChild(todayLabel);
                     }
 
-
                     daySlot.appendChild(dayNumber);
 
-                    // Show appointments
                     const dailyAppointments = appointments.filter(app => {
                         const appDate = new Date(app.date);
-                        return appDate.getDate() === day && appDate.getMonth() === month && appDate.getFullYear() === year;
+                        return appDate.getDate() === day && appDate.getMonth() === month && appDate
+                            .getFullYear() === year;
                     });
 
                     if (dailyAppointments.length > 0) {
                         const appointmentList = document.createElement('div');
 
-                        // Determine background color based on the first appointment status
                         let bgColor = "";
-
                         switch (dailyAppointments[0].status) {
                             case 'Pending':
-                                bgColor = "bg-yellow-200";
+                                bgColor = "bg-yellow-200 shadow-lg";
                                 break;
                             case 'Approved':
-                                bgColor = "bg-blue-200";
+                                bgColor = "bg-blue-200 shadow-lg";
                                 break;
                             case 'Attended':
-                                bgColor = "bg-green-200";
+                                bgColor = "bg-green-200 shadow-lg";
                                 break;
                             case 'Unattended':
-                                bgColor = "bg-red-200";
+                                bgColor = "bg-red-200 shadow-lg";
                                 break;
                             default:
-                                bgColor = "bg-gray-200";
+                                bgColor = "bg-gray-200 shadow-lg";
                         }
-                        appointmentList.className = `${bgColor} mt-1 text-sm px-2 py-1 rounded-lg overflow-auto`;
-                        // Loop through appointments and add them to the container
+                        appointmentList.className =
+                            `${bgColor} mt-1 text-sm px-2 py-1 rounded-lg overflow-auto`;
                         dailyAppointments.forEach(res => {
                             const item = document.createElement('p');
                             item.className = "text-gray-800 text-sm font-semibold";
@@ -178,11 +287,12 @@
                     calendar.appendChild(daySlot);
                 }
             }
-            monthSelect.addEventListener('change', function () {
+
+            monthSelect.addEventListener('change', function() {
                 renderCalendar(parseInt(monthSelect.value), parseInt(yearSelect.value));
             });
 
-            yearSelect.addEventListener('change', function () {
+            yearSelect.addEventListener('change', function() {
                 renderCalendar(parseInt(monthSelect.value), parseInt(yearSelect.value));
             });
             renderCalendar(currentMonth, currentYear);
