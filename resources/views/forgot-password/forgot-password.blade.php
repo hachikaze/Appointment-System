@@ -10,13 +10,7 @@
         <form action="{{ route('forgot-password-post') }}" method="POST">
             @csrf
             <label for="email" class="block mb-2 text-sm">Email Address:</label>
-            <input type="email" 
-                   name="email" 
-                   id="email" 
-                   placeholder="example@example.com"
-                   :value="old('email')"
-                   class="w-full p-2 border rounded mb-3"
-                   required>
+            <input type="email" name="email" class="w-full p-2 border rounded mb-3" required>
 
             <button type="submit" class="w-full bg-teal-500 text-white p-2 rounded hover:bg-teal-600">
                 Submit

@@ -24,8 +24,6 @@ class ForgotPasswordController extends Controller
         $token = Str::random(64);
     
         try {
-            // Delete any existing token for the email before inserting a new one
-            ResetToken::where('email', $email)->delete();
     
             // Store the new reset token
             ResetToken::create([
@@ -48,7 +46,6 @@ class ForgotPasswordController extends Controller
         }
     }
     
-
     public function forgotPasswordPost(Request $request) {
         $request->validate([
             'email' => ['required', 'email', 'exists:users,email']

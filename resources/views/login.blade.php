@@ -3,8 +3,16 @@
     <div class="w-full max-w-md mt-20 mx-auto bg-white p-6 rounded-lg shadow-lg">
         <h2 class="text-2xl font-bold text-center mb-4">Login</h2>
 
+        @if (session('status'))
+            <x-alert-success>
+                {{ session('status') }}
+            </x-alert-success>
+        @endif
+
         @if (session('success'))
-            <div class="text-green-500 mb-3">{{ session('success') }}</div>
+            <x-alert-success>
+                {{ session('success') }}
+            </x-alert-success>
         @endif
 
         @if ($errors->any())
