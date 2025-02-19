@@ -16,24 +16,21 @@
 <body class="bg-gray-100">
     <!-- Header -->
     <header class="bg-white shadow-md p-4 flex justify-between items-center">
-        <a href="/">
+        <a href="/patient/dashboard">
             <img src="{{ asset('images/logo.png') }}" alt="Clinic Logo" class="h-16">
         </a>
         <nav class="flex space-x-12  items-left">
             <!-- <a href="/" class="text-gray-600 hover:text-blue-500">Home</a> -->
-            <a href="{{ route('calendar') }}" class="text-lg font-bold text-gray-600 hover:text-blue-500">Calendar
-                Schedules</a>
-            <a href="{{ route('notifications') }}"
-                class="text-lg font-bold text-gray-600 hover:text-blue-500">Notifications</a>
-            <a href="{{ route('history') }}" class="text-lg  font-bold  text-gray-600 hover:text-blue-500">History</a>
+            <!-- <a href="{{ route('calendar') }}" class="text-gray-600 hover:text-blue-500">Calendar Schedules</a>
+            <a href="{{ route('notifications') }}" class="text-gray-600 hover:text-blue-500">Notifications</a>
+            <a href="{{ route('history') }}" class="text-gray-600 hover:text-blue-500">History</a> -->
         </nav>
 
         <div class="flex items-center justify-between space-x-4">
-            <a href="{{ route('appointment') }}" class="bg-teal-500 text-white px-3 py-2 rounded-md hover:bg-teal-700">
+            <!-- <a href="{{ route('appointment') }}" class="bg-teal-500 text-white px-3 py-2 rounded-md hover:bg-teal-700">
                 Make a Reservation
-            </a>
-            <button id="dropdownDividerButton" data-dropdown-toggle="dropdownDivider"
-                class="text-white bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 
+            </a> -->
+            <button id="dropdownDividerButton" data-dropdown-toggle="dropdownDivider" class="text-white bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 
                    font-medium rounded-lg text-sm px-5 p-4 py-4 text-center inline-flex items-start w-15
                    dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 type="button">

@@ -7,9 +7,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
 
-class PatientCalendarController extends Controller
+class PatientController extends Controller
 {
     public function index()
+    {
+        return view('dashboard');
+    }
+
+    public function calendar()
     {
         $userEmail = Auth::user()->email;
         $appointments = Appointment::where('email', $userEmail)
@@ -17,6 +22,15 @@ class PatientCalendarController extends Controller
         return view('patient.calendar')->with('appointments', $appointments);
     }
 
+    public function notifications()
+    {
+        return view('patient.notifications');
+    }
+
+    public function history()
+    {
+        return view('patient.history');
+    }
 
     public function destroy($id)
     {

@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ForgotPasswordController;
-use App\Http\Controllers\PatientCalendarController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PatientController;
 use App\Http\Middleware\PreventBackHistory;
 use App\Mail\ForgotPassword;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -26,24 +27,35 @@ Route::get('test', function () {
     }
 });
 
-Route::get('/forgot-password', function () {
-    return view('forgot-password.forgot-password');
-});
+// LANDING PAGE
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/about', [HomeController::class, 'about'])->name('about');
+Route::get('/doctor', [HomeController::class, 'doctor'])->name('doctor');
+Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(function() {
 
-Route::get('/about', function () {
-    return view('about');
-});
+    //FOR PATIENT USERS
+    Route::get('/patient/dashboard', [PatientController::class, 'index'])->name('patient.dashboard');
+    Route::get('/patient/calendar', action: [PatientController::class, 'calendar'])->name('calendar');
+    Route::get('/patient/notifications', action: [PatientController::class, 'notifications'])->name('notifications');
+    Route::get('/patient/history', action: [PatientController::class, 'history'])->name('history');
+    Route::delete('/patient/appointments/{id}', [PatientController::class, 'destroy'])->name('appointments.destroy');
 
-Route::get('/doctor', function () {
-    return view('doctor');
-});
+    // FOR APPOINTMENT
+    Route::get('/patient/appointment', function () {
+        return view('patient.appointment');
+    })->name('appointment');
 
-Route::get('/contact', function () {
-    return view('contact');
+    // FOR STORING APPOINTMENTS
+    Route::post('/patient/appointment/store', [AppointmentController::class, 'store'])->name('appointment.store');
+
+    //FOR ADMIN USERS
+    Route::get('/admin_dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/create', [AdminController::class, 'create'])->name('admin.create');
+    Route::get('/records', [AdminController::class, 'records'])->name('admin.records');
+    Route::get('/reports', [AdminController::class, 'reports'])->name('admin.reports');
+    Route::get('/approved_appointments', [AdminController::class, 'approvedAppointments'])->name('admin.approved_appointments');
 });
 
 // FOR LOGIN
@@ -53,58 +65,6 @@ Route::post('/login', [LoginController::class, 'store']);
 // FOR REGISTER
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
-
-// GROUPED ROUTES FOR PATIENT WITH MIDDLEWARE
-Route::middleware(['auth', 'patientMiddleware'])->group(function () {
-
-
-    // FOR APPOINTMENT
-    Route::get('/patient/appointment', function () {
-        return view('patient.appointment');
-    })->name('appointment');
-
-    // Route::get('/patient/appointment', [AppointmentController::class, 'showAppointments'])->name('appointment');
-
-    Route::get('/patient/calendar', action: [PatientCalendarController::class, 'index'])->name('calendar');
-
-
-    Route::delete('/patient/appointments/{id}', [PatientCalendarController::class, 'destroy'])->name('appointments.destroy');
-
-    Route::get('/patient/notifications', function () {
-        return view('patient.notifications');
-    })->name('notifications');
-
-
-    Route::get('/patient/history', function () {
-        return view('patient.history');
-    })->name('history');
-
-    // FOR STORING APPOINTMENTS
-    Route::post('/patient/appointment/store', [AppointmentController::class, 'store'])->name('appointment.store');
-
-    Route::get('/profile', [LoginController::class, 'profile'])->name('profile');
-});
-
-Route::middleware(['auth', 'adminMiddleware'])->group(function () {
-
-
-
-    Route::get('/create', function () {
-        return view('admin.create');
-    });
-
-    Route::get('/records', function () {
-        return view('admin.records');
-    });
-
-    Route::get('/reports', function () {
-        return view('admin.reports');
-    });
-
-    Route::get('/approved_appointments', function () {
-        return view('admin.approved_appointments');
-    });
-});
 
 //FOR LOGOUT
 Route::post('/logout', function () {
@@ -143,11 +103,3 @@ Route::post('/email/verification-notification', function (Request $request) {
 
     return redirect('/email/verify')->with('success', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
-
-Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('patient.dashboard');
-
-    Route::get('/admin_dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
-});
