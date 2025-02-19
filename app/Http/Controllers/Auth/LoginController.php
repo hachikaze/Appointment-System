@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
+    public function profile()
+    {
+        return view('profile.editprofile');
+    }
+
 
     public function create(Request $request)
     {
@@ -83,7 +88,7 @@ class LoginController extends Controller
 
         // Prevent back button after logout
         return redirect()->route('login')->withHeaders([
-            'Cache-Control' => 'no-cache, no-store, must-revalidate', 
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
             'Pragma' => 'no-cache',
             'Expires' => '0',
         ]);

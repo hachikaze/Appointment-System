@@ -57,8 +57,7 @@ Route::post('/register', [RegisterController::class, 'register']);
 // GROUPED ROUTES FOR PATIENT WITH MIDDLEWARE
 Route::middleware(['auth', 'patientMiddleware'])->group(function () {
 
-    
-    
+
     // FOR APPOINTMENT
     Route::get('/patient/appointment', function () {
         return view('patient.appointment');
@@ -82,11 +81,13 @@ Route::middleware(['auth', 'patientMiddleware'])->group(function () {
 
     // FOR STORING APPOINTMENTS
     Route::post('/patient/appointment/store', [AppointmentController::class, 'store'])->name('appointment.store');
+
+    Route::get('/profile', [LoginController::class, 'profile'])->name('profile');
 });
 
 Route::middleware(['auth', 'adminMiddleware'])->group(function () {
-    
-    
+
+
 
     Route::get('/create', function () {
         return view('admin.create');
@@ -143,7 +144,7 @@ Route::post('/email/verification-notification', function (Request $request) {
     return redirect('/email/verify')->with('success', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
-Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(function() {
+Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('patient.dashboard');

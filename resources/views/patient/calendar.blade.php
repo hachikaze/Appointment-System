@@ -1,3 +1,6 @@
+@php
+    use Carbon\Carbon;
+@endphp
 <x-patientnav-layout>
 
     <!DOCTYPE html>
@@ -76,10 +79,10 @@
         </div>
 
 
-        <div class="flex items-center  justify-center  mt-10 bg-gray-200 ">
+        <div class="flex items-center m-8 rounded-lg  justify-center ">
 
-            <div class="relative overflow-x-auto  my-12 container shadow-lg sm:rounded-lg p-5 pt-0 pr-0 pl-0 mx-auto">
-                <table class="w-full rounded-lg text-lg text-left rtl:text-right text-white dark:text-gray-400">
+            <div class="relative overflow-x-auto my-12 container shadow-lg sm:rounded-lg p-5 pt-0 pr-0 pl-0 mx-auto">
+                <table class="w-full  rounded-lg text-lg text-left rtl:text-right text-white dark:text-gray-400">
                     <thead class="text-lg text-black uppercase bg-teal-600  dark:text-white">
                         <tr>
                             <th scope="col" class="px-6 py-3">Patient Name</th>
@@ -95,8 +98,8 @@
                             <tr class="border-b text-black hover:bg-teal-200 ">
                                 <td class="px-6 py-4">{{ $appointment->patient_name }}</td>
                                 <td class="px-6 py-4">{{ $appointment->phone }}</td>
-                                <td class="px-6 py-4">{{ $appointment->date }}</td>
-                                <td class="px-6 py-4">{{ $appointment->time }}</td>
+                                <td class="px-6 py-4">{{ Carbon::parse($appointment->date)->format('F j, Y') }}</td>
+                                <td class="px-6 py-4">{{ Carbon::parse($appointment->time)->format('g:i A') }}</td>
                                 <td class="px-6 py-4">
                                     <span
                                         class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
@@ -221,7 +224,6 @@
                     const currentDate = new Date(year, month, day);
                     daySlot.className =
                         "flex flex-col items-center content-center justify-center bg-white shadow-lg border-2 border-teal-300 rounded-lg text-xl font-semibold text-teal-700 transition-all duration-300 hover:bg-blue-400 hover:text-white cursor-pointer shadow-md w-16 h-16 sm:w-20 sm:h-20 md:w-32 md:h-24 lg:w-32 lg:h-28 xl:w-48 xl:h-28";
-
                     const dayNumber = document.createElement('span');
                     dayNumber.className = "xl:text-3xl lg:text-2xl font-bold";
                     dayNumber.innerText = day;
@@ -247,6 +249,19 @@
                     }
 
                     daySlot.appendChild(dayNumber);
+
+                    function formatTimeTo12Hour(time) {
+                        const [hour, minute] = time.split(':');
+                        const formattedTime = new Date();
+                        formattedTime.setHours(parseInt(hour));
+                        formattedTime.setMinutes(parseInt(minute));
+                        const options = {
+                            hour: 'numeric',
+                            minute: 'numeric',
+                            hour12: true
+                        };
+                        return formattedTime.toLocaleString('en-US', options);
+                    }
 
                     const dailyAppointments = appointments.filter(app => {
                         const appDate = new Date(app.date);
@@ -279,7 +294,8 @@
                         dailyAppointments.forEach(res => {
                             const item = document.createElement('p');
                             item.className = "text-gray-800 text-sm font-semibold";
-                            item.innerText = `${res.status} - ${res.time}`;
+                            const formattedTime = formatTimeTo12Hour(res.time);
+                            item.innerText = `${res.status} - ${formattedTime}`;
                             appointmentList.appendChild(item);
                         });
                         daySlot.appendChild(appointmentList);
