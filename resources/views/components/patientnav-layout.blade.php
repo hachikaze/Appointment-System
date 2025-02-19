@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     @vite('resources/css/app.css')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js" defer></script>
-    <link rel="stylesheet" href="/assets/fontawesome/all.min.css">
+    <link rel="stylesheet" href="/fontawesome/all.min.css">
 </head>
 
 <body class="bg-gray-100">
@@ -30,9 +30,9 @@
             <!-- <a href="{{ route('appointment') }}" class="bg-teal-500 text-white px-3 py-2 rounded-md hover:bg-teal-700">
                 Make a Reservation
             </a> -->
-            <button id="dropdownDividerButton" data-dropdown-toggle="dropdownDivider" class="text-white bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 
-                   font-medium rounded-lg text-sm px-5 p-4 py-4 text-center inline-flex items-start w-15
-                   dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            <button id="dropdownDividerButton" data-dropdown-toggle="dropdownDivider"
+                class="text-white bg-teal-500
+                   font-medium rounded-lg text-sm px-5 p-4 py-4 text-center inline-flex items-start w-15"
                 type="button">
                 <svg class="w-2.5 h-2.5  " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 10 6">
@@ -42,10 +42,9 @@
             </button>
             <div id="dropdownDivider"
                 class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-lg 
-                dark:bg-gray-700 dark:divide-gray-600">
+                ">
                 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDividerButton">
-                    <a href="{{ route('profile') }}"
-                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                    <a href="{{ route('profile') }}" class="block px-4 text-black py-2 hover:bg-gray-100 ">
                         Update Profile</a>
                     </li>
                 </ul>
@@ -53,8 +52,7 @@
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit"
-                            class="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 
-                        dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                            class="block w-full text-black px-4 py-2 text-sm text-left hover:bg-gray-100 ">
                             Log Out
                         </button>
                     </form>
