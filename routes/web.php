@@ -28,11 +28,12 @@ Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/doctor', [HomeController::class, 'doctor'])->name('doctor');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 
-Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(function() {
+Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(function () {
 
     // FOR PATIENT USERS
     Route::middleware(['patientMiddleware'])->group(function () {
         Route::get('/patient/dashboard', [PatientController::class, 'index'])->name('patient.dashboard');
+
         Route::get('/patient/calendar', [PatientController::class, 'calendar'])->name('calendar');
         Route::get('/patient/notifications', [PatientController::class, 'notifications'])->name('notifications');
         Route::get('/patient/history', [PatientController::class, 'history'])->name('history');
@@ -57,7 +58,7 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::post('/admin/store', [AdminController::class, 'store'])->name('admin.store');
         Route::get('/admin/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
         Route::get('/admin/appointments/action', [AppointmentController::class, 'updateStatus'])->name('appointments.updateStatus');
-    });    
+    });
 
 });
 

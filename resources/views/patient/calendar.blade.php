@@ -79,9 +79,9 @@
 
 
         <div class="flex items-center  justify-center m-10  mt-10  ">
-
             <div class="relative overflow-x-auto  my-12 container shadow-lg sm:rounded-lg p-5 pt-0 pr-0 pl-0 mx-auto">
-                <table class="w-full rounded-lg text-lg text-left rtl:text-right text-white dark:text-gray-400">
+                <table
+                    class="w-full rounded-lg text-lg text-left rtl:text-right text-white dark:text-gray-400 shadow-lg">
                     <thead class="text-lg text-white uppercase bg-teal-600  dark:text-white">
                         <tr>
                             <th scope="col" class="px-6 py-3">Patient Name</th>
@@ -92,7 +92,7 @@
                             <th scope="col" class="px-6 py-3"></th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white">
+                    <tbody class="bg-white border">
                         @foreach ($appointments as $appointment)
                             <tr class="border-b text-black hover:bg-teal-200 ">
                                 <td class="px-6 py-4">{{ $appointment->patient_name }}</td>
@@ -120,7 +120,7 @@
                                             <!-- Modal header -->
                                             <div
                                                 class="flex bg-teal-500 items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
-                                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                                <h3 class="text-xl font-semibold  text-white">
                                                     Cancel Appointment?
                                                 </h3>
                                                 <button type="button"

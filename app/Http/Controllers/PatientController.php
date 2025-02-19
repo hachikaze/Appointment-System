@@ -9,6 +9,12 @@ use App\Models\Appointment;
 
 class PatientController extends Controller
 {
+
+    public function try()
+    {
+        return view('try');
+    }
+
     public function index()
     {
         return view('dashboard');
