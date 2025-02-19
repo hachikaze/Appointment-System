@@ -16,7 +16,6 @@ class LoginController extends Controller
         return view('profile.editprofile');
     }
 
-
     public function create(Request $request)
     {
         // Redirect authenticated users to the dashboard

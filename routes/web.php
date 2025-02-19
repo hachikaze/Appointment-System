@@ -41,6 +41,7 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
     Route::get('/patient/notifications', action: [PatientController::class, 'notifications'])->name('notifications');
     Route::get('/patient/history', action: [PatientController::class, 'history'])->name('history');
     Route::delete('/patient/appointments/{id}', [PatientController::class, 'destroy'])->name('appointments.destroy');
+    Route::get('/patient/profile', [LoginController::class, 'profile'])->name('profile');
 
     // FOR APPOINTMENT
     Route::get('/patient/appointment', function () {
