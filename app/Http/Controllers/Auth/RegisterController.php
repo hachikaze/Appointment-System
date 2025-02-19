@@ -23,6 +23,7 @@ class RegisterController extends Controller
             'firstname' => 'required|string|max:255',
             'middleinitial' => 'nullable|string|max:1',
             'lastname' => 'required|string|max:255',
+            'gender' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'user_type' => 'nullable|string',
@@ -34,6 +35,7 @@ class RegisterController extends Controller
         $user = User::create([
             'name' => $fullName,
             'email' => $request->email,
+            'email' => $request->gender,
             'password' => Hash::make($request->password),
             'user_type' => $request->user_type ?? 'patient', // Default to 'patient' if not provided
         ]);

@@ -20,6 +20,6 @@ class PatientMiddleware
             return $next($request);
         }
 
-        return redirect('/')->with('error', 'Access denied. You are not authorized.');
+        return redirect()->back()->with('error', 'Access denied. You are not authorized.');
     }
 }

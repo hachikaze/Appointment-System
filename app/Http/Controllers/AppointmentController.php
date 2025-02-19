@@ -9,10 +9,44 @@ use Illuminate\Support\Facades\Auth;
 class AppointmentController extends Controller
 {
 
+    public function index(Request $request)
+    {
+        $search = $request->query('search', '');
+        $filter = $request->query('filter', '');
+        $appointments = Appointment::when($search, function ($query, $search) {
+                return $query->where('patient_name', 'like', "%{$search}%");
+            })
+            ->when($filter, function ($query, $filter) {
+                return $query->where('status', $filter);
+            })
+            ->orderBy('date', 'desc')
+            ->paginate(10);
+
+        return view('admin.manage_appointments', compact('appointments', 'search', 'filter'));
+    }
+
+    public function updateStatus(Request $request)
+    {
+        $appointment = Appointment::findOrFail($request->id);
+        $action = $request->query('action');
+
+        if ($action === 'approve') {
+            $appointment->status = 'Approved';
+        } elseif ($action === 'cancel') {
+            $appointment->status = 'Unattended';
+        } elseif ($action === 'attended') {
+            $appointment->status = 'Attended';
+        } elseif ($action === 'delete') {
+            $appointment->delete();
+            return redirect()->route('appointments.index');
+        }
+
+        $appointment->save();
+        return redirect()->route('appointments.index');
+    }
  
     public function store(Request $request)
     {
-
         // Validate the request
         $validated = $request->validate([
             'phone' => 'required|string|max:11|regex:/^[0-9]+$/',

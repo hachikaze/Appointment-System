@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\PreventBackHistory;
 use App\Mail\ForgotPassword;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -15,17 +16,11 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('test', function () {
-    try {
-        Mail::raw('This is a test email.', function ($message) {
-            $message->to('recipient@example.com')->subject('Test Email');
-        });
+// Route::get('test', function () {
+//     return view('admin.manage_appointments');
+// });
 
-        return "Email sent successfully!";
-    } catch (\Exception $e) {
-        return "Failed to send email: " . $e->getMessage();
-    }
-});
+Route::get('test', [AppointmentController::class, 'index']);
 
 // LANDING PAGE
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -35,13 +30,15 @@ Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 
 Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(function() {
 
-    //FOR PATIENT USERS
-    Route::get('/patient/dashboard', [PatientController::class, 'index'])->name('patient.dashboard');
-    Route::get('/patient/calendar', action: [PatientController::class, 'calendar'])->name('calendar');
-    Route::get('/patient/notifications', action: [PatientController::class, 'notifications'])->name('notifications');
-    Route::get('/patient/history', action: [PatientController::class, 'history'])->name('history');
-    Route::delete('/patient/appointments/{id}', [PatientController::class, 'destroy'])->name('appointments.destroy');
-    Route::get('/patient/profile', [LoginController::class, 'profile'])->name('profile');
+    // FOR PATIENT USERS
+    Route::middleware(['patientMiddleware'])->group(function () {
+        Route::get('/patient/dashboard', [PatientController::class, 'index'])->name('patient.dashboard');
+        Route::get('/patient/calendar', [PatientController::class, 'calendar'])->name('calendar');
+        Route::get('/patient/notifications', [PatientController::class, 'notifications'])->name('notifications');
+        Route::get('/patient/history', [PatientController::class, 'history'])->name('history');
+        Route::delete('/patient/appointments/{id}', [PatientController::class, 'destroy'])->name('appointments.destroy');
+        Route::get('/patient/profile', [LoginController::class, 'profile'])->name('profile');
+    });
 
     // FOR APPOINTMENT
     Route::get('/patient/appointment', function () {
@@ -51,12 +48,17 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
     // FOR STORING APPOINTMENTS
     Route::post('/patient/appointment/store', [AppointmentController::class, 'store'])->name('appointment.store');
 
-    //FOR ADMIN USERS
-    Route::get('/admin_dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-    Route::get('/create', [AdminController::class, 'create'])->name('admin.create');
-    Route::get('/records', [AdminController::class, 'records'])->name('admin.records');
-    Route::get('/reports', [AdminController::class, 'reports'])->name('admin.reports');
-    Route::get('/approved_appointments', [AdminController::class, 'approvedAppointments'])->name('admin.approved_appointments');
+    // FOR ADMIN USERS
+    Route::middleware(['adminMiddleware'])->group(function () {
+        Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+        Route::get('/admin/reports', [AdminController::class, 'reports'])->name('admin.reports');
+        Route::get('/admin/approved_appointments', [AdminController::class, 'approvedAppointments'])->name('admin.approved_appointments');
+        Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');
+        Route::post('/admin/store', [AdminController::class, 'store'])->name('admin.store');
+        Route::get('/admin/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+        Route::get('/admin/appointments/action', [AppointmentController::class, 'updateStatus'])->name('appointments.updateStatus');
+    });    
+
 });
 
 // FOR LOGIN
@@ -91,6 +93,7 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
     $request->fulfill();
     switch ($request->user()->user_type) {
         case 'admin':
+        case 'staff':
             return redirect()->route('admin.dashboard')->with('success', 'Your email has been successfully verified.');
         case 'patient':
             return redirect()->route('patient.dashboard')->with('success', 'Your email has been successfully verified.');
