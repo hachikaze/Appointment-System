@@ -1,12 +1,5 @@
 <?php
 
-<<<<<<< HEAD
-use Illuminate\Support\Facades\Route;
-
-Route::get('/', function () {
-    return view('welcome');
-});
-=======
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\LoginController;
@@ -115,4 +108,3 @@ Route::post('/email/verification-notification', function (Request $request) {
 
     return redirect('/email/verify')->with('success', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
->>>>>>> 22ae4e9a2a3c5770754365515ea942f132985fb9
