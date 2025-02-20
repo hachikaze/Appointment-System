@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Appointment; // Ensure the model is imported
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class AppointmentController extends Controller
@@ -80,5 +81,37 @@ class AppointmentController extends Controller
         //         return response()->json(['status' => 'error', 'message' => 'Failed to book appointment']);
         //     }
         // }
+    }
+
+    public function graph()
+    {
+        $today = Carbon::today()->toDateString();
+        $monthly = Carbon::now()->format('Y-m');
+
+        // Count today's appointments and remaining slots
+        $appointmentsToday = Appointment::whereDate('date', $today)->count();
+        $remainingSlotsToday = max(0, 10 - $appointmentsToday); // Adjust max slots as needed
+
+        // Count monthly appointments and remaining slots
+        $monthlyAppointments = Appointment::where('date', 'like', "$monthly%")->count();
+        $remainingSlotsMonthly = max(0, 100 - $monthlyAppointments); // Adjust max slots as needed
+
+        // Get appointments over time
+        $appointmentsOverTime = Appointment::selectRaw("strftime('%m', date) as month, COUNT(*) as total")
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->map(function ($item) {
+                $item->month = date("F", mktime(0, 0, 0, $item->month, 1));
+                return $item;
+            });
+
+        return view('admin.graph', compact(
+            'appointmentsToday',
+            'remainingSlotsToday',
+            'monthlyAppointments',
+            'remainingSlotsMonthly',
+            'appointmentsOverTime'
+        ));
     }
 }

@@ -53,6 +53,7 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
     Route::middleware(['adminMiddleware'])->group(function () {
         Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
         Route::get('/admin/reports', [AdminController::class, 'reports'])->name('admin.reports');
+        Route::get('/admin/graph', [AppointmentController::class, 'graph'])->name('admin.graph');
         Route::get('/admin/approved_appointments', [AdminController::class, 'approvedAppointments'])->name('admin.approved_appointments');
         Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');
         Route::post('/admin/store', [AdminController::class, 'store'])->name('admin.store');
