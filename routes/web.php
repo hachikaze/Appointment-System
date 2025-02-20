@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminAppointmentController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ManageAppointmentController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\PreventBackHistory;
@@ -57,8 +59,9 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::get('/admin/approved_appointments', [AdminController::class, 'approvedAppointments'])->name('admin.approved_appointments');
         Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');
         Route::post('/admin/store', [AdminController::class, 'store'])->name('admin.store');
-        Route::get('/admin/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
-        Route::get('/admin/appointments/action', [AppointmentController::class, 'updateStatus'])->name('appointments.updateStatus');
+        Route::get('/admin/manage_appointments', [ManageAppointmentController::class, 'index'])->name('appointments.index');
+        Route::post('/admin/appointments/action', [ManageAppointmentController::class, 'updateStatus'])->name('appointments.updateStatus');
+
     });
 
 });
@@ -109,3 +112,12 @@ Route::post('/email/verification-notification', function (Request $request) {
 
     return redirect('/email/verify')->with('success', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
+Route::post('/appointments/store', [AppointmentController::class, 'store'])->name('appointments.store');
+
+Route::get('/admin/appointments', [AdminAppointmentController::class, 'index'])->name('admin.appointments.index');
+Route::get('/admin/appointments/create', [AdminAppointmentController::class, 'create'])->name('admin.appointments.create');
+Route::post('/admin/appointments/store', [AdminAppointmentController::class, 'store'])->name('admin.appointments.store');
+
+// Route::post('/appointments/send-message', [ManageAppointmentController::class, 'sendMessage'])->name('appointments.sendMessage');

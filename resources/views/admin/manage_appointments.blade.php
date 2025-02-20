@@ -4,7 +4,6 @@
     </x-slot:heading>
 
     <div class="p-6">
-
         <form method="GET" class="mb-4 flex flex-wrap gap-2">
             <input type="text" name="search" placeholder="Search by name"
                 value="{{ request('search') }}"
@@ -40,24 +39,26 @@
                         <tr class="border">
                             <td class="border text-xs px-4 py-2">{{ $appointment->id }}</td>
                             <td class="border text-xs px-4 py-2">{{ $appointment->patient_name }}</td>
-                            <td class="border text-xs text-xs px-4 py-2">{{ $appointment->email }}</td>
+                            <td class="border text-xs px-4 py-2">{{ $appointment->email }}</td>
                             <td class="border text-xs px-4 py-2">{{ $appointment->phone }}</td>
                             <td class="border text-xs px-4 py-2">{{ $appointment->date }}</td>
                             <td class="border text-xs px-4 py-2">{{ $appointment->time }}</td>
                             <td class="border text-xs px-4 py-2">{{ $appointment->doctor }}</td>
-                            <td class="border text-xs px-4 py-2">{{ $appointment->appointmentss }}</td>
+                            <td class="border text-xs px-4 py-2">{{ $appointment->appointments }}</td>
                             <td class="border text-xs px-4 py-2">{{ $appointment->status }}</td>
                             <td class="border text-xs px-4 py-2 flex gap-2">
-                                <a href="{{ route('appointments.updateStatus', ['id' => $appointment->id, 'action' => 'approve']) }}"
-                                   class="bg-green-500 text-white px-2 py-1 rounded text-sm">Approve</a>
-                                <a href="{{ route('appointments.updateStatus', ['id' => $appointment->id, 'action' => 'attended']) }}"
-                                   class="bg-blue-500 text-white px-2 py-1 rounded text-sm">Mark Attended</a>
-                                <a href="{{ route('appointments.updateStatus', ['id' => $appointment->id, 'action' => 'cancel']) }}"
-                                   class="bg-yellow-500 text-white px-2 py-1 rounded text-sm">Cancel</a>
-                                <a href="{{ route('appointments.updateStatus', ['id' => $appointment->id, 'action' => 'delete']) }}"
-                                   class="bg-red-500 text-white px-2 py-1 rounded text-sm"
-                                   onclick="return confirm('Are you sure?');">Delete</a>
-                            </td>
+                                <button onclick="openModal('{{ $appointment->id }}', 'approve')" 
+                                        class="bg-green-500 text-white px-2 py-1 rounded text-sm">
+                                    Approve
+                                </button>
+                                <button onclick="openModal('{{ $appointment->id }}', 'attended')" 
+                                        class="bg-blue-500 text-white px-2 py-1 rounded text-sm">
+                                    Mark Attended
+                                </button>
+                                <button onclick="openModal('{{ $appointment->id }}', 'cancel')" 
+                                        class="bg-yellow-500 text-white px-2 py-1 rounded text-sm">
+                                    Cancel
+                                </button>
                         </tr>
                     @endforeach
                 </tbody>
@@ -68,4 +69,40 @@
             {{ $appointments->links() }}
         </div>
     </div>
+
+    <!-- Modal -->
+    <div id="messageModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+        <div class="bg-white p-6 rounded shadow-md w-96">
+            <h2 id="modalTitle" class="text-xl font-bold mb-2"></h2>
+            <form id="messageForm" method="POST" action="{{ route('appointments.updateStatus') }}">
+                @csrf
+                <input type="hidden" id="appointmentId" name="id">
+                <input type="hidden" id="actionType" name="action">
+                <textarea name="message" id="message" placeholder="Enter your message..." 
+                          class="w-full p-2 border rounded" required></textarea>
+                <div class="flex justify-end mt-4 gap-2">
+                    <button type="button" onclick="closeModal()" class="bg-gray-400 text-white px-3 py-1 rounded">
+                        Cancel
+                    </button>
+                    <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">
+                        Confirm
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal(id, action) {
+            document.getElementById('appointmentId').value = id;
+            document.getElementById('actionType').value = action;
+            document.getElementById('modalTitle').innerText = action.charAt(0).toUpperCase() + action.slice(1) + ' Appointment';
+            document.getElementById('messageModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('messageModal').classList.add('hidden');
+        }
+    </script>
+
 </x-sidebar-layout>
