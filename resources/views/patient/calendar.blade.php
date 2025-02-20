@@ -10,17 +10,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Custom Calendar</title>
-        <style>
-            /* .calendar {
-                display: grid;
-                grid-template-columns: repeat(7, 1fr);
-                gap: 0.5rem;
-                padding: 1rem;
-                background-color: #f9f9f9;
-                border-radius: 12px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            } */
-        </style>
+
     </head>
 
     <body class="bg-gray-100 min-h-screen flex items-center justify-center">
@@ -28,7 +18,7 @@
 
             <div class="mb-4 flex justify-end my-12 pr-4 items-center">
                 <select id="monthSelect"
-                    class="border border-2 border-teal-300  font-bold p-2 mr-4 rounded mx-4 bg-white shadow pr-12">
+                    class="border border-2 border-teal-500  font-bold p-2 mr-4 rounded mx-4 bg-white shadow pr-12">
                     <option value="0">January</option>
                     <option value="1">February</option>
                     <option value="2">March</option>
@@ -43,34 +33,37 @@
                     <option value="11">December</option>
                 </select>
                 <select id="yearSelect"
-                    class="border border-2 border-teal-300  font-bold p-2 mr-4 rounded mx-4 bg-white shadow pr-12">
+                    class="border border-2 border-teal-500  font-bold p-2 mr-4 rounded mx-4 bg-white shadow pr-12">
                     <!-- JavaScript will populate the years here -->
                 </select>
             </div>
 
             <div class="flex items-center  justify-center ">
-                <div class=" bg-teal-200 p-4 content-center rounded-lg shadow-lg grid grid-cols-7 gap-2 " id="calendar">
-                    <div
-                        class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-grays-200 p-2 rounded">
-                        Sun</div>
-                    <div
-                        class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
-                        Mon</div>
-                    <div
-                        class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
-                        Tue</div>
-                    <div
-                        class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
-                        Wed</div>
-                    <div
-                        class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
-                        Thu</div>
-                    <div
-                        class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
-                        Fri</div>
-                    <div
-                        class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
-                        Sat</div>
+                <div class="border-2 border-teal-500 p-2 rounded-lg">
+                    <div class=" bg-teal-200 p-4 content-center rounded-lg shadow-lg grid grid-cols-7 gap-2"
+                        id="calendar">
+                        <div
+                            class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-grays-200 p-2 rounded">
+                            Sun</div>
+                        <div
+                            class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
+                            Mon</div>
+                        <div
+                            class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
+                            Tue</div>
+                        <div
+                            class="text-center font-bold tetext-teal-500xt-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
+                            Wed</div>
+                        <div
+                            class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
+                            Thu</div>
+                        <div
+                            class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
+                            Fri</div>
+                        <div
+                            class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
+                            Sat</div>
+                    </div>
                 </div>
             </div>
 
@@ -79,7 +72,7 @@
 
 
         <div class="flex items-center  justify-center m-10  mt-10  ">
-            <div class="relative overflow-x-auto  my-12 container shadow-lg sm:rounded-lg p-5 pt-0 pr-0 pl-0 mx-auto">
+            <div class="relative overflow-x-auto  my-12 container shadow-lg sm:rounded-lg  pt-0 pr-0 pl-0 mx-auto">
                 <table
                     class="w-full rounded-lg text-lg text-left rtl:text-right text-white dark:text-gray-400 shadow-lg">
                     <thead class="text-lg text-white uppercase bg-teal-600  dark:text-white">
@@ -127,7 +120,8 @@
                                                     class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                                                     data-modal-hide="default-modal">
                                                     <svg class="w-3 h-3 text-white" aria-hidden="true"
-                                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                        viewBox="0 0 14 14">
                                                         <path stroke="currentColor" stroke-linecap="round"
                                                             stroke-linejoin="round" stroke-width="2"
                                                             d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
@@ -165,6 +159,49 @@
             </div>
         </div>
 
+        <div id="modal" class="hidden fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title"
+            role="dialog" aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                    <div class="absolute inset-0 bg-gray-800 opacity-75"></div>
+                </div>
+
+                <!-- Modal panel -->
+                <div class="fixed inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50">
+                    <div
+                        class="inline-block align-bottom bg-white rounded-lg   pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full ">
+                        <div class="bg-teal-500">
+                            <h2 class=" text-xl font-bold text-white p-6" id="modal-title"><i
+                                    class="fa-solid fa-clock text-white"></i>
+                                Schedule an Appointment
+                            </h2>
+                        </div>
+
+                        <div class="sm:p-6 pt-0">
+
+                            <div>
+                                <p class="text-md text-black">Are you sure you want to deactivate your account? All
+                                    of
+                                    your data will be permanently removed. This action cannot be undone.</p>
+                            </div>
+                        </div>
+                        <hr class="border-b-4 border-t-0 border-teal-500">
+                        <div class="mt-5 p-4 pt-0 pb-0 sm:mt-3 flex flex-col sm:flex-row-reverse gap-3 sm:gap-2">
+                            <button type="button"
+                                class="inline-flex justify-center rounded-md border border-transparent px-4 py-2 bg-green-600 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-red-700 transition ease-in-out duration-150 sm:text-sm">
+                                Set Appointment
+                            </button>
+                            <button type="button" onclick="document.getElementById('modal').classList.add('hidden')"
+                                class="inline-flex justify-center rounded-md border border-gray-300 px-4 py-2 bg-white text-base font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-300 transition ease-in-out duration-150 sm:text-sm">
+                                Cancel
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
 
 
     </body>
@@ -172,7 +209,7 @@
     </html>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const appointments = @json($appointments);
 
             const calendar = document.querySelector('#calendar');
@@ -225,6 +262,13 @@
                     const dayNumber = document.createElement('span');
                     dayNumber.className = "xl:text-3xl lg:text-2xl font-bold";
                     dayNumber.innerText = day;
+                    daySlot.appendChild(dayNumber);
+
+                    daySlot.addEventListener('click', () => {
+                        const modal = document.getElementById('modal');
+                        modal.classList.remove('hidden');
+                        modal.classList.add('block');
+                    });
 
                     if (currentDate < today.setHours(0, 0, 0, 0)) {
                         daySlot.classList.remove("border-teal-300");
@@ -302,11 +346,11 @@
                 }
             }
 
-            monthSelect.addEventListener('change', function () {
+            monthSelect.addEventListener('change', function() {
                 renderCalendar(parseInt(monthSelect.value), parseInt(yearSelect.value));
             });
 
-            yearSelect.addEventListener('change', function () {
+            yearSelect.addEventListener('change', function() {
                 renderCalendar(parseInt(monthSelect.value), parseInt(yearSelect.value));
             });
             renderCalendar(currentMonth, currentYear);

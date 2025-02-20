@@ -3,7 +3,7 @@
         <div class="max-w-8xl mx-auto px-6 lg:px-8 grid lg:gap-8 gap-4 lg:grid-cols-4 md:grid-cols-1 sm:grid-cols-1">
             <!-- First Column: Avatar and Buttons (1/4 of the width) -->
             <div
-                class="bg-white dark:bg-gray-800 overflow-hidden sm:rounded-lg shadow-lg  xl:col-span-1 md:col-span-2 sm:col-span-2  col-span-2">
+                class="bg-white  overflow-hidden sm:rounded-lg shadow-lg  xl:col-span-1 md:col-span-2 sm:col-span-2  col-span-2">
                 <div class="w-full">
                     <h3 class="bg-teal-500 p-4 font-bold text-xl text-white">
                         <i class="fas fa-user-md"></i> PATIENT DASHBOARD
@@ -103,7 +103,7 @@
 
             </div>
 
-            <div class="bg-white dark:bg-gray-800 overflow-hidden sm:rounded-lg shadow-lg  col-span-2">
+            <div class="bg-white  overflow-hidden sm:rounded-lg shadow-lg  col-span-2">
                 <div class="w-full">
                     <h3 class="bg-teal-500 p-4 font-bold text-xl text-white">
                         <i class="fas fa-user-md"></i> DENTAL CLINIC LOCATION
@@ -115,7 +115,7 @@
                 </iframe>
 
                 <!-- Upcoming Appointments Section -->
-                <div class="bg-white dark:bg-gray-800 overflow-hidden  col-span-2 mt-6 ">
+                <div class="bg-white  overflow-hidden  col-span-2 mt-6 ">
                     <h3 class="bg-teal-500 p-4 font-bold text-xl text-white flex justify-between items-center">
                         <span><i class="fas fa-calendar-alt"></i> Appointments Today (9 AM - 6 PM)</span>
                         <button
@@ -130,29 +130,26 @@
                         <!-- Today's Appointments -->
 
                         <!-- Sample appointment cards (Only within 9 AM - 6 PM) -->
-                        <div
-                            class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow-md flex justify-between items-center">
+                        <div class="bg-gray-100  p-4 rounded-lg shadow-md flex justify-between items-center">
                             <div>
                                 <p class="font-semibold text-lg">10:00 AM</p>
-                                <p class="text-sm text-gray-600 dark:text-gray-300">Feb 22, 2025</p>
+                                <p class="text-sm text-gray-600 ">Feb 22, 2025</p>
                             </div>
                             <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm">24/50</span>
                         </div>
 
-                        <div
-                            class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow-md flex justify-between items-center">
+                        <div class="bg-gray-100  p-4 rounded-lg shadow-md flex justify-between items-center">
                             <div>
                                 <p class="font-semibold text-lg">3:00 PM</p>
-                                <p class="text-sm text-gray-600 dark:text-gray-300">Feb 22, 2025</p>
+                                <p class="text-sm text-gray-600 ">Feb 22, 2025</p>
                             </div>
                             <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm">18/50</span>
                         </div>
 
-                        <div
-                            class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow-md flex justify-between items-center">
+                        <div class="bg-gray-100  p-4 rounded-lg shadow-md flex justify-between items-center">
                             <div>
                                 <p class="font-semibold text-lg">5:45 PM</p>
-                                <p class="text-sm text-gray-600 dark:text-gray-300">Feb 22, 2025</p>
+                                <p class="text-sm text-gray-600 ">Feb 22, 2025</p>
                             </div>
                             <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm">20/50</span>
                         </div>
@@ -164,32 +161,31 @@
 
             <!-- Third Column: Additional Content (1/4 of the width) -->
             <div
-                class="bg-white dark:bg-gray-800 overflow-hidden sm:rounded-lg shadow-lg  xl:col-span-1 md:col-span-4 sm:col-span-2 col-span-2 ">
+                class="bg-white  overflow-hidden sm:rounded-lg shadow-lg  xl:col-span-1 md:col-span-4 sm:col-span-2 col-span-2 ">
                 <p class="text-gray-600 dark:text-gray-400 mt-2">
 
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg  max-w-xxl mx-auto">
-                    <h2
-                        class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center border-b-2 border-teal-500  pb-2">
-                        <i class="fas fa-address-card text-teal-500 text-2xl mr-2"></i> Contact Details
+                <div class="bg-white  p-6 rounded-lg  max-w-xxl mx-auto">
+                    <h2 class="text-xl font-bold text-teal-500 mb-4 flex items-center border-b-2 border-teal-500  pb-2">
+                        <i class="fas fa-address-card  text-2xl mr-2"></i> Contact Details
                     </h2>
 
                     <div class="space-y-4">
-                        <div class="flex items-center bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+                        <div class="flex items-center bg-gray-100  p-4 rounded-lg">
                             <i class="fas fa-user text-teal-500 text-xl mr-3"></i>
                             <p><strong>Name:</strong> ANA FATIMA BARROSO, DMD Dental Clinic</p>
                         </div>
 
-                        <div class="flex items-center bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+                        <div class="flex items-center bg-gray-100  p-4 rounded-lg">
                             <i class="fas fa-map-marker-alt text-teal-500 text-xl mr-3"></i>
                             <p><strong>Address:</strong> H2PR+X34, Nueve de Febrero, Mandaluyong, Kalakhang Maynila</p>
                         </div>
 
-                        <div class="flex items-center bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+                        <div class="flex items-center bg-gray-100 p-4 rounded-lg">
                             <i class="fas fa-phone text-teal-500 text-xl mr-3"></i>
                             <p><strong>Phone:</strong> +63 912 345 6789</p>
                         </div>
 
-                        <div class="flex items-center bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+                        <div class="flex items-center bg-gray-100 p-4 rounded-lg">
                             <i class="fas fa-envelope text-teal-500 text-xl mr-3"></i>
                             <p><strong>Email:</strong>
                                 <a href="mailto:contact@clinic.com"
@@ -197,7 +193,7 @@
                             </p>
                         </div>
 
-                        <div class="flex items-center bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+                        <div class="flex items-center bg-gray-100 p-4 rounded-lg">
                             <i class="fas fa-clock text-teal-500 text-xl mr-3"></i>
                             <p><strong>Opening Hours:</strong> Mon-Sat: 9 AM - 6 PM</p>
                         </div>
@@ -219,14 +215,16 @@
                     <div class="bg-gray-100 p-4 rounded-lg shadow-md flex flex-col items-center">
                         <i class="fas fa-calendar-alt text-teal-500 text-4xl mb-2"></i>
                         <h3 class="text-lg font-bold">Easy Appointments</h3>
-                        <p class="text-center text-sm text-gray-600">Book an appointment online at your convenience.</p>
+                        <p class="text-center text-sm text-gray-600">Book an appointment online at your convenience.
+                        </p>
                     </div>
 
                     <!-- Card 3 -->
                     <div class="bg-gray-100 p-4 rounded-lg shadow-md flex flex-col items-center">
                         <i class="fas fa-tooth text-teal-500 text-4xl mb-2"></i>
                         <h3 class="text-lg font-bold">Quality Services</h3>
-                        <p class="text-center text-sm text-gray-600">Providing top-notch dental procedures and care.</p>
+                        <p class="text-center text-sm text-gray-600">Providing top-notch dental procedures and care.
+                        </p>
                     </div>
 
                     <!-- Card 4 -->
