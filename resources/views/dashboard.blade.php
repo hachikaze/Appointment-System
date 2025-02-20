@@ -127,12 +127,9 @@
 
 
                     <div class="flex-1 min-h-0 overflow-y-auto p-2 space-y-4">
-                        <!-- Today's Appointments -->
-
-                        <!-- Sample appointment cards (Only within 9 AM - 6 PM) -->
                         <div class="bg-gray-100  p-4 rounded-lg shadow-md flex justify-between items-center">
                             <div>
-                                <p class="font-semibold text-lg">10:00 AM</p>
+                                <p class="font-semibold text-lg ">10:00 AM</p>
                                 <p class="text-sm text-gray-600 ">Feb 22, 2025</p>
                             </div>
                             <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm">24/50</span>
@@ -145,7 +142,6 @@
                             </div>
                             <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm">18/50</span>
                         </div>
-
                         <div class="bg-gray-100  p-4 rounded-lg shadow-md flex justify-between items-center">
                             <div>
                                 <p class="font-semibold text-lg">5:45 PM</p>
