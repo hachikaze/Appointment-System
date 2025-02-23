@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditTrail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
@@ -52,6 +53,15 @@ class LoginController extends Controller
 
         // Regenerate session to prevent session fixation
         $request->session()->regenerate();
+        
+        AuditTrail::create([
+            'user_id' => $request->user()->id,
+            'action' => 'Logged In',
+            'model' => 'User',
+            'changes' => null,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->header('User-Agent'),
+        ]);
 
         // Handle email verification
         if (!Auth::user()->hasVerifiedEmail()) {
@@ -83,7 +93,23 @@ class LoginController extends Controller
 
     public function destroy()
     {
+
+        $user = Auth::user();
+
+        AuditTrail::create([
+            'user_id' => auth()->id(),
+            'action' => 'logged out',
+            'model' => 'User',
+            'model_id' => $user->id,
+            'changes' => null,  // No changes for creation
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->header('User-Agent'),
+        ]);
+
         Auth::logout();
+
+
+
 
         // Prevent back button after logout
         return redirect()->route('login')->withHeaders([
