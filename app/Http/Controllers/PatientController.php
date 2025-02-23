@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AvailableAppointment;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -16,13 +18,75 @@ class PatientController extends Controller
         return view('dashboard');
     }
 
-    public function calendar()
+    // public function calendar(Request $request)
+    // {
+    //     $userEmail = Auth::user()->email;
+    //     $selectedDate = $request->input('hiddenselectedDate'); // Expected: "February 28, 2025"
+
+    //     if ($selectedDate) {
+    //         $selectedDate = date('Y-m-d', strtotime($selectedDate));
+    //     }
+    //     dd($selectedDate);
+    //     $availableappointments = AvailableAppointment::all();
+    //     $appointments = Appointment::where('email', $userEmail)
+    //         ->select('id', 'patient_name', 'phone', 'date', 'time', 'status')
+    //         ->get();
+
+    //     if ($selectedDate) {
+    //         $availableappointments = $availableappointments->filter(function ($appointment) use ($selectedDate) {
+    //             return $appointment->date === $selectedDate;
+    //         });
+    //     }
+
+    //     $availableTimeSlots = $availableappointments->pluck('time_slot')->toArray();
+
+    //     \Log::info('Selected Date: ' . $selectedDate);
+    //     \Log::info('Database Dates: ' . AvailableAppointment::pluck('date'));
+
+    //     return view('patient.calendar')
+    //         ->with('appointments', $appointments)
+    //         ->with('availableappointments', $availableTimeSlots)
+    //         ->with('selectedDate', $selectedDate);
+    // }
+
+    public function calendar(Request $request)
     {
         $userEmail = Auth::user()->email;
+        $selectedDate = $request->input('hiddenselectedDate'); // Get date from form submission
+
+        \Log::info('Received Selected Date: ' . ($selectedDate ?? 'None'));
+
+        if (!empty($selectedDate)) {
+            $selectedDate = date('Y-m-d', strtotime($selectedDate)); // Convert to "YYYY-MM-DD"
+        } else {
+            $selectedDate = null;
+        }
+
         $appointments = Appointment::where('email', $userEmail)
-            ->select('id', 'patient_name', 'phone', 'date', 'time', 'status')->get();
-        return view('patient.calendar')->with('appointments', $appointments);
+            ->select('id', 'patient_name', 'phone', 'date', 'time', 'status')
+            ->get();
+
+        $availableappointments = $selectedDate
+            ? AvailableAppointment::where('date', $selectedDate)
+                ->select('time_slot', 'max_slots')
+                ->get()
+                ->map(function ($appointment) use ($selectedDate) {
+                    // Count how many appointments are booked for this time slot
+                    $bookedSlots = Appointment::where('date', $selectedDate)
+                        ->where('time', $appointment->time_slot)
+                        ->count();
+
+                    // Deduct booked slots from max slots
+                    $appointment->remaining_slots = max(0, $appointment->max_slots - $bookedSlots);
+                    return $appointment;
+                })
+            : collect();
+
+        $availableslots = $availableappointments->sum('remaining_slots');
+        return view('patient.calendar', compact('appointments', 'availableappointments', 'selectedDate', 'availableslots'));
     }
+
+
 
     public function notifications()
     {
@@ -36,7 +100,7 @@ class PatientController extends Controller
         $appointments = Appointment::where('email', $userEmail)
             ->select('id', 'patient_name', 'phone', 'date', 'time', 'status')->get();
         return view('patient.history')->with('appointments', $appointments);
-       
+
     }
 
     public function destroy($id)

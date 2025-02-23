@@ -37,6 +37,7 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::get('/patient/dashboard', [PatientController::class, 'index'])->name('patient.dashboard');
 
         Route::get('/patient/calendar', [PatientController::class, 'calendar'])->name('calendar');
+
         Route::get('/patient/notifications', [PatientController::class, 'notifications'])->name('notifications');
         Route::get('/patient/history', [PatientController::class, 'history'])->name('history');
         Route::delete('/patient/appointments/{id}', [PatientController::class, 'destroy'])->name('appointments.destroy');
@@ -114,7 +115,7 @@ Route::post('/email/verification-notification', function (Request $request) {
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
-Route::post('/appointments/store', [AppointmentController::class, 'store'])->name('appointments.store');
+Route::post('/appointments/store', [AppointmentController::class, 'store'])->name(name: 'appointments.store');
 
 Route::get('/admin/appointments', [AdminAppointmentController::class, 'index'])->name('admin.appointments.index');
 Route::get('/admin/appointments/create', [AdminAppointmentController::class, 'create'])->name('admin.appointments.create');

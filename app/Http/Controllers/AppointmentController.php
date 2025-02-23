@@ -17,29 +17,53 @@ class AppointmentController extends Controller
         return view('appointments.create', compact('availableAppointments'));
     }
 
+
     public function store(Request $request)
     {
+        $user = Auth::user();
+
         $request->validate([
-            'patient_name' => 'required|string',
-            'email' => 'required|email',
             'phone' => 'required|string',
             'date' => 'required|date',
-            'time' => 'required',
-            'doctor' => 'required|string',
-            'appointments' => 'required|string'
+            'time' => 'required|string',
+            'appointment_reason' => 'required|string',
         ]);
 
-        $availableSlot = AvailableAppointment::where('date', $request->date)
-            ->where('time_slot', $request->time)
-            ->first();
+        $selectedDate = $request->date;
+        $time = $request->input('time', '00:00');
 
-        if (!$availableSlot || $availableSlot->remainingSlots() <= 0) {
+        // Prevent booking for past dates
+        if ($selectedDate < date('Y-m-d')) {
+            return back()->withErrors(['error' => 'You cannot book an appointment for a past date.']);
+        }
+
+        $startOfMonth = date('Y-m-01', strtotime($selectedDate));
+        $endOfMonth = date('Y-m-t', strtotime($selectedDate));
+
+        $existingAppointment = Appointment::where('email', $user->email)
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->exists();
+
+        if ($existingAppointment) {
+            return back()->withErrors(['error' => 'You can only book one appointment per month.']);
+        }
+
+        if (!AvailableAppointment::where('date', $request->date)->where('time_slot', $time)->exists()) {
             return back()->withErrors(['error' => 'No available slots for the selected time.']);
         }
 
-        Appointment::create($request->all());
+        Appointment::create([
+            'patient_name' => $user->name,
+            'email' => $user->email,
+            'doctor' => 'Ana Fatima Barroso',
+            'status' => 'Pending',
+            'phone' => $request->phone,
+            'date' => $request->date,
+            'time' => $time,
+            'appointments' => $request->input('appointment_reason'),
+        ]);
 
-        return redirect()->route('appointments.create')->with('success', 'Appointment booked successfully.');
+        return back()->with('success', 'Appointment successfully booked.');
     }
 
     public function graph()
