@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuditTrail;
 use App\Models\AvailableAppointment;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +16,13 @@ class PatientController extends Controller
 
     public function index()
     {
-        return view('dashboard');
+        $auditTrails = AuditTrail::where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $availableAppointments = AvailableAppointment::whereDate('date', Carbon::today())
+            ->orderBy('date', 'desc')
+            ->get();
+        return view('dashboard', compact('auditTrails', 'availableAppointments'));
     }
 
     // public function calendar(Request $request)
@@ -107,6 +114,16 @@ class PatientController extends Controller
     {
         $appointment = Appointment::findorFail($id);
         $appointment->delete();
+
+        AuditTrail::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Delete Appointment',
+            'model' => 'User',
+            'changes' => null,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->header('User-Agent'),
+        ]);
+
         return redirect()->back();
     }
 }

@@ -53,7 +53,7 @@ class LoginController extends Controller
 
         // Regenerate session to prevent session fixation
         $request->session()->regenerate();
-        
+
         AuditTrail::create([
             'user_id' => $request->user()->id,
             'action' => 'Logged In',
@@ -91,31 +91,28 @@ class LoginController extends Controller
         }
     }
 
-    public function destroy()
+    public function destroy(Request $request)
     {
-
-        $user = Auth::user();
-
+        // Log audit trail
         AuditTrail::create([
-            'user_id' => auth()->id(),
-            'action' => 'logged out',
+            'user_id' => $request->user()->id,
+            'action' => 'Logged Out',
             'model' => 'User',
-            'model_id' => $user->id,
-            'changes' => null,  // No changes for creation
+            'changes' => null,
             'ip_address' => request()->ip(),
             'user_agent' => request()->header('User-Agent'),
         ]);
 
-        Auth::logout();
+        // Log out user
+        Auth::guard('web')->logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
 
-
-
-
-        // Prevent back button after logout
         return redirect()->route('login')->withHeaders([
             'Cache-Control' => 'no-cache, no-store, must-revalidate',
             'Pragma' => 'no-cache',
             'Expires' => '0',
         ]);
     }
+
 }

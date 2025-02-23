@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuditTrail;
 use Illuminate\Http\Request;
 use App\Models\Appointment; // Ensure the model is imported
 use App\Models\AvailableAppointment;
@@ -63,8 +64,20 @@ class AppointmentController extends Controller
             'appointments' => $request->input('appointment_reason'),
         ]);
 
+        AuditTrail::create([
+            'user_id' => $request->user()->id,
+            'action' => 'Create Appointment',
+            'model' => 'User',
+            'changes' => null,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->header('User-Agent'),
+        ]);
+
         return back()->with('success', 'Appointment successfully booked.');
     }
+
+
+
 
     public function graph()
     {
