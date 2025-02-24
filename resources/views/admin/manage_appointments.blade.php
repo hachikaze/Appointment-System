@@ -16,6 +16,7 @@
                 <option value="Unattended" {{ request('filter') === "Unattended" ? 'selected' : '' }}>Unattended</option>
             </select>
             <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Apply</button>
+            <a href="{{ route('admin.appointments.create') }}" class="bg-green-500 text-white px-4 py-2 rounded">Add Slots</a>
         </form>
 
         <div class="overflow-x-auto">
