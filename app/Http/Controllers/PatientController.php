@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
+use Illuminate\Support\Facades\Log;
 
 class PatientController extends Controller
 {
@@ -61,7 +62,7 @@ class PatientController extends Controller
         $userEmail = Auth::user()->email;
         $selectedDate = $request->input('hiddenselectedDate'); // Get date from form submission
 
-        \Log::info('Received Selected Date: ' . ($selectedDate ?? 'None'));
+        Log::info('Received Selected Date: ' . ($selectedDate ?? 'None'));
 
         if (!empty($selectedDate)) {
             $selectedDate = date('Y-m-d', strtotime($selectedDate)); // Convert to "YYYY-MM-DD"

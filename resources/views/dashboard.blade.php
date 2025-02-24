@@ -169,11 +169,11 @@
                                 class="bg-gray-100 border-l-4 border-teal-500 p-4 rounded-lg shadow-md flex justify-between items-center  ">
                                 <div>
                                     <p class="font-semibold text-lg">
-                                        {{ \Carbon\Carbon::parse($appointments->date)->format('M d, Y') }}
+                                        {{ $appointments->date }}
                                     </p>
 
                                     <p class="text-sm text-gray-600 ">
-                                        {{ \Carbon\Carbon::parse($appointments->time_slot)->format('h:i A') }}
+                                        {{ $appointments->time_slot }}
                                     </p>
                                 </div>
                                 <span

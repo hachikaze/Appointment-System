@@ -16,12 +16,21 @@
             @csrf
             <div class="mb-4">
                 <label class="block text-gray-700">Date</label>
-                <input type="date" name="date" class="w-full p-2 border rounded">
+                <input type="date" name="date" class="w-full p-2 border rounded" 
+                    value="{{ now()->format('Y-m-d') }}" 
+                    min="{{ now()->format('Y-m-d') }}">
             </div>
 
             <div class="mb-4">
                 <label class="block text-gray-700">Time Slot</label>
-                <input type="time" name="time_slot" class="w-full p-2 border rounded">
+                <select name="time_slot" class="w-full p-2 border rounded" required>
+                    <option value="">Select a time slot</option>
+                    @foreach (range(8, 17) as $hour)
+                        <option value="{{ sprintf('%02d:00 - %02d:00', $hour, $hour + 1) }}">
+                            {{ sprintf('%02d:00 - %02d:00', $hour, $hour + 1) }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
 
             <div class="mb-4">

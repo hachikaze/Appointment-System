@@ -35,7 +35,7 @@ class RegisterController extends Controller
         $user = User::create([
             'name' => $fullName,
             'email' => $request->email,
-            'email' => $request->gender,
+            'gender' => $request->gender,
             'password' => Hash::make($request->password),
             'user_type' => $request->user_type ?? 'patient', // Default to 'patient' if not provided
         ]);

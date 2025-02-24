@@ -22,12 +22,17 @@ class AdminAppointmentController extends Controller
     {
         $request->validate([
             'date' => 'required|date',
-            'time_slot' => 'required',
+            'time_slot' => 'required|string',
             'max_slots' => 'required|integer|min:1'
         ]);
 
-        AvailableAppointment::create($request->all());
+        AvailableAppointment::create([
+            'date' => $request->date,
+            'time_slot' => $request->time_slot,
+            'max_slots' => $request->max_slots,
+        ]);
 
-        return redirect()->route('admin.appointments.index')->with('success', 'Available appointment added successfully.');
+        return redirect()->route('admin.appointments.create')
+                        ->with('success', 'Available appointment added successfully.');
     }
 }
