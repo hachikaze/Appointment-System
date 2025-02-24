@@ -1,11 +1,5 @@
 <x-navbar-layout>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-
-        * {
-            font-family: 'Poppins', sans-serif;
-        }
-
         .professional-gradient {
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
         }

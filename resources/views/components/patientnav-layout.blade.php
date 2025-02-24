@@ -14,6 +14,28 @@
 </head>
 
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .fade-up {
+        animation: fadeUp 0.4s ease-out;
+    }
+
     .grid-bg {
         position: relative;
         min-height: 100vh;
@@ -63,16 +85,16 @@
                     <div class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hidden"
                         id="menu-items">
                         <div class="py-1" role="none">
-                            <a href="#" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
-                                id="menu-item-0">
+                            <a href="#" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem"
+                                tabindex="-1" id="menu-item-0">
                                 <i class="fas fa-cog mr-2"></i> Account settings
                             </a>
-                            <a href="#" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
-                                id="menu-item-1">
+                            <a href="#" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem"
+                                tabindex="-1" id="menu-item-1">
                                 <i class="fas fa-life-ring mr-2"></i> Support
                             </a>
-                            <a href="#" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
-                                id="menu-item-2">
+                            <a href="#" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem"
+                                tabindex="-1" id="menu-item-2">
                                 <i class="fas fa-file-alt mr-2"></i> License
                             </a>
                             <form method="POST" action="{{ route('logout') }}" role="none">
