@@ -16,16 +16,6 @@
 
         <form id="appointmentForm" action="{{ route('appointment.store') }}" method="POST" class="space-y-4">
             @csrf
-            <!-- <div>
-                <label class="block font-semibold">Full Name:</label>
-                <input type="text" name="patient_name" required class="w-full border p-2 rounded">
-            </div>
-
-            <div>
-                <label class="block font-semibold">Email:</label>
-                <input type="email" name="email" required class="w-full border p-2 rounded">
-            </div> -->
-
             <div>
                 <label class="block font-semibold">Phone Number:</label>
                 <input type="text" name="phone" required class="w-full border p-2 rounded" maxlength="11">

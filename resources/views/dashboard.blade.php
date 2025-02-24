@@ -30,79 +30,41 @@
                 <!-- Audit Trail Section -->
                 <div class="mt-10 p-6 pt-0">
                     <h3 class="text-lg font-bold text-gray-700 mt-5 mb-4 flex items-center">
-                        <i class="fas fa-history text-teal-500 text-xl mr-2"></i> Audit Trail
+                        <i class="fas fa-history text-teal-500 text-xl mr-2"></i> Activity Log
                     </h3>
 
-                    <div class="max-h-96 overflow-y-auto p-4 bg-gray-50 rounded-lg">
-                        <div class="grid grid-cols-2 gap-4 text-gray-700 text-sm">
-                            <!-- Column Headers -->
-                            <div class="font-semibold">Action</div>
-                            <div class="font-semibold">Date & Time</div>
-
-                            <!-- Entry 1 -->
-                            <div class="flex items-center space-x-2">
-                                <i class="fas fa-user-edit text-blue-500"></i>
-                                <span>Updated clinic hours</span>
-                            </div>
-                            <div class="text-gray-500">Feb 18, 2025, 10:45 AM</div>
-
-                            <!-- Entry 2 -->
-                            <div class="flex items-center space-x-2">
-                                <i class="fas fa-user-plus text-green-500"></i>
-                                <span>New patient record added</span>
-                            </div>
-                            <div class="text-gray-500">Feb 17, 2025, 3:30 PM</div>
-
-                            <!-- Entry 3 -->
-                            <div class="flex items-center space-x-2">
-                                <i class="fas fa-trash-alt text-red-500"></i>
-                                <span>Deleted old record</span>
-                            </div>
-                            <div class="text-gray-500">Feb 16, 2025, 1:15 PM</div>
-
-                            <!-- Entry 4 -->
-                            <div class="flex items-center space-x-2">
-                                <i class="fas fa-calendar-check text-yellow-500"></i>
-                                <span>Appointment scheduled</span>
-                            </div>
-                            <div class="text-gray-500">Feb 15, 2025, 9:00 AM</div>
-
-                            <!-- Entry 5 -->
-                            <div class="flex items-center space-x-2">
-                                <i class="fas fa-file-alt text-gray-500"></i>
-                                <span>Medical record updated</span>
-                            </div>
-                            <div class="text-gray-500">Feb 14, 2025, 2:45 PM</div>
-
-                            <!-- Entry 6 -->
-                            <div class="flex items-center space-x-2">
-                                <i class="fas fa-file-alt text-gray-500"></i>
-                                <span>Medical record updated</span>
-                            </div>
-                            <div class="text-gray-500">Feb 14, 2025, 2:45 PM</div>
-
-                            <!-- Entry 7 -->
-                            <div class="flex items-center space-x-2">
-                                <i class="fas fa-file-alt text-gray-500"></i>
-                                <span>Medical record updated</span>
-                            </div>
-                            <div class="text-gray-500">Feb 14, 2025, 2:45 PM</div>
-
-                            <!-- Entry 8 -->
-                            <div class="flex items-center space-x-2">
-                                <i class="fas fa-file-alt text-gray-500"></i>
-                                <span>Medical record updated</span>
-                            </div>
-                            <div class="text-gray-500">Feb 14, 2025, 2:45 PM</div>
+                    <div class="bg-gray-200 rounded-lg">
+                        <!-- Column Headers -->
+                        <div class="flex rounded-t-lg font-semibold bg-teal-500 p-2 text-white text-md">
+                            <div class="flex-1">Action</div>
+                            <div class="flex-1">Date & Time</div>
+                        </div>
+                        <div class="grid grid-cols-2 max-h-96 overflow-y-auto   text-gray-700 text-sm">
+                            @foreach($auditTrails as $audit)
+                                <div class="p-4 flex items-center justify-between border-b-2 border-gray-300">
+                                    <div class="flex items-center space-x-2">
+                                        @if($audit->action === 'Logged In')
+                                            <i class="fas fa-sign-in-alt text-green-600"></i>
+                                        @elseif($audit->action === 'Logged Out')
+                                            <i class="fas fa-sign-out-alt text-red-600"></i>
+                                        @elseif($audit->action === 'Create Appointment')
+                                            <i class="fas fa-calendar-plus text-blue-600"></i>
+                                        @elseif($audit->action === 'Delete Appointment')
+                                            <i class="fas fa-calendar-minus text-yellow-600"></i>
+                                        @else
+                                            <i class="fas fa-user-edit text-gray-500"></i>
+                                        @endif
+                                        <span class="font-bold">{{ $audit->action }}</span>
+                                    </div>
+                                </div>
+                                <div class="text-gray-600 flex items-center border-b-2 border-gray-300 ">
+                                    {{ \Carbon\Carbon::parse($audit->created_at)->setTimezone('Asia/Singapore')->format('M d, Y, h:i A') }}
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
-
-
-
-
             </div>
-
             <div class="bg-white  overflow-hidden sm:rounded-lg shadow-lg  col-span-2">
                 <div class="w-full">
                     <h3 class="bg-teal-500 p-4 font-bold text-xl text-white">
@@ -123,34 +85,25 @@
                             See More <i class="fas fa-arrow-right ml-2"></i>
                         </button>
                     </h3>
+                    @foreach ($availableAppointments as $appointments)
+                        <div class="flex-1 min-h-0 overflow-y-auto p-2 pt-4 space-y-4">
+                            <div
+                                class="bg-gray-100 border-l-4 border-teal-500 p-4 rounded-lg shadow-md flex justify-between items-center">
+                                <div>
+                                    <p class="font-semibold text-lg">
+                                        {{ \Carbon\Carbon::parse($appointments->date)->format('M d, Y') }}
+                                    </p>
 
-
-
-                    <div class="flex-1 min-h-0 overflow-y-auto p-2 space-y-4">
-                        <div class="bg-gray-100  p-4 rounded-lg shadow-md flex justify-between items-center">
-                            <div>
-                                <p class="font-semibold text-lg ">10:00 AM</p>
-                                <p class="text-sm text-gray-600 ">Feb 22, 2025</p>
+                                    <p class="text-sm text-gray-600 ">
+                                        {{ \Carbon\Carbon::parse($appointments->time_slot)->format('h:i A') }}
+                                    </p>
+                                </div>
+                                <span
+                                    class="bg-teal-600 text-white px-3 py-1 rounded-full text-md">{{ $appointments->max_slots }}
+                                    Slots Remaining</span>
                             </div>
-                            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm">24/50</span>
                         </div>
-
-                        <div class="bg-gray-100  p-4 rounded-lg shadow-md flex justify-between items-center">
-                            <div>
-                                <p class="font-semibold text-lg">3:00 PM</p>
-                                <p class="text-sm text-gray-600 ">Feb 22, 2025</p>
-                            </div>
-                            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm">18/50</span>
-                        </div>
-                        <div class="bg-gray-100  p-4 rounded-lg shadow-md flex justify-between items-center">
-                            <div>
-                                <p class="font-semibold text-lg">5:45 PM</p>
-                                <p class="text-sm text-gray-600 ">Feb 22, 2025</p>
-                            </div>
-                            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm">20/50</span>
-                        </div>
-
-                    </div>
+                    @endforeach
 
                 </div>
             </div>
@@ -166,22 +119,22 @@
                     </h2>
 
                     <div class="space-y-4">
-                        <div class="flex items-center bg-gray-100  p-4 rounded-lg">
+                        <div class="flex items-center bg-gray-100 shadow-lg p-4 rounded-lg">
                             <i class="fas fa-user text-teal-500 text-xl mr-3"></i>
                             <p><strong>Name:</strong> ANA FATIMA BARROSO, DMD Dental Clinic</p>
                         </div>
 
-                        <div class="flex items-center bg-gray-100  p-4 rounded-lg">
+                        <div class="flex items-center bg-gray-100  shadow-lg p-4 rounded-lg">
                             <i class="fas fa-map-marker-alt text-teal-500 text-xl mr-3"></i>
                             <p><strong>Address:</strong> H2PR+X34, Nueve de Febrero, Mandaluyong, Kalakhang Maynila</p>
                         </div>
 
-                        <div class="flex items-center bg-gray-100 p-4 rounded-lg">
+                        <div class="flex items-center bg-gray-100 shadow-lg p-4 rounded-lg">
                             <i class="fas fa-phone text-teal-500 text-xl mr-3"></i>
                             <p><strong>Phone:</strong> +63 912 345 6789</p>
                         </div>
 
-                        <div class="flex items-center bg-gray-100 p-4 rounded-lg">
+                        <div class="flex items-center bg-gray-100 shadow-lg p-4 rounded-lg">
                             <i class="fas fa-envelope text-teal-500 text-xl mr-3"></i>
                             <p><strong>Email:</strong>
                                 <a href="mailto:contact@clinic.com"
@@ -189,7 +142,7 @@
                             </p>
                         </div>
 
-                        <div class="flex items-center bg-gray-100 p-4 rounded-lg">
+                        <div class="flex items-center bg-gray-100 shadow-lg p-4 rounded-lg">
                             <i class="fas fa-clock text-teal-500 text-xl mr-3"></i>
                             <p><strong>Opening Hours:</strong> Mon-Sat: 9 AM - 6 PM</p>
                         </div>

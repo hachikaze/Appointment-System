@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditTrail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
@@ -53,6 +54,15 @@ class LoginController extends Controller
         // Regenerate session to prevent session fixation
         $request->session()->regenerate();
 
+        AuditTrail::create([
+            'user_id' => $request->user()->id,
+            'action' => 'Logged In',
+            'model' => 'User',
+            'changes' => null,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->header('User-Agent'),
+        ]);
+
         // Handle email verification
         if (!Auth::user()->hasVerifiedEmail()) {
             return view('auth.verify-email');
@@ -81,15 +91,28 @@ class LoginController extends Controller
         }
     }
 
-    public function destroy()
+    public function destroy(Request $request)
     {
-        Auth::logout();
+        // Log audit trail
+        AuditTrail::create([
+            'user_id' => $request->user()->id,
+            'action' => 'Logged Out',
+            'model' => 'User',
+            'changes' => null,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->header('User-Agent'),
+        ]);
 
-        // Prevent back button after logout
+        // Log out user
+        Auth::guard('web')->logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+
         return redirect()->route('login')->withHeaders([
             'Cache-Control' => 'no-cache, no-store, must-revalidate',
             'Pragma' => 'no-cache',
             'Expires' => '0',
         ]);
     }
+
 }
