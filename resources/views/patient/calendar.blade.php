@@ -1,8 +1,7 @@
 @php
-    use Carbon\Carbon;
+use Carbon\Carbon;
 @endphp
 <x-patientnav-layout>
-
     <!DOCTYPE html>
     <html lang="en">
 
@@ -16,7 +15,7 @@
     <body class="bg-gray-100 min-h-screen flex items-center justify-center">
         <div class="container mx-auto p-4 pr-0 pl-0">
 
-            <div class="mb-4 flex justify-end my-12 pr-4 items-center">
+            <div class="mb-4 flex justify-end my-12  items-center">
                 <select id="monthSelect"
                     class="border border-2 border-teal-500  font-bold p-2 mr-4 rounded mx-4 bg-white shadow pr-12">
                     <option value="0">January</option>
@@ -32,15 +31,16 @@
                     <option value="10">November</option>
                     <option value="11">December</option>
                 </select>
-                <select id="yearSelect"
-                    class="border border-2 border-teal-500  font-bold p-2 mr-4 rounded mx-4 bg-white shadow pr-12">
-                    <!-- JavaScript will populate the years here -->
+                <select id="yearSelect" class="border border-2 border-teal-500 font-bold p-2 rounded  bg-white shadow ">
                 </select>
             </div>
 
-            <div class="flex items-center  justify-center ">
+            <div class="justify-center  ">
                 <div class="border-2 border-teal-500 p-2 rounded-lg">
-                    <div class=" bg-teal-200 p-4 content-center rounded-lg shadow-lg grid grid-cols-7 gap-2"
+                    <div class="bg-teal-500 w-full text-center text-3xl text-white p-4 font-bold rounded-t-lg">
+                        APPOINTMENT CALENDAR
+                    </div>
+                    <div class=" bg-teal-200 p-4 content-center rounded-b-lg shadow-lg grid grid-cols-7 gap-2"
                         id="calendar">
                         <div
                             class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-grays-200 p-2 rounded">
@@ -178,17 +178,94 @@
                         </div>
 
                         <div class="sm:p-6 pt-0">
-
                             <div>
-                                <p class="text-md text-black">Are you sure you want to deactivate your account? All
-                                    of
-                                    your data will be permanently removed. This action cannot be undone.</p>
+                                <p class="text-xl font-bold mb-2 text-teal-600" id="selectedDate">Selected Date: </p>
+                                <p class="text-md text-black">
+                                    Please fill in the details to set your dental appointment.
+                                </p>
+
+                                <!-- Patient Name -->
+                                <label for="website-admin"
+                                    class="block mb-2 my-4 mt-4 text-sm font-medium text-gray-900">Username</label>
+                                <div class="flex">
+                                    <span
+                                        class="inline-flex items-center px-3 text-sm text-gray-900 bg-teal-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md  dark:text-gray-400 dark:border-gray-600">
+                                        <i class="fa-solid fa-user text-teal-700 shadow-lg"></i>
+                                    </span>
+                                    <input type="text" id="website-admin" id="username" name="phone"
+                                        class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  border-gray-600 placeholder-gray-500"
+                                        placeholder="Ex. John Doe">
+                                </div>
+
+                                <!-- Phone Number -->
+                                <label for="website-admin"
+                                    class="block mb-2 my-4 mt-4 text-sm font-medium text-gray-900">Phone Number</label>
+                                <div class="flex">
+                                    <span
+                                        class="inline-flex items-center px-3 text-sm text-gray-900 bg-teal-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md  dark:text-gray-400 dark:border-gray-600">
+                                        <i class="fa-solid fa-phone text-teal-700 shadow-lg"></i>
+
+                                    </span>
+                                    <input type="text" id="website-admin" id="phone" name="phone"
+                                        class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  border-gray-600 placeholder-gray-500"
+                                        placeholder="Ex. John Doe">
+                                </div>
+
+                                <!-- Reason for Appointment -->
+                                <label for="appointment-reason"
+                                    class="block mb-2 my-4 mt-4 text-sm font-medium text-gray-900">
+                                    Reason for Appointment
+                                </label>
+                                <div class="flex">
+                                    <span
+                                        class="inline-flex items-center px-3 text-sm text-gray-900 bg-teal-200 border rounded-e-0 border-gray-800 border-e-0 rounded-s-md">
+                                        <i class="fa-solid fa-calendar text-teal-700 shadow-lg"></i>
+                                    </span>
+                                    <select id="appointment-reason" name="appointment-reason"
+                                        class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-800 p-2.5 placeholder-gray-500">
+                                        <option value="">Select Reason</option>
+                                        <option value="Tooth Restoration">Tooth Restoration</option>
+                                        <option value="Extraction">Extraction</option>
+                                        <option value="Teeth Whitening">Teeth Whitening</option>
+                                        <option value="Oral Prophylaxis">Oral Prophylaxis</option>
+                                        <option value="Odontectomy">Odontectomy</option>
+                                        <option value="Orthodontics">Orthodontics</option>
+                                    </select>
+                                </div>
+
+                                <!-- Time Selection -->
+                                <label for="appointment-time"
+                                    class="block mb-2 my-4 mt-4 text-sm font-medium text-gray-900">
+                                    Select Available Time
+                                </label>
+                                <div class="flex">
+                                    <span
+                                        class="inline-flex items-center px-3 text-sm text-gray-900 bg-teal-200 border rounded-e-0 border-gray-800 border-e-0 rounded-s-md">
+                                        <i class="fa-solid fa-clock text-teal-700 shadow-lg"></i>
+                                    </span>
+                                    <select id="appointment-time" name="appointment-time"
+                                        class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-800 p-2.5 placeholder-gray-500">
+                                        <option value="">Select Time</option>
+                                        <option value="08:00 AM">08:00 AM</option>
+                                        <option value="09:00 AM">09:00 AM</option>
+                                        <option value="10:00 AM">10:00 AM</option>
+                                        <option value="11:00 AM">11:00 AM</option>
+                                        <option value="12:00 PM">12:00 PM</option>
+                                        <option value="01:00 PM">01:00 PM</option>
+                                        <option value="02:00 PM">02:00 PM</option>
+                                        <option value="03:00 PM">03:00 PM</option>
+                                        <option value="04:00 PM">04:00 PM</option>
+                                        <option value="05:00 PM">05:00 PM</option>
+                                    </select>
+                                </div>
+
                             </div>
+
                         </div>
                         <hr class="border-b-4 border-t-0 border-teal-500">
                         <div class="mt-5 p-4 pt-0 pb-0 sm:mt-3 flex flex-col sm:flex-row-reverse gap-3 sm:gap-2">
                             <button type="button"
-                                class="inline-flex justify-center rounded-md border border-transparent px-4 py-2 bg-green-600 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-red-700 transition ease-in-out duration-150 sm:text-sm">
+                                class="inline-flex justify-center rounded-md border border-transparent px-4 py-2 bg-teal-600 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-red-700 transition ease-in-out duration-150 sm:text-sm">
                                 Set Appointment
                             </button>
                             <button type="button" onclick="document.getElementById('modal').classList.add('hidden')"
@@ -262,10 +339,20 @@
                     const dayNumber = document.createElement('span');
                     dayNumber.className = "xl:text-3xl lg:text-2xl font-bold";
                     dayNumber.innerText = day;
-                    daySlot.appendChild(dayNumber);
 
+                    daySlot.appendChild(dayNumber);
                     daySlot.addEventListener('click', () => {
                         const modal = document.getElementById('modal');
+                        const modalDate = document.getElementById(
+                            'selectedDate');
+
+                        const formattedDate = currentDate.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        });
+                        modalDate.innerText = `Selected Date: ${formattedDate}`;
+
                         modal.classList.remove('hidden');
                         modal.classList.add('block');
                     });

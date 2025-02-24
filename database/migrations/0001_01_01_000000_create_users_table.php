@@ -17,10 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-<<<<<<< HEAD
-=======
             $table->string('user_type', ['admin', 'patient']);
->>>>>>> 22ae4e9a2a3c5770754365515ea942f132985fb9
             $table->rememberToken();
             $table->timestamps();
         });

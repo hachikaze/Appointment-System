@@ -9,9 +9,7 @@ class Appointment extends Model
 {
     use HasFactory;
 
-    protected $table = 'appointment';
+    protected $table = 'appointments';
 
-    protected $fillable = [
-        'patient_name', 'email', 'phone', 'date', 'time', 'doctor', 'appointmentss', 'status'
-    ];
+    protected $guarded = [];
 }

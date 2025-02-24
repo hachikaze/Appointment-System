@@ -10,10 +10,6 @@ use App\Models\Appointment;
 class PatientController extends Controller
 {
 
-    public function try()
-    {
-        return view('try');
-    }
 
     public function index()
     {
@@ -35,7 +31,12 @@ class PatientController extends Controller
 
     public function history()
     {
-        return view('patient.history');
+
+        $userEmail = Auth::user()->email;
+        $appointments = Appointment::where('email', $userEmail)
+            ->select('id', 'patient_name', 'phone', 'date', 'time', 'status')->get();
+        return view('patient.history')->with('appointments', $appointments);
+       
     }
 
     public function destroy($id)
