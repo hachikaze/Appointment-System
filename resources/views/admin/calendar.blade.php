@@ -561,7 +561,7 @@
             // Edit appointment button functionality
             document.getElementById('modal-edit-btn').addEventListener('click', function() {
                 alert('Edit appointment functionality would go here');
-                // Here you would typically redirect to an edit form or open an edit modal
+                // redirect to an edit form or open an edit modal
             });
             
             // Check for screen size changes to handle responsive behavior
@@ -582,10 +582,10 @@
             // Initial check
             handleScreenSizeChange(mediaQuery);
             
-            // Add listener for changes
+            // listener for changes
             mediaQuery.addEventListener('change', handleScreenSizeChange);
             
-            // Add swipe gestures for mobile navigation (optional enhancement)
+            // swipe gestures for mobile navigation (optional enhancement)
             let touchStartX = 0;
             let touchEndX = 0;
             
