@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AuditTrail;
 use Illuminate\Http\Request;
-use App\Models\Appointment; // Ensure the model is imported
+use App\Models\Appointment; 
 use App\Models\AvailableAppointment;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
