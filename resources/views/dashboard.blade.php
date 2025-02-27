@@ -40,7 +40,7 @@
                             <div class="flex-1">Action</div>
                             <div class="flex-1">Date & Time</div>
                         </div>
-                        <div class="grid grid-cols-2 max-h-96 overflow-y-auto   text-gray-700 text-sm">
+                        <div class="grid grid-cols-2 m-2 max-h-96 overflow-y-auto   text-gray-700 text-sm">
                             @foreach ($auditTrails as $audit)
                                 <div class="p-4 flex items-center justify-between border-b-2 border-gray-300">
                                     <div class="flex items-center space-x-2">
@@ -152,24 +152,25 @@
                         <i class="fas fa-user-md"></i> DENTAL CLINIC LOCATION
                     </h3>
                 </div>
-                {{-- <iframe width="100%" height="300" style="border:0" loading="lazy" allowfullscreen
+                <iframe width="100%" height="300" style="border:0" loading="lazy" allowfullscreen
                     referrerpolicy="no-referrer-when-downgrade"
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.2050300674914!2d121.04021859999999!3d14.587389799999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c8312ce6011f%3A0x3b9575c6988133e6!2sANA%20FATIMA%20BARROSO%2C%20DMD%20Dental%20Clinic!5e0!3m2!1sen!2sph!4v1739887099838!5m2!1sen!2sph">
-                </iframe> --}}
+                </iframe>
 
                 <!-- Upcoming Appointments Section -->
                 <div class="bg-white  overflow-hidden  col-span-2 ">
                     <h3 class="bg-teal-500 p-4 font-bold text-xl text-white flex justify-between items-center">
                         <span><i class="fas fa-calendar-alt"></i> Appointments Today (9 AM - 6 PM)</span>
-                        <button
+                        <button onclick="window.location.href='{{ route('calendar') }}'"
                             class="bg-white text-teal-500 text-sm font-semibold px-3 py-1 rounded-lg flex items-center hover:bg-gray-100">
                             See More <i class="fas fa-arrow-right ml-2"></i>
                         </button>
                     </h3>
                     @foreach ($availableAppointments as $appointments)
-                        <div class="flex-1 min-h-0 overflow-y-auto p-2 pt-4 space-y-4">
+                        <div
+                            class="flex-1 min-h-0 overflow-y-auto p-2 pt-4 space-y-4 scrollbar-thin scrollbar-thumb-teal-600 scrollbar-track-gray-200">
                             <div
-                                class="bg-gray-100 border-l-4 border-teal-500 p-4 rounded-lg shadow-md flex justify-between items-center  ">
+                                class="bg-gray-100 border-l-4 border-teal-500 p-4 rounded-lg shadow-md flex justify-between items-center   ">
                                 <div>
                                     <p class="font-semibold text-lg">
                                         {{ $appointments->date }}
@@ -180,7 +181,7 @@
                                     </p>
                                 </div>
                                 <span
-                                    class="bg-teal-600 text-white px-3 py-1 rounded-full text-md">{{ $appointments->max_slots }}
+                                    class="bg-teal-600 text-white px-3 py-1 rounded-full text-md transform hover:scale-105 transition-transform duration-200">{{ $appointments->max_slots }}
                                     Slots Remaining</span>
                             </div>
                         </div>

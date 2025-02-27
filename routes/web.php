@@ -45,6 +45,10 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         return view('patient.appointment');
     })->name('appointment');
 
+    // FOR NOTIFICATIONS
+    Route::get('/appointment/update/{id}', [AppointmentController::class, 'markAsRead'])
+    ->name('appointment.markAsRead');
+
     // FOR STORING APPOINTMENTS
     Route::post('/patient/appointment/store', [AppointmentController::class, 'store'])->name('appointment.store');
 

@@ -9,7 +9,6 @@
 
         <!-- Quick Stats Overview -->
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-            <!-- Admin Stats -->
             <div
                 class="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform duration-200">
                 <div class="flex justify-between items-start">

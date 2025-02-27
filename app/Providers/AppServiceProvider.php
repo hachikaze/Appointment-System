@@ -25,10 +25,21 @@ class AppServiceProvider extends ServiceProvider
         View::composer('*', function ($view) {
             if (Auth::check()) {
                 $userEmail = Auth::user()->email;
+
                 $notifications = Appointment::where('email', $userEmail)
                     ->whereIn('status', ['Cancelled', 'Pending', 'Approved', 'Attended'])
+                    ->whereNull('updated_at')
                     ->get();
-                $view->with('notifications', $notifications);
+
+                $notifcount = Appointment::where('email', $userEmail)
+                    ->whereNull('updated_at')
+                    ->count();
+
+                // Pass both notifications and count to all views
+                $view->with([
+                    'notifications' => $notifications,
+                    'notifcount' => $notifcount
+                ]);
             }
         });
     }

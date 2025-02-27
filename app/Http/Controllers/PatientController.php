@@ -21,9 +21,6 @@ class PatientController extends Controller
         $availableDates = AvailableAppointment::count();
         $currentAppointments = AvailableAppointment::whereDate('date', (Carbon::today()))->count();
         $canceledAppointments = Appointment::where('status', 'Canceled')->count();
-        // $notifications = Appointment::where('email', $userEmail)
-        //     ->whereIn('status', ['Pending', 'Approved', 'Attended', 'Unattended', 'Cancelled'])
-        //     ->get();
 
         $auditTrails = AuditTrail::where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
@@ -42,6 +39,7 @@ class PatientController extends Controller
             'canceledAppointments'
         ));
     }
+    
 
     public function calendar(Request $request)
     {
