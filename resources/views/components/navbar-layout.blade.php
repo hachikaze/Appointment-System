@@ -8,11 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     @vite('resources/css/app.css')
-<<<<<<< HEAD
-=======
 
 </head>
->>>>>>> d317c0f04525e1f9b47eb11623af530625713e25
 
     <style>
         .hamburger {
