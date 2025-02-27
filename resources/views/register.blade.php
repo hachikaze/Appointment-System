@@ -1,10 +1,5 @@
 <x-navbar-layout>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-
-        * {
-            font-family: 'Poppins', sans-serif;
-        }
 
         .professional-gradient {
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
@@ -70,19 +65,6 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1.5">
-                                Last Name
-                            </label>
-                            <input type="text" 
-                                   name="lastname" 
-                                   required
-                                   class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg
-                                          focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20
-                                          focus:border-teal-500 transition-all duration-200 text-gray-900 text-sm"
-                                   placeholder="Enter last name">
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">
                                 First Name
                             </label>
                             <input type="text" 
@@ -92,6 +74,19 @@
                                           focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20
                                           focus:border-teal-500 transition-all duration-200 text-gray-900 text-sm"
                                    placeholder="Enter first name">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">
+                                Last Name
+                            </label>
+                            <input type="text" 
+                                   name="lastname" 
+                                   required
+                                   class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg
+                                          focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20
+                                          focus:border-teal-500 transition-all duration-200 text-gray-900 text-sm"
+                                   placeholder="Enter last name">
                         </div>
                     </div>
                     <div>
