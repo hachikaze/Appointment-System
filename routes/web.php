@@ -19,7 +19,9 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 // Test route
-Route::get('test', [AppointmentController::class, 'index']);
+Route::get('/test', function () {
+    return view('mail.email-message');
+});
 
 // LANDING PAGE
 Route::get('/', [HomeController::class, 'index'])->name('home');

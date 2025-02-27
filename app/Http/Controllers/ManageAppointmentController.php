@@ -7,6 +7,8 @@ use App\Models\Message;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Mail\MessageNotification;
+use Illuminate\Support\Facades\Mail;
 
 class ManageAppointmentController extends Controller
 {
@@ -39,35 +41,55 @@ class ManageAppointmentController extends Controller
 
     public function updateStatus(Request $request)
     {
-        $appointment = DB::table('appointments')->where('id', $request->id)->first();
+        $request->validate([
+            'id' => 'required|exists:appointments,id',
+            'action' => 'required|in:approve,cancel,attended,delete',
+            'message' => 'nullable|string',
+        ]);
+
+        $appointment = Appointment::find($request->id);
+
         if (!$appointment) {
             return redirect()->back()->with('error', 'Appointment not found.');
         }
-        
-        $action = $request->input('action');
-        $messageContent = $request->input('message'); // ✅ Capture the message input
-        
-        if ($action === 'approve') {
-            DB::table('appointments')->where('id', $request->id)->update(['status' => 'Approved']);
-        } elseif ($action === 'cancel') {
-            DB::table('appointments')->where('id', $request->id)->update(['status' => 'Unattended']);
-        } elseif ($action === 'attended') {
-            DB::table('appointments')->where('id', $request->id)->update(['status' => 'Attended']);
-        } elseif ($action === 'delete') {
-            DB::table('appointments')->where('id', $request->id)->delete();
-            return redirect()->route('appointments.index')->with('success', 'Appointment deleted.');
+
+        switch ($request->action) {
+            case 'approve':
+                $appointment->update(['status' => 'Approved']);
+                break;
+            case 'cancel':
+                $appointment->update(['status' => 'Unattended']);
+                break;
+            case 'attended':
+                $appointment->update(['status' => 'Attended']);
+                break;
+            case 'delete':
+                $appointment->delete();
+                return redirect()->route('appointments.index')->with('success', 'Appointment deleted.');
         }
-        
-        // ✅ Store the message
-        if (!empty($messageContent)) {
+
+        if ($request->filled('message')) {
             DB::table('messages')->insert([
-                'appointment_id' => $request->id,
-                'message' => $messageContent,
+                'appointment_id' => $appointment->id,
+                'message' => $request->message,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-        }
         
+            if (!empty($appointment->email)) {
+                $status = match ($request->action) {
+                    'approve' => 'Approved',
+                    'cancel' => 'Cancelled',
+                    'attended' => 'Attended',
+                    default => 'Unattended',
+                };
+
+                $patientName = Appointment::where('id', $appointment->id)->value('patient_name');
+        
+                Mail::to($appointment->email)->send(new MessageNotification($request->message, $status, $patientName));
+            }
+        }
+
         return redirect()->route('appointments.index')->with('success', 'Status updated and message sent.');
     }
 
