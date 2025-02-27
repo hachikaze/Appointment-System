@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Appointment;
+use App\Models\AvailableAppointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -19,36 +20,30 @@ class AdminAppointmentController extends Controller
         return view('admin.dashboard');
     }
 
+    public function create()
+    {
+        return view('admin.appointments.create');
+    }
+
     /**
      * Add new staff or admin user
      */
     public function store(Request $request)
     {
-        Log::info('Request Data:', $request->all()); // Debugging
         $request->validate([
-            'firstname' => 'required|string|max:255',
-            'middleinitial' => 'nullable|string|max:1',
-            'lastname' => 'required|string|max:255',
-            'gender' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'user_type' => 'required|string',
+            'date' => 'required|date',
+            'time_slot' => 'required|string',
+            'max_slots' => 'required|integer|min:1'
         ]);
 
-        // Concatenate full name
-        $fullName = trim("{$request->firstname} {$request->middleinitial} {$request->lastname}");
-
-        // Create user
-        $user = User::create([
-            'name' => $fullName,
-            'email' => $request->email,
-            'gender' => $request->gender,
-            'password' => Hash::make($request->password),
-            'user_type' => $request->user_type
+        AvailableAppointment::create([
+            'date' => $request->date,
+            'time_slot' => $request->time_slot,
+            'max_slots' => $request->max_slots,
         ]);
 
-        Log::info('User Created:', ['id' => $user->id, 'email' => $user->email]); // Debugging
-        return redirect()->route('admin.users')->with('success', 'User created successfully.');
+        return redirect()->route('admin.appointments.create')
+                        ->with('success', 'Available appointment added successfully.');
     }
 
     /**
