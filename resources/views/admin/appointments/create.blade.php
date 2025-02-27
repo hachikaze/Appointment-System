@@ -6,7 +6,7 @@
     <div class="container mx-auto p-6">
         <h1 class="text-3xl font-bold mb-4">Add Available Appointment</h1>
 
-        @if(session('success'))
+        @if (session('success'))
             <div class="bg-green-500 text-white p-2 rounded">
                 {{ session('success') }}
             </div>
@@ -16,9 +16,8 @@
             @csrf
             <div class="mb-4">
                 <label class="block text-gray-700">Date</label>
-                <input type="date" name="date" class="w-full p-2 border rounded" 
-                    value="{{ now()->format('Y-m-d') }}" 
-                    min="{{ now()->format('Y-m-d') }}">
+                <input type="date" name="date" class="w-full p-2 border rounded"
+                    value="{{ now()->format('Y-m-d') }}" min="{{ now()->format('Y-m-d') }}">
             </div>
 
             <div class="mb-4">
@@ -26,10 +25,15 @@
                 <select name="time_slot" class="w-full p-2 border rounded" required>
                     <option value="">Select a time slot</option>
                     @foreach (range(8, 17) as $hour)
-                        <option value="{{ sprintf('%02d:00 - %02d:00', $hour, $hour + 1) }}">
-                            {{ sprintf('%02d:00 - %02d:00', $hour, $hour + 1) }}
+                        @php
+                            $start = date('g:i A', strtotime("$hour:00"));
+                            $end = date('g:i A', strtotime($hour + 1 . ':00'));
+                        @endphp
+                        <option value="{{ $start }} - {{ $end }}">
+                            {{ $start }} - {{ $end }}
                         </option>
                     @endforeach
+
                 </select>
             </div>
 

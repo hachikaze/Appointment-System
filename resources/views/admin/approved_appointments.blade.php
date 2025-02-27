@@ -25,68 +25,97 @@
         </div>
     </div>
 
-<script>
-    $(document).ready(function () {
-        $.ajax({
-            url: "",
-            method: "GET",
-            dataType: "json",
-            success: function (response) {
-                loadCharts(response.today, response.monthly, response.total);
-            },
-            error: function () {
-                alert("Error fetching data from the database.");
-            }
-        });
-
-        function loadCharts(todayData, monthlyData, totalData) {
-            new Chart(document.getElementById("pieChartToday"), {
-                type: "pie",
-                data: {
-                    labels: ["Approved", "Remaining Slots"],
-                    datasets: [{
-                        data: [todayData.approved, 100 - todayData.approved],
-                        backgroundColor: ["#4bc0c0", "#ffcd56"]
-                    }]
+    <script>
+        $(document).ready(function() {
+            $.ajax({
+                url: "",
+                method: "GET",
+                dataType: "json",
+                success: function(response) {
+                    loadCharts(response.today, response.monthly, response.total);
                 },
-                options: { responsive: true, plugins: { legend: { position: "bottom" } } }
-            });
-
-            new Chart(document.getElementById("pieChartMonthly"), {
-                type: "pie",
-                data: {
-                    labels: ["Approved", "Remaining Slots"],
-                    datasets: [{
-                        data: [monthlyData.approved, 500 - monthlyData.approved],
-                        backgroundColor: ["#36a2eb", "#ff6384"]
-                    }]
-                },
-                options: { responsive: true, plugins: { legend: { position: "bottom" } } }
-            });
-
-            new Chart(document.getElementById("lineChartTotal"), {
-                type: "line",
-                data: {
-                    labels: totalData.months,
-                    datasets: [{
-                        label: "Approved",
-                        data: totalData.approvedCounts,
-                        borderColor: "#4bc0c0",
-                        backgroundColor: "#4bc0c0",
-                        fill: false
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: true, position: "top" } },
-                    scales: {
-                        x: { title: { display: true, text: "Months" } },
-                        y: { title: { display: true, text: "Number of Approved Appointments" } }
-                    }
+                error: function() {
+                    alert("Error fetching data from the database.");
                 }
             });
-        }
-    });
-</script>
+
+            function loadCharts(todayData, monthlyData, totalData) {
+                new Chart(document.getElementById("pieChartToday"), {
+                    type: "pie",
+                    data: {
+                        labels: ["Approved", "Remaining Slots"],
+                        datasets: [{
+                            data: [todayData.approved, 100 - todayData.approved],
+                            backgroundColor: ["#4bc0c0", "#ffcd56"]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: "bottom"
+                            }
+                        }
+                    }
+                });
+
+                new Chart(document.getElementById("pieChartMonthly"), {
+                    type: "pie",
+                    data: {
+                        labels: ["Approved", "Remaining Slots"],
+                        datasets: [{
+                            data: [monthlyData.approved, 500 - monthlyData.approved],
+                            backgroundColor: ["#36a2eb", "#ff6384"]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: "bottom"
+                            }
+                        }
+                    }
+                });
+
+                new Chart(document.getElementById("lineChartTotal"), {
+                    type: "line",
+                    data: {
+                        labels: totalData.months,
+                        datasets: [{
+                            label: "Approved",
+                            data: totalData.approvedCounts,
+                            borderColor: "#4bc0c0",
+                            backgroundColor: "#4bc0c0",
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: "top"
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: "Months"
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: "Number of Approved Appointments"
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 
 </x-sidebar-layout>

@@ -40,6 +40,8 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
 
         Route::get('/patient/notifications', [PatientController::class, 'notifications'])->name('notifications');
         Route::get('/patient/history', [PatientController::class, 'history'])->name('history');
+        Route::get('/view-history/{appointmentId}', [PatientController::class, 'viewHistory'])->name('viewhistory');
+
         Route::delete('/patient/appointments/{id}', [PatientController::class, 'destroy'])->name('appointments.destroy');
         Route::get('/patient/profile', [LoginController::class, 'profile'])->name('profile');
     });
@@ -62,9 +64,7 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::post('/admin/store', [AdminController::class, 'store'])->name('admin.store');
         Route::get('/admin/manage_appointments', [ManageAppointmentController::class, 'index'])->name('appointments.index');
         Route::post('/admin/appointments/action', [ManageAppointmentController::class, 'updateStatus'])->name('appointments.updateStatus');
-
     });
-
 });
 
 // FOR LOGIN

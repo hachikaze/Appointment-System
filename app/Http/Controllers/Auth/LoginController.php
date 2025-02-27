@@ -114,5 +114,4 @@ class LoginController extends Controller
             'Expires' => '0',
         ]);
     }
-
 }

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('appointment', function (Blueprint $table) {
+        Schema::create('appointments', function (Blueprint $table) {
             $table->id(); // Auto-incrementing primary key (equivalent to `id` int(11) NOT NULL)
             $table->string('patient_name');
             $table->string('email');
@@ -20,7 +20,7 @@ return new class extends Migration
             $table->time('time');
             $table->string('doctor');
             $table->text('appointments');
-            $table->enum('status', ['Pending', 'Approved', 'Attended', 'Unattended'])->default('Pending');
+            $table->enum('status', ['Pending', 'Approved', 'Attended', 'Unattended', 'Cancelled'])->default('Pending');
             $table->timestamps();
         });
     }

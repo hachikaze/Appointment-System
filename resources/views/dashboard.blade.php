@@ -3,13 +3,13 @@
         <div class="max-w-8xl mx-auto px-6 lg:px-8 grid lg:gap-8 gap-4 lg:grid-cols-4 md:grid-cols-1 sm:grid-cols-1">
             <!-- First Column: Avatar and Buttons (1/4 of the width) -->
             <div
-                class="bg-white fade-up  overflow-hidden sm:rounded-lg shadow-lg  xl:col-span-1 md:col-span-2 sm:col-span-2  col-span-2">
+                class="bg-white fade-up overflow-hidden sm:rounded-lg shadow-lg  xl:col-span-1 md:col-span-2 sm:col-span-2  col-span-2">
                 <div class="w-full">
                     <h3 class="bg-teal-500 p-4 font-bold text-xl text-white">
                         <i class="fas fa-user-md"></i> PATIENT DASHBOARD
                     </h3>
                 </div>
-                <div class="flex flex-col bg-gray-200 rounded-b-lg  border-b-4 border-teal-500 items-center p-6">
+                <div class="flex flex-col bg-gray-100 rounded-b-lg  border-b-4 border-teal-500 items-center p-6">
                     <img src="{{ asset(path: 'images/logo.png') }}" alt="Clinic Logo"
                         class="h-40 w-40 bg-white border-2 border-teal-500 rounded-full m-4 shadow-lg object-contain aspect-square">
 
@@ -34,7 +34,7 @@
                         <i class="fas fa-history text-teal-500 text-xl mr-2"></i> Activity Log
                     </h3>
 
-                    <div class="bg-gray-200 rounded-lg">
+                    <div class="bg-gray-100 rounded-lg">
                         <!-- Column Headers -->
                         <div class="flex rounded-t-lg font-semibold bg-teal-500 p-2 text-white text-md">
                             <div class="flex-1">Action</div>
@@ -77,7 +77,8 @@
                         <div class="flex justify-between items-start">
                             <div>
                                 <p class="text-white/80 text-sm">Available Dates</p>
-                                <h3 class="text-4xl font-bold mt-2">7</h3>
+                                <h3 class="text-4xl font-bold mt-2"> {{ $availableDates }}
+                                </h3>
                             </div>
                             <div class="bg-white/20 p-3 rounded-xl">
                                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -88,7 +89,7 @@
                             </div>
                         </div>
                         <div class="mt-4 text-white/80 text-sm">
-                            Total of available dates
+                            Current Available Dates
                         </div>
                     </div>
 
@@ -98,7 +99,8 @@
                         <div class="flex justify-between items-start">
                             <div>
                                 <p class="text-white/80 text-sm">Today's Appointments</p>
-                                <h3 class="text-4xl font-bold mt-2">7</h3>
+                                <h3 class="text-4xl font-bold mt-2"> {{ $currentAppointments }}
+                                </h3>
                             </div>
                             <div class="bg-white/20 p-3 rounded-xl">
                                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -109,7 +111,7 @@
                             </div>
                         </div>
                         <div class="mt-4 text-white/80 text-sm">
-                            Scheduled for today
+                            Current Available Appointments
                         </div>
                     </div>
 
@@ -118,8 +120,9 @@
                         class="bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform duration-200">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="text-white/80 text-sm">Canceled Appointments</p>
-                                <h3 class="text-4xl font-bold mt-2">7</h3>
+                                <p class="text-white/80 text-sm">Cancelled Appointments</p>
+                                <h3 class="text-4xl font-bold mt-2"> {{ $canceledAppointments }}
+                                </h3>
                             </div>
                             <div class="bg-white/20 p-3 rounded-xl">
                                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -131,7 +134,7 @@
                             </div>
                         </div>
                         <div class="mt-4 text-white/80 text-sm">
-                            Total number of canceled appointments
+                            Total Number of Cancelled Appointments
                         </div>
                     </div>
                 </div>
@@ -149,10 +152,10 @@
                         <i class="fas fa-user-md"></i> DENTAL CLINIC LOCATION
                     </h3>
                 </div>
-                <iframe width="100%" height="300" style="border:0" loading="lazy" allowfullscreen
+                {{-- <iframe width="100%" height="300" style="border:0" loading="lazy" allowfullscreen
                     referrerpolicy="no-referrer-when-downgrade"
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.2050300674914!2d121.04021859999999!3d14.587389799999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c8312ce6011f%3A0x3b9575c6988133e6!2sANA%20FATIMA%20BARROSO%2C%20DMD%20Dental%20Clinic!5e0!3m2!1sen!2sph!4v1739887099838!5m2!1sen!2sph">
-                </iframe>
+                </iframe> --}}
 
                 <!-- Upcoming Appointments Section -->
                 <div class="bg-white  overflow-hidden  col-span-2 ">
