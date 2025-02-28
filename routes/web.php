@@ -9,6 +9,7 @@ use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ManageAppointmentController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\PreventBackHistory;
 use App\Mail\ForgotPassword;
@@ -19,9 +20,11 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 // Test route
-Route::get('/test', function () {
-    return view('mail.email-message');
-});
+Route::get('/test', [PaymentController::class, 'receipt'])->name('payment');
+
+Route::get('/receipts', [PaymentController::class, 'index'])->name('receipts.create');
+Route::post('/receipts', [PaymentController::class, 'store'])->name('receipts.store');
+Route::get('/receipts/{id}', [PaymentController::class, 'show'])->name('receipt.show');
 
 // LANDING PAGE
 Route::get('/', [HomeController::class, 'index'])->name('home');

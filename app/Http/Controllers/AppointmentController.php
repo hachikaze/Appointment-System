@@ -85,9 +85,6 @@ class AppointmentController extends Controller
         return back()->with('success', 'Appointment successfully booked.');
     }
 
-
-
-
     public function graph()
     {
         $today = Carbon::today()->toDateString();
