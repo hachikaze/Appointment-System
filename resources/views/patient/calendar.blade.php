@@ -16,7 +16,8 @@
 
             <div
                 class="mb-4 flex flex-col sm:flex-row bg-white p-5 shadow-lg rounded-lg border-l-4 border-teal-500 justify-between my-12 items-center space-y-4 sm:space-y-0">
-                <a href="{{ route('patient.dashboard') }}" class="flex items-center bg-red-500 rounded-lg text-white p-2 text-lg shadow-lg font-semibold 
+                <a href="{{ route('patient.dashboard') }}"
+                    class="flex items-center bg-red-500 rounded-lg text-white p-2 text-lg shadow-lg font-semibold 
                      hover:bg-red-600 transition duration-200">
                     <i class="fa-solid fa-arrow-left mr-2"></i> Go Back
                 </a>
@@ -108,7 +109,7 @@
                             class="bg-gray-100 border border-gray-800 rounded-lg px-6 py-4 flex items-center shadow-lg">
                             <i class="fa-solid fa-user-clock text-teal-600 text-2xl mr-2"></i>
                             <span class="text-lg font-bold text-gray-900">
-                                Slots Available: {{ ($availableslots) }}
+                                Slots Available: {{ $availableslots }}
                             </span>
                         </div>
                     </div>
@@ -116,13 +117,13 @@
                     <!-- Time Slots Selection -->
                     <div class="flex flex-wrap gap-2 mt-4">
                         @if ($selectedDate && count($availableappointments) > 0)
-                            @foreach($availableappointments as $appointment)
-                                @if($appointment->remaining_slots > 0)
+                            @foreach ($availableappointments as $appointment)
+                                @if ($appointment->remaining_slots > 0)
                                     <button type="button"
                                         class="appointment-button px-4 py-2 text-md shadow-lg font-medium text-gray-900 bg-gray-100 border border-gray-800 rounded-lg hover:bg-teal-600 hover:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                        data-time="{{ date('H:i', strtotime($appointment->time_slot)) }}"
-                                        onclick="selectAppointmentTime(this)">
-                                        {{ date('h:i A', strtotime($appointment->time_slot)) }} ({{ $appointment->remaining_slots }}
+                                        data-time="{{ $appointment->time_slot }}" onclick="selectAppointmentTime(this)">
+                                        {{ $appointment->time_slot }}
+                                        ({{ $appointment->remaining_slots }}
                                         slots left)
                                     </button>
                                 @endif
@@ -159,13 +160,15 @@
                         <div class="grid p-6 grid-cols-1 md:grid-cols-2 gap-4 ">
 
                             <div>
-                                <label for="date" class="block mb-2 text-md font-medium text-gray-900">Date Selected</label>
+                                <label for="date" class="block mb-2 text-md font-medium text-gray-900">Date
+                                    Selected</label>
                                 <div class="flex">
                                     <span
                                         class="inline-flex items-center px-3 text-md text-gray-900 bg-teal-200 border rounded-e-0 border-gray-800 border-e-0 rounded-s-md">
                                         <i class="fa-solid fa-calendar text-teal-700 shadow-lg"></i>
                                     </span>
-                                    <input type="text" id="date" name="date" value="{{ $selectedDate }}" readonly
+                                    <input type="text" id="date" name="date" value="{{ $selectedDate }}"
+                                        readonly
                                         class="rounded-none rounded-e-lg bg-gray-50 border text-gray-500 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-md border-gray-800 p-2.5 placeholder-gray-500"
                                         placeholder="2025-02-20">
                                 </div>
@@ -187,7 +190,8 @@
 
 
                             <div>
-                                <label for="phone" class="block mb-2 text-md font-medium text-gray-900">Phone Number</label>
+                                <label for="phone" class="block mb-2 text-md font-medium text-gray-900">Phone
+                                    Number</label>
                                 <div class="flex">
                                     <span
                                         class="inline-flex items-center px-3 text-sm text-gray-900 bg-teal-200 border rounded-e-0 border-gray-800 border-e-0 rounded-s-md">
@@ -236,15 +240,15 @@
                         </div>
                     </div>
                 </div>
-        @else
-            <div class="flex items-center justify-center m-10 mt-10">
-                <div
-                    class="bg-white relative  p-4 text-teal-600 overflow-x-auto container shadow-lg sm:rounded-lg mx-auto">
-                    <p class="text-xl font-bold">
-                        <i class="fa-solid fa-calendar-check"></i> No Date Selected
-                    </p>
+            @else
+                <div class="flex items-center justify-center m-10 mt-10">
+                    <div
+                        class="bg-white relative  p-4 text-teal-600 overflow-x-auto container shadow-lg sm:rounded-lg mx-auto">
+                        <p class="text-xl font-bold">
+                            <i class="fa-solid fa-calendar-check"></i> No Date Selected
+                        </p>
+                    </div>
                 </div>
-            </div>
         @endif
         </form>
         <div class="flex items-center  justify-center m-10 mb-0 mt-10  ">
@@ -267,7 +271,7 @@
                                 <td class="px-6 py-4">{{ $appointment->patient_name }}</td>
                                 <td class="px-6 py-4">{{ $appointment->phone }}</td>
                                 <td class="px-6 py-4">{{ Carbon::parse($appointment->date)->format('F j, Y') }}</td>
-                                <td class="px-6 py-4">{{ Carbon::parse($appointment->time)->format('g:i A') }}</td>
+                                <td class="px-6 py-4">{{ $appointment->time }}</td>
                                 <td class="px-6 py-4">
                                     <span
                                         class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
@@ -284,8 +288,8 @@
 
                                 <x-modal modalId="delete-appointment-modal" title="Delete this Appointment"
                                     message="Are you sure you want to delete this appointment?"
-                                    route="{{ route('appointments.destroy', ['id' => $appointment->id]) }}" method="DELETE"
-                                    buttonText="Delete" />
+                                    route="{{ route('appointments.destroy', ['id' => $appointment->id]) }}"
+                                    method="DELETE" buttonText="Delete" />
                             </tr>
                         @endforeach
                     </tbody>
@@ -310,7 +314,7 @@
             button.classList.add('bg-teal-600', 'text-white');
         }
 
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const appointments = @json($appointments);
             const calendar = document.querySelector('#calendar');
             const monthSelect = document.getElementById('monthSelect');
@@ -331,6 +335,7 @@
             }
 
             monthSelect.value = currentMonth;
+
             function renderCalendar(month, year) {
                 calendar.innerHTML = `
                     <div class="text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Sun</div>
@@ -389,7 +394,8 @@
 
                     if (currentDate < today.setHours(0, 0, 0, 0)) {
                         daySlot.classList.remove("border-teal-500", "text-teal-700");
-                        daySlot.classList.add("border-red-500", "bg-gray-300", "text-red-500", "relative", "cursor-not-allowed", "border-l-4");
+                        daySlot.classList.add("border-red-500", "bg-gray-300", "text-red-500", "relative",
+                            "cursor-not-allowed", "border-l-4");
 
                         // Ensure the daySlot has position relative
                         daySlot.style.position = "relative";
@@ -487,11 +493,11 @@
                 }
             }
 
-            monthSelect.addEventListener('change', function () {
+            monthSelect.addEventListener('change', function() {
                 renderCalendar(parseInt(monthSelect.value), parseInt(yearSelect.value));
             });
 
-            yearSelect.addEventListener('change', function () {
+            yearSelect.addEventListener('change', function() {
                 renderCalendar(parseInt(monthSelect.value), parseInt(yearSelect.value));
             });
             renderCalendar(currentMonth, currentYear);

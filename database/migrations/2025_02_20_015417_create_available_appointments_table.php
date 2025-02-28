@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('available_appointments', function (Blueprint $table) {
             $table->id();
             $table->date('date'); // Available date
-            $table->time('time_slot'); // Time period
+            $table->string('time_slot'); // Time period
             $table->integer('max_slots'); // Max patients per time slot
             $table->timestamps();
         });

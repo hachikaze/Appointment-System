@@ -87,12 +87,12 @@
                         </label>
                         <div class="relative">
                             <input type="password" 
-                                   name="password" 
-                                   required 
-                                   class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg 
-                                          focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 
-                                          focus:border-teal-500 transition-all duration-200 text-gray-900 text-sm"
-                                   placeholder="Enter your password">
+                                name="password" 
+                                required 
+                                class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg 
+                                        focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 
+                                        focus:border-teal-500 transition-all duration-200 text-gray-900 text-sm"
+                                placeholder="Enter your password">
                         </div>
                     </div>
 
