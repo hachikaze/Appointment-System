@@ -54,19 +54,19 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::get('/admin/reports', [AdminController::class, 'reports'])->name('admin.reports');
         Route::get('/admin/graph', [AppointmentController::class, 'graph'])->name('admin.graph');
         Route::get('/admin/approved_appointments', [AdminController::class, 'approvedAppointments'])->name('admin.approved_appointments');
-        
+
         // User Management Routes
         Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');
         Route::post('/admin/users', [UserController::class, 'store'])->name('admin.users.store'); // IMPORTANT: Change to UserController
         Route::get('/admin/users/{user}', [UserController::class, 'getUser'])->name('admin.users.get'); // IMPORTANT: Change to UserController
         Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update'); // IMPORTANT: Change to UserController
         Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy'); // IMPORTANT: Change to UserController
-        
+
         // Legacy route - keep for backward compatibility
         Route::post('/admin/store', [AdminController::class, 'store'])->name('admin.store');
         Route::get('/admin/manage_appointments', [ManageAppointmentController::class, 'index'])->name('appointments.index');
         Route::post('/admin/appointments/action', [ManageAppointmentController::class, 'updateStatus'])->name('appointments.updateStatus');
-        
+
         // Enhanced calendar routes
         Route::get('/admin/calendar', [AdminAppointmentController::class, 'calendar'])->name('admin.calendar');
         Route::get('/admin/calendar/appointments', [AdminAppointmentController::class, 'getCalendarAppointments'])->name('admin.calendar.appointments');
@@ -98,7 +98,7 @@ Route::get('/email/verify', function () {
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $request->fulfill();
-    
+
     switch ($request->user()->user_type) {
         case 'admin':
         case 'staff':
