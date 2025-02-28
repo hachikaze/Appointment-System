@@ -38,12 +38,17 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
 
         Route::delete('/patient/appointments/{id}', [PatientController::class, 'destroy'])->name('appointments.destroy');
         Route::get('/patient/profile', [LoginController::class, 'profile'])->name('profile');
+        Route::put('patient/users/{id}', [LoginController::class, 'update'])->name('profile.update');
     });
 
     // FOR APPOINTMENT
     Route::get('/patient/appointment', function () {
         return view('patient.appointment');
     })->name('appointment');
+
+    // FOR NOTIFICATIONS
+    Route::get('/appointment/update/{id}', [AppointmentController::class, 'markAsRead'])
+        ->name('appointment.markAsRead');
 
     // FOR STORING APPOINTMENTS
     Route::post('/patient/appointment/store', [AppointmentController::class, 'store'])->name('appointment.store');

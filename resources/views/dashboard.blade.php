@@ -10,7 +10,8 @@
                     </h3>
                 </div>
                 <div class="flex flex-col bg-gray-100 rounded-b-lg  border-b-4 border-teal-500 items-center p-6">
-                    <img src="{{ asset(path: 'images/logo.png') }}" alt="Clinic Logo"
+                    <img src="{{ $user->image_path ? asset('storage/' . $user->image_path) : asset('images/default-avatar.png') }}"
+                        alt="Clinic Logo"
                         class="h-40 w-40 bg-white border-2 border-teal-500 rounded-full m-4 shadow-lg object-contain aspect-square">
 
                     <form action="{{ route('calendar') }}" method="GET" class="w-full">
@@ -40,7 +41,7 @@
                             <div class="flex-1">Action</div>
                             <div class="flex-1">Date & Time</div>
                         </div>
-                        <div class="grid grid-cols-2 max-h-96 overflow-y-auto   text-gray-700 text-sm">
+                        <div class="grid grid-cols-2 m-2 max-h-96 overflow-y-auto   text-gray-700 text-sm">
                             @foreach ($auditTrails as $audit)
                                 <div class="p-4 flex items-center justify-between border-b-2 border-gray-300">
                                     <div class="flex items-center space-x-2">
@@ -142,7 +143,10 @@
                     <!-- Welcome Section -->
                     <div
                         class="mb-2 bg-white p-4  rounded-lg border-l-4 border-teal-500 shadow-lg transform hover:scale-105 transition-transform duration-200">
-                        <h1 class="text-3xl font-bold text-gray-800">Welcome back, {{ Auth::user()->name }}! 👋</h1>
+                        <h1 class="text-3xl font-bold text-gray-800">Welcome back,
+                            {{ Auth::user()->firstname . ' ' . Auth::user()->middleinitial . ' ' . Auth::user()->lastname }}!
+                            👋
+                        </h1>
                         <p class="text-gray-600 mt-2">Here's what's happening in your dental clinic today.</p>
                     </div>
 
@@ -161,15 +165,16 @@
                 <div class="bg-white  overflow-hidden  col-span-2 ">
                     <h3 class="bg-teal-500 p-4 font-bold text-xl text-white flex justify-between items-center">
                         <span><i class="fas fa-calendar-alt"></i> Appointments Today (9 AM - 6 PM)</span>
-                        <button
+                        <button onclick="window.location.href='{{ route('calendar') }}'"
                             class="bg-white text-teal-500 text-sm font-semibold px-3 py-1 rounded-lg flex items-center hover:bg-gray-100">
                             See More <i class="fas fa-arrow-right ml-2"></i>
                         </button>
                     </h3>
                     @foreach ($availableAppointments as $appointments)
-                        <div class="flex-1 min-h-0 overflow-y-auto p-2 pt-4 space-y-4">
+                        <div
+                            class="flex-1 min-h-0 overflow-y-auto p-2 pt-4 space-y-4 scrollbar-thin scrollbar-thumb-teal-600 scrollbar-track-gray-200">
                             <div
-                                class="bg-gray-100 border-l-4 border-teal-500 p-4 rounded-lg shadow-md flex justify-between items-center  ">
+                                class="bg-gray-100 border-l-4 border-teal-500 p-4 rounded-lg shadow-md flex justify-between items-center   ">
                                 <div>
                                     <p class="font-semibold text-lg">
                                         {{ $appointments->date }}
@@ -180,7 +185,7 @@
                                     </p>
                                 </div>
                                 <span
-                                    class="bg-teal-600 text-white px-3 py-1 rounded-full text-md">{{ $appointments->max_slots }}
+                                    class="bg-teal-600 text-white px-3 py-1 rounded-full text-md transform hover:scale-105 transition-transform duration-200">{{ $appointments->max_slots }}
                                     Slots Remaining</span>
                             </div>
                         </div>

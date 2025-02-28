@@ -18,23 +18,23 @@ class PatientController extends Controller
     public function index()
     {
         $userEmail = Auth::user()->email;
+        $user = Auth::user();
+
         $availableDates = AvailableAppointment::count();
         $currentAppointments = AvailableAppointment::whereDate('date', (Carbon::today()))->count();
         $canceledAppointments = Appointment::where('status', 'Canceled')->count();
-        // $notifications = Appointment::where('email', $userEmail)
-        //     ->whereIn('status', ['Pending', 'Approved', 'Attended', 'Unattended', 'Cancelled'])
-        //     ->get();
 
         $auditTrails = AuditTrail::where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
             ->get();
-            
+
         $availableAppointments = AvailableAppointment::whereDate('date', Carbon::today())
             ->orderBy('date', 'desc')
             ->get();
 
         return view('dashboard', compact(
             'auditTrails',
+            'user',
             // 'notifications',
             'availableAppointments',
             'availableDates',
@@ -42,6 +42,7 @@ class PatientController extends Controller
             'canceledAppointments'
         ));
     }
+
 
     public function calendar(Request $request)
     {
@@ -57,7 +58,6 @@ class PatientController extends Controller
         $appointments = Appointment::where('email', $userEmail)
             ->select('id', 'patient_name', 'phone', 'date', 'time', 'status')
             ->get();
-
         $availableappointments = $selectedDate
             ? AvailableAppointment::where('date', $selectedDate)
             ->select('time_slot', 'max_slots')
@@ -87,7 +87,9 @@ class PatientController extends Controller
         $appointments = Appointment::where('email', $userEmail)
             ->select('id', 'patient_name', 'phone', 'date', 'time', 'status', 'appointments')
             ->get();
-        return view('patient.history', ['appointments' => $appointments]);
+        $isEmpty = $appointments->isEmpty();
+
+        return view('patient.history', ['appointments' => $appointments, 'isEmpty' => $isEmpty]);
     }
 
     //For Displaying the Modal Details 

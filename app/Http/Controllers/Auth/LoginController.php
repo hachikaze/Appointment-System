@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\AuditTrail;
+use App\Models\User;
+
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
@@ -14,7 +16,40 @@ class LoginController extends Controller
 {
     public function profile()
     {
-        return view('profile.editprofile');
+
+        $authUser = Auth::user();
+
+        return view('profile.editprofile', compact('authUser'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'firstname' => 'required|string|max:255',
+            'middleinitial' => 'required|string|max:255',
+            'lastname' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'gender' => 'required|in:male,female,other',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('profile_images', 'public'); // Save to storage/app/public/profile_images
+            $user->image_path = $imagePath;
+        }
+
+
+        $user->update([
+            'firstname' => $request->firstname,
+            'middleinitial' => $request->middleinitial,
+            'lastname' => $request->lastname,
+            'email' => $request->email,
+            'gender' => $request->gender,
+            'image_path' => $user->image_path, // Update image if uploaded
+
+        ]);
+        return redirect()->back()->with('success', 'User updated successfully!');
     }
 
     public function create(Request $request)

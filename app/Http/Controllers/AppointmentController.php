@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AuditTrail;
 use Illuminate\Http\Request;
-use App\Models\Appointment; 
+use App\Models\Appointment;
 use App\Models\AvailableAppointment;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +16,18 @@ class AppointmentController extends Controller
     {
         $availableAppointments = AvailableAppointment::all();
         return view('appointments.create', compact('availableAppointments'));
+    }
+
+    public function markAsRead($id)
+    {
+        $appointment = Appointment::find($id);
+
+        if ($appointment) {
+            $appointment->updated_at = now();
+            $appointment->save();
+            return back()->with('success', 'Appointment marked as read.');
+        }
+        return back()->with('error', 'Appointment not found.');
     }
 
 
@@ -54,7 +66,7 @@ class AppointmentController extends Controller
         }
 
         Appointment::create([
-            'patient_name' => $user->name,
+            'patient_name' => $user->firstname . " " . $user->middleinitial . " " . $user->lastname,
             'email' => $user->email,
             'doctor' => 'Ana Fatima Barroso',
             'status' => 'Pending',
@@ -62,6 +74,7 @@ class AppointmentController extends Controller
             'date' => $request->date,
             'time' => $time,
             'appointments' => $request->input('appointment_reason'),
+            'updated_at' => null,
         ]);
 
         AuditTrail::create([
