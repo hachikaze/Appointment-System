@@ -9,18 +9,9 @@
             <p class="text-gray-600 mt-2">Create and manage appointment slots for patients to book</p>
         </div>
 
-        <!-- Success Message -->
-        @if(session('success'))
-        <div class="bg-teal-100 border-l-4 border-teal-500 text-teal-700 p-4 mb-6 rounded shadow" role="alert">
-            <div class="flex">
-                <div class="py-1">
-                    <svg class="w-6 h-6 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-                <div>
-                    <p>{{ session('success') }}</p>
-                </div>
+        @if (session('success'))
+            <div class="bg-green-500 text-white p-2 rounded">
+                {{ session('success') }}
             </div>
         </div>
         @endif

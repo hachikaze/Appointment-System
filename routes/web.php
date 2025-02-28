@@ -35,14 +35,21 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::get('/patient/calendar', [PatientController::class, 'calendar'])->name('calendar');
         Route::get('/patient/notifications', [PatientController::class, 'notifications'])->name('notifications');
         Route::get('/patient/history', [PatientController::class, 'history'])->name('history');
+        Route::get('/view-history/{appointmentId}', [PatientController::class, 'viewHistory'])->name('viewhistory');
+
         Route::delete('/patient/appointments/{id}', [PatientController::class, 'destroy'])->name('appointments.destroy');
         Route::get('/patient/profile', [LoginController::class, 'profile'])->name('profile');
+        Route::put('patient/users/{id}', [LoginController::class, 'update'])->name('profile.update');
     });
 
     // FOR APPOINTMENT
     Route::get('/patient/appointment', function () {
         return view('patient.appointment');
     })->name('appointment');
+
+    // FOR NOTIFICATIONS
+    Route::get('/appointment/update/{id}', [AppointmentController::class, 'markAsRead'])
+        ->name('appointment.markAsRead');
 
     // FOR STORING APPOINTMENTS
     Route::post('/patient/appointment/store', [AppointmentController::class, 'store'])->name('appointment.store');
@@ -56,10 +63,10 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
 
         // User Management Routes
         Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');
-        Route::post('/admin/users', [UserController::class, 'store'])->name('admin.users.store');
-        Route::get('/admin/users/{user}', [UserController::class, 'getUser'])->name('admin.users.get');
-        Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
-        Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+        Route::post('/admin/users', [UserController::class, 'store'])->name('admin.users.store'); // IMPORTANT: Change to UserController
+        Route::get('/admin/users/{user}', [UserController::class, 'getUser'])->name('admin.users.get'); // IMPORTANT: Change to UserController
+        Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update'); // IMPORTANT: Change to UserController
+        Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy'); // IMPORTANT: Change to UserController
 
         // Legacy route - keep for backward compatibility
         Route::post('/admin/store', [AdminController::class, 'store'])->name('admin.store');
@@ -127,7 +134,7 @@ Route::get('/email/verify', function () {
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $request->fulfill();
-    
+
     switch ($request->user()->user_type) {
         case 'admin':
         case 'staff':

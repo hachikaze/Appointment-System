@@ -24,7 +24,6 @@ class ForgotPasswordController extends Controller
         $token = Str::random(64);
     
         try {
-    
             // Store the new reset token
             ResetToken::create([
                 'email' => $email,
