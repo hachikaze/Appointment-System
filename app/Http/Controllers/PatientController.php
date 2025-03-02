@@ -18,6 +18,21 @@ class PatientController extends Controller
     public function index()
     {
         $userEmail = Auth::user()->email;
+        $user = Auth::user();
+        $now = Carbon::now('Asia/Singapore');
+
+        $monthlyAppointments = Appointment::where('email', auth()->user()->email)
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->groupBy('date')
+            ->pluck('count', 'date');
+
+
+        $dailyAppointments = Appointment::where('email', auth()->user()->email)
+            ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->groupBy('date')
+            ->pluck('count', 'date');
+
         $availableDates = AvailableAppointment::count();
         $currentAppointments = AvailableAppointment::whereDate('date', (Carbon::today()))->count();
         $canceledAppointments = Appointment::where('status', 'Canceled')->count();
@@ -25,21 +40,66 @@ class PatientController extends Controller
         $auditTrails = AuditTrail::where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
             ->get();
-            
-        $availableAppointments = AvailableAppointment::whereDate('date', Carbon::today())
+
+        $today = Carbon::now()->timezone('Asia/Singapore')->toDateString();
+        $availableAppointments = AvailableAppointment::whereDate('date', $today)
             ->orderBy('date', 'desc')
             ->get();
 
+
+        $appointmentCategories = Appointment::where('email', Auth::user()->email)
+            ->get()
+            ->groupBy('appointments')
+            ->map(function ($group) {
+                return $group->count();
+            });
+
+        // ATTENDANCE RATE CALCULATION
+        $approvedCount = Appointment::where('email', $userEmail)
+            ->where('status', 'Approved')
+            ->count();
+
+        $attendedCount = Appointment::where('email', $userEmail)
+            ->where('status', 'Attended')
+            ->count();
+
+        $totalEligible = $approvedCount + $attendedCount;
+        $attendanceRate = $totalEligible > 0 ? ($attendedCount / $totalEligible) * 100 : 0;
+
+        $totalAppointments = Appointment::where('email', auth()->user()->email)->count();
+
+
+        $upcomingappointment = Appointment::where('status', 'Approved')
+            ->whereDate('date', '>=', $now)
+            ->orderBy('date', 'asc')
+            ->first();
+
+
         return view('dashboard', compact(
             'auditTrails',
-            // 'notifications',
+            'user',
+            'dailyAppointments',
+            'monthlyAppointments',
             'availableAppointments',
             'availableDates',
+            'appointmentCategories',
             'currentAppointments',
-            'canceledAppointments'
+            'totalAppointments',
+            'attendanceRate',
+            'canceledAppointments',
+            'attendedCount',
+            'totalEligible',
+            'upcomingappointment'
         ));
     }
-    
+
+    // public function getUpcomingAppointment()
+    // {
+    //     $now = Carbon::now('Asia/Singapore');
+
+    //     return view('patient.dashboard', compact('upcomingappointment'));
+    // }
+
 
     public function calendar(Request $request)
     {
@@ -58,23 +118,30 @@ class PatientController extends Controller
 
         $availableappointments = $selectedDate
             ? AvailableAppointment::where('date', $selectedDate)
-            ->select('time_slot', 'max_slots')
-            ->get()
-            ->map(function ($appointment) use ($selectedDate) {
-                // Count how many appointments are booked for this time slot
-                $bookedSlots = Appointment::where('date', $selectedDate)
-                    ->where('time', $appointment->time_slot)
-                    ->count();
-
-                // Deduct booked slots from max slots
-                $appointment->remaining_slots = max(0, $appointment->max_slots - $bookedSlots);
-                return $appointment;
-            })
+                ->select('time_slot', 'max_slots')
+                ->get()
+                ->map(function ($appointment) use ($selectedDate) {
+                    // Count how many appointments are booked for this time slot
+                    $bookedSlots = Appointment::where('date', $selectedDate)
+                        ->where('time', $appointment->time_slot)
+                        ->where('status', 'Pending')
+                        ->count();
+                    // Deduct booked slots from max slots
+                    $appointment->remaining_slots = max(0, $appointment->max_slots - $bookedSlots);
+                    return $appointment;
+                })
             : collect();
+
 
         $availableslots = $availableappointments->sum('remaining_slots');
         return view('patient.calendar', compact('appointments', 'availableappointments', 'selectedDate', 'availableslots'));
     }
+
+    // public function messages()
+    // {
+
+    //     return view('patient.messages');
+    // }
 
 
 
@@ -85,7 +152,9 @@ class PatientController extends Controller
         $appointments = Appointment::where('email', $userEmail)
             ->select('id', 'patient_name', 'phone', 'date', 'time', 'status', 'appointments')
             ->get();
-        return view('patient.history', ['appointments' => $appointments]);
+        $isEmpty = $appointments->isEmpty();
+
+        return view('patient.history', ['appointments' => $appointments, 'isEmpty' => $isEmpty]);
     }
 
     //For Displaying the Modal Details 
@@ -112,14 +181,15 @@ class PatientController extends Controller
     }
 
 
-    public function destroy($id)
+    public function cancel($id)
     {
         $appointment = Appointment::findorFail($id);
-        $appointment->delete();
+        $appointment->status = 'Cancelled';
+        $appointment->save();
 
         AuditTrail::create([
             'user_id' => Auth::user()->id,
-            'action' => 'Delete Appointment',
+            'action' => 'Cancelled Appointment',
             'model' => 'User',
             'changes' => null,
             'ip_address' => request()->ip(),

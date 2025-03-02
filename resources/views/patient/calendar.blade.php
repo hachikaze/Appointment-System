@@ -15,9 +15,8 @@
         <div class="container mx-auto p-4 pr-0 pl-0">
 
             <div
-                class="mb-4 flex flex-col sm:flex-row bg-white p-5 shadow-lg rounded-lg border-l-4 border-teal-500 justify-between my-12 items-center space-y-4 sm:space-y-0">
-                <a href="{{ route('patient.dashboard') }}"
-                    class="flex items-center bg-red-500 rounded-lg text-white p-2 text-lg shadow-lg font-semibold 
+                class="mb-4 flex flex-col sm:flex-row bg-teal-50 p-5 shadow-lg rounded-lg border-l-4 border-teal-500 justify-between my-12 items-center space-y-4 sm:space-y-0">
+                <a href="{{ route('patient.dashboard') }}" class="flex items-center sm:w-auto w-full bg-red-500 rounded-lg text-white p-2 text-lg shadow-lg font-semibold 
                      hover:bg-red-600 transition duration-200">
                     <i class="fa-solid fa-arrow-left mr-2"></i> Go Back
                 </a>
@@ -53,15 +52,17 @@
                 </div>
             @endif
 
-            <div class="justify-center  ">
-                <div class="border-2 border-teal-500 p-2 rounded-lg">
+
+
+            <div class="justify-center mx-5 ">
+                <div class="border-2 border-teal-500 p-2 rounded-lg relative animate-border" id="divborder">
                     <div class="bg-teal-500 w-full text-center text-3xl text-white p-4 font-bold rounded-t-lg">
                         APPOINTMENT CALENDAR
                     </div>
-                    <div class=" bg-teal-200 p-4 content-center rounded-b-lg shadow-lg flex flex-wrap gap-2 sm:grid sm:grid-cols-7"
+                    <div class="bg-teal-200 p-4 content-center rounded-b-lg shadow-lg flex flex-wrap gap-2 sm:grid sm:grid-cols-7"
                         id="calendar">
                         <div
-                            class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-grays-200 p-2 rounded">
+                            class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
                             Sun</div>
                         <div
                             class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
@@ -70,7 +71,7 @@
                             class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
                             Tue</div>
                         <div
-                            class="text-center font-bold tetext-teal-500xt-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
+                            class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
                             Wed</div>
                         <div
                             class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
@@ -84,21 +85,19 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
 
 
-        <div class="flex items-center  justify-center m-10  mt-10  ">
+        <div class="flex items-center  justify-center m-10  mt-10" id="dateformSection">
             <form id="dateForm" class="w-full">
                 <h2 id="selectedDate" class="text-lg font-bold hidden"></h2>
                 <input type="hidden" id="hiddenselectedDate" name="hiddenselectedDate" value="">
 
                 <div
-                    class="bg-white relative overflow-x-auto border-l-4 border-teal-500  container shadow-lg sm:rounded-lg  p-5 mx-auto">
+                    class="bg-teal-50 relative overflow-x-auto border-l-4 border-teal-500  container shadow-lg sm:rounded-lg  p-5 mx-auto">
                     <div class="flex flex-wrap gap-4">
                         <!-- Choose a Time Slot Header -->
-                        <div class="bg-teal-500 rounded-lg">
+                        <div class="bg-teal-500 rounded-lg w-full md:w-auto ">
                             <h2 class="text-xl font-bold text-white p-6 shadow-lg" id="modal-title">
                                 <i class="fa-solid fa-clock text-white"></i> Choose a Time Slot
                             </h2>
@@ -106,7 +105,7 @@
 
                         <!-- Available Slots Counter -->
                         <div
-                            class="bg-gray-100 border border-gray-800 rounded-lg px-6 py-4 flex items-center shadow-lg">
+                            class="bg-teal-50 border border-gray-800 w-full md:w-auto rounded-lg px-6 py-4 flex items-center shadow-lg">
                             <i class="fa-solid fa-user-clock text-teal-600 text-2xl mr-2"></i>
                             <span class="text-lg font-bold text-gray-900">
                                 Slots Available: {{ $availableslots }}
@@ -120,7 +119,7 @@
                             @foreach ($availableappointments as $appointment)
                                 @if ($appointment->remaining_slots > 0)
                                     <button type="button"
-                                        class="appointment-button px-4 py-2 text-md shadow-lg font-medium text-gray-900 bg-gray-100 border border-gray-800 rounded-lg hover:bg-teal-600 hover:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                        class="appointment-button md:w-auto w-full px-4 py-2 text-md shadow-lg font-medium text-gray-900 bg-gray-100 border border-gray-800 rounded-lg hover:bg-teal-600 hover:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                         data-time="{{ $appointment->time_slot }}" onclick="selectAppointmentTime(this)">
                                         {{ $appointment->time_slot }}
                                         ({{ $appointment->remaining_slots }}
@@ -148,10 +147,10 @@
         @if (!empty($selectedDate))
             <form id="appointmentForm" action="{{ route('appointment.store') }}" method="POST" class="space-y-4">
                 @csrf
-                <div class="flex items-center justify-center m-10 mt-10">
-                    <div class="bg-white relative overflow-x-auto container shadow-lg sm:rounded-lg mx-auto">
+                <div class="flex items-center justify-center mx-10 mt-10">
+                    <div class="bg-teal-50 relative overflow-x-auto container mb-12 shadow-lg sm:rounded-lg mx-auto">
                         <div class="bg-teal-600  rounded-t-lg text-white p-3">
-                            <p class="text-lg font-bold">
+                            <p class="text-xl font-semibold">
                                 Please fill in the details to set your dental appointment.
                             </p>
                         </div>
@@ -167,8 +166,7 @@
                                         class="inline-flex items-center px-3 text-md text-gray-900 bg-teal-200 border rounded-e-0 border-gray-800 border-e-0 rounded-s-md">
                                         <i class="fa-solid fa-calendar text-teal-700 shadow-lg"></i>
                                     </span>
-                                    <input type="text" id="date" name="date" value="{{ $selectedDate }}"
-                                        readonly
+                                    <input type="text" id="date" name="date" value="{{ $selectedDate }}" readonly
                                         class="rounded-none rounded-e-lg bg-gray-50 border text-gray-500 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-md border-gray-800 p-2.5 placeholder-gray-500"
                                         placeholder="2025-02-20">
                                 </div>
@@ -197,7 +195,7 @@
                                         class="inline-flex items-center px-3 text-sm text-gray-900 bg-teal-200 border rounded-e-0 border-gray-800 border-e-0 rounded-s-md">
                                         <i class="fa-solid fa-phone text-teal-700 shadow-lg"></i>
                                     </span>
-                                    <input type="text" id="phone" name="phone"
+                                    <input type="text" id="phone" name="phone" maxlength="11"
                                         class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-md border-gray-800 p-2.5 placeholder-gray-500"
                                         placeholder="Ex. 09123456789">
                                 </div>
@@ -240,61 +238,19 @@
                         </div>
                     </div>
                 </div>
-            @else
-                <div class="flex items-center justify-center m-10 mt-10">
-                    <div
-                        class="bg-white relative  p-4 text-teal-600 overflow-x-auto container shadow-lg sm:rounded-lg mx-auto">
-                        <p class="text-xl font-bold">
-                            <i class="fa-solid fa-calendar-check"></i> No Date Selected
-                        </p>
-                    </div>
+        @else
+            <div class="flex items-center justify-center mt-10">
+                <div
+                    class="bg-teal-50 relative mb-10 p-6 text-teal-600 overflow-x-auto container shadow-lg sm:rounded-lg mx-auto">
+                    <p class="text-xl font-bold">
+                        <i class="fa-solid fa-calendar-check"></i> No Date Selected
+                    </p>
                 </div>
+            </div>
         @endif
         </form>
-        <div class="flex items-center  justify-center m-10 mb-0 mt-10  ">
-            <div class="relative overflow-x-auto  my-5 container shadow-lg sm:rounded-lg  pt-0 pr-0 pl-0 mx-auto">
-                <table
-                    class="w-full rounded-lg text-lg text-left rtl:text-right text-white dark:text-gray-400 shadow-lg">
-                    <thead class="text-lg text-white uppercase bg-teal-600  dark:text-white">
-                        <tr>
-                            <th scope="col" class="px-6 py-3">Patient Name</th>
-                            <th scope="col" class="px-6 py-3">Phone Number</th>
-                            <th scope="col" class="px-6 py-3">Date</th>
-                            <th scope="col" class="px-6 py-3">Time</th>
-                            <th scope="col" class="px-6 py-3">Status</th>
-                            <th scope="col" class="px-6 py-3"></th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white border">
-                        @foreach ($appointments as $appointment)
-                            <tr class="border-b text-black hover:bg-teal-200 ">
-                                <td class="px-6 py-4">{{ $appointment->patient_name }}</td>
-                                <td class="px-6 py-4">{{ $appointment->phone }}</td>
-                                <td class="px-6 py-4">{{ Carbon::parse($appointment->date)->format('F j, Y') }}</td>
-                                <td class="px-6 py-4">{{ $appointment->time }}</td>
-                                <td class="px-6 py-4">
-                                    <span
-                                        class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
-                                        {{ $appointment->status }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <button data-modal-target="delete-appointment-modal"
-                                        data-modal-toggle="delete-appointment-modal"
-                                        class="bg-red-500 hover:bg-red-700 text-white font-bold p-2 rounded-xl shadow-lg">
-                                        Cancel
-                                    </button>
-                                </td>
 
-                                <x-modal modalId="delete-appointment-modal" title="Delete this Appointment"
-                                    message="Are you sure you want to delete this appointment?"
-                                    route="{{ route('appointments.destroy', ['id' => $appointment->id]) }}"
-                                    method="DELETE" buttonText="Delete" />
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+        </div>
         </div>
     </body>
 
@@ -314,7 +270,7 @@
             button.classList.add('bg-teal-600', 'text-white');
         }
 
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const appointments = @json($appointments);
             const calendar = document.querySelector('#calendar');
             const monthSelect = document.getElementById('monthSelect');
@@ -337,71 +293,168 @@
             monthSelect.value = currentMonth;
 
             function renderCalendar(month, year) {
-                calendar.innerHTML = `
-                    <div class="text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Sun</div>
-                    <div class="text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Mon</div>
-                    <div class="text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Tue</div>
-                    <div class="text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Wed</div>
-                    <div class="text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Thu</div>
-                    <div class="text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Fri</div>
-                    <div class="text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Sat</div>
-                `;
 
                 const firstDayOfMonth = new Date(year, month, 1).getDay();
                 const daysInMonth = new Date(year, month + 1, 0).getDate();
                 const today = new Date();
 
-                for (let i = 0; i < firstDayOfMonth; i++) {
-                    const emptySlot = document.createElement('div');
-                    emptySlot.className = "w-24 h-24";
-                    calendar.appendChild(emptySlot);
-                }
+                const isSmallScreen = window.matchMedia("(max-width: 640px)").matches;
 
-                for (let day = 1; day <= daysInMonth; day++) {
-                    const daySlot = document.createElement('div');
-                    const currentDate = new Date(year, month, day);
-                    daySlot.className =
-                        "flex flex-col items-center content-center justify-center bg-white shadow-lg border-l-4 border-teal-500 rounded-lg text-xl font-semibold text-teal-700 transition-all duration-300 hover:bg-blue-400 hover:text-white cursor-pointer shadow-md w-16 h-16 sm:w-20 sm:h-20 md:w-32 md:h-24 lg:w-32 lg:h-28 xl:w-48 xl:h-28";
-                    const dayNumber = document.createElement('span');
-                    dayNumber.className = "xl:text-3xl lg:text-2xl font-bold";
-                    dayNumber.innerText = day;
-                    daySlot.appendChild(dayNumber);
-                    daySlot.addEventListener('click', () => {
-                        const modal = document.getElementById('modal');
-                        const modalDate = document.getElementById('selectedDate');
-                        const hiddenmodalDate = document.getElementById('hiddenselectedDate');
+                calendar.innerHTML = ""; // This removes previous months if the function is run multiple times
 
-                        // Check if the hidden input exists before updating it
-                        if (!hiddenmodalDate) {
-                            console.error("Hidden input field 'hiddenselectedDate' not found.");
-                            return;
-                        }
+                if (isSmallScreen) {
+                    const listContainer = document.createElement("ul"); // List for better structure
+                    listContainer.className = "space-y-2 w-full";
 
-                        const formattedDate = currentDate.toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
+                    for (let day = 1; day <= daysInMonth; day++) {
+                        const currentDate = new Date(year, month, day);
+
+                        const dayOfWeek = currentDate.getDay();
+                        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                        const dayName = daysOfWeek[dayOfWeek]; // Convert index to day name
+
+                        const listItem = document.createElement("li");
+                        listItem.className =
+                            "flex justify-between items-center bg-white shadow-md border-l-4 border-teal-500 rounded-lg p-3 cursor-pointer hover:bg-teal-100 transition-all";
+
+                        const dayNumber = document.createElement("span");
+                        dayNumber.className = "text-lg font-bold text-teal-700";
+                        dayNumber.innerText = day;
+
+                        // Formatted date + day name
+                        const formattedDate = currentDate.toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
                         });
 
-                        modalDate.innerText = `Selected Date: ${formattedDate}`;
-                        document.getElementById('hiddenselectedDate').value = formattedDate;
-                        document.getElementById('dateForm').submit();
+                        const dateText = document.createElement("span");
+                        dateText.className = "text-sm text-gray-600";
+                        dateText.innerText = `${dayName}, ${formattedDate}`; // Include day name
 
-                        modal.classList.remove('hidden');
-                        modal.classList.add('block');
+                        listItem.appendChild(dayNumber);
+                        listItem.appendChild(dateText);
 
-                    });
+                        listItem.addEventListener("click", () => {
+                            // const modal = document.getElementById("modal");
+                            const modalDate = document.getElementById("selectedDate");
+                            const hiddenmodalDate = document.getElementById("hiddenselectedDate");
 
-                    if (currentDate < today.setHours(0, 0, 0, 0)) {
-                        daySlot.classList.remove("border-teal-500", "text-teal-700");
-                        daySlot.classList.add("border-red-500", "bg-gray-300", "text-red-500", "relative",
-                            "cursor-not-allowed", "border-l-4");
+                            if (!hiddenmodalDate) {
+                                console.error("Hidden input field 'hiddenselectedDate' not found.");
+                                return;
+                            }
 
-                        // Ensure the daySlot has position relative
-                        daySlot.style.position = "relative";
+                            modalDate.innerText = `Selected Date: ${dayName}, ${formattedDate}`;
+                            hiddenmodalDate.value = formattedDate;
+                            document.getElementById("dateForm").submit();
 
-                        // Common styles for both diagonal lines
-                        const lineStyles = `
+                            // modal.classList.remove("hidden");
+                            // modal.classList.add("block");
+                        });
+
+                        listContainer.appendChild(listItem);
+                    }
+
+                    calendar.appendChild(listContainer);
+                }
+
+                else {
+                    calendar.innerHTML = `
+                     <div class="hidden sm:block text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Sun</div>
+                    <div class="hidden sm:block text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Mon</div>
+                    <div class="hidden sm:block text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Tue</div>
+                    <div class="hidden sm:block text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Wed</div>
+                    <div class="hidden sm:block text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Thu</div>
+                    <div class="hidden sm:block text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Fri</div>
+                    <div class="hidden sm:block text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Sat</div>
+                `;
+
+
+                    // Add a wrapper div for scrolling effect
+                    const scrollWrapper = document.createElement("div");
+                    scrollWrapper.className = "sm:grid sm:grid-cols-7 gap-2 overflow-x-auto flex flex-row sm:flex-wrap w-full";
+
+                    for (let i = 0; i < firstDayOfMonth; i++) {
+                        const emptySlot = document.createElement('div');
+                        emptySlot.className = "w-24 h-24";
+                        calendar.appendChild(emptySlot);
+                    }
+
+                    for (let day = 1; day <= daysInMonth; day++) {
+                        const daySlot = document.createElement('div');
+                        const currentDate = new Date(year, month, day);
+                        daySlot.className =
+                            "hidden sm:flex flex-col items-center justify-center cursor bg-white shadow-lg border-l-4 border-teal-500 rounded-lg text-xl font-semibold text-teal-700 transition-all duration-300 hover:bg-teal-100 hover:text-gray-700 cursor-pointer shadow-md w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 2xl:w-48 2xl:h-40 mx-auto";
+
+                        const dayNumber = document.createElement('span');
+                        dayNumber.className = "xl:text-3xl lg:text-2xl font-bold";
+                        dayNumber.innerText = day;
+                        daySlot.appendChild(dayNumber);
+                        daySlot.addEventListener('click', (event) => {
+                            event.preventDefault(); // Stops any default link or form behavior
+
+                            // const modal = document.getElementById('modal');
+                            const modalDate = document.getElementById('selectedDate');
+                            const hiddenmodalDate = document.getElementById('hiddenselectedDate');
+                            const targetSection = document.getElementById("dateformSection");
+
+
+
+                            // Check if the hidden input exists before updating it
+                            if (!hiddenmodalDate) {
+                                console.error("Hidden input field 'hiddenselectedDate' not found.");
+                                return;
+                            }
+
+                            const formattedDate = currentDate.toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            });
+
+                            modalDate.innerText = `Selected Date: ${formattedDate}`;
+                            document.getElementById('hiddenselectedDate').value = formattedDate;
+                            document.getElementById('dateForm').submit();
+
+
+                            // if (targetSection) {
+                            //     targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
+
+                            //     targetSection.classList.add("bg-yellow-100");
+                            //     setTimeout(() => {
+                            //         targetSection.classList.remove("bg-yellow-100");
+                            //     }, 1500);
+                            // }
+
+                            // modal.classList.remove('hidden');
+                            // modal.classList.add('block');
+
+                        });
+                        window.onload = () => {
+                            const targetSection = document.getElementById("dateformSection");
+                            if (targetSection) {
+                                targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
+
+                                targetSection.classList.add("highlight");
+
+                                setTimeout(() => {
+                                    targetSection.classList.remove("highlight");
+                                }, 1500);
+                            }
+                        };
+
+
+                        if (currentDate < today.setHours(0, 0, 0, 0)) {
+                            daySlot.classList.remove("border-teal-500", "text-teal-700");
+                            daySlot.classList.add("border-red-500", "bg-gray-300", "text-red-500", "relative",
+                                "cursor-not-allowed", "border-l-4");
+
+                            // Ensure the daySlot has position relative
+                            daySlot.style.position = "relative";
+
+                            // Common styles for both diagonal lines
+                            const lineStyles = `
                         position: absolute;
                         top: 50%;
                         left: 50%;
@@ -411,96 +464,151 @@
                         background-color: red;
                         transform-origin: center;
                     `;
-                        // Create the first diagonal line (/)
-                        let line1 = document.createElement("div");
-                        line1.style.cssText = lineStyles;
-                        line1.style.transform = "translate(-50%, -50%) rotate(45deg)";
+                            // Create the first diagonal line (/)
+                            let line1 = document.createElement("div");
+                            line1.style.cssText = lineStyles;
+                            line1.style.transform = "translate(-50%, -50%) rotate(45deg)";
 
-                        // Create the second diagonal line (\)
-                        let line2 = document.createElement("div");
-                        line2.style.cssText = lineStyles;
-                        line2.style.transform = "translate(-50%, -50%) rotate(-45deg)";
-                        daySlot.appendChild(line1);
-                        daySlot.appendChild(line2);
-                        daySlot.style.pointerEvents = "none";
-                    }
-
-                    if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-                        daySlot.classList.add("text-black", "ring-4", "ring-green-500");
-
-                        const todayLabel = document.createElement('span');
-                        todayLabel.className =
-                            "text-sm font-bold text-white bg-green-500 px-2 py-0.5 rounded-md mt-1";
-                        todayLabel.innerText = "Today";
-
-                        daySlot.appendChild(todayLabel);
-                    }
-
-                    daySlot.appendChild(dayNumber);
-
-                    function formatTimeTo12Hour(time) {
-                        const [hour, minute] = time.split(':');
-                        const formattedTime = new Date();
-                        formattedTime.setHours(parseInt(hour));
-                        formattedTime.setMinutes(parseInt(minute));
-                        const options = {
-                            hour: 'numeric',
-                            minute: 'numeric',
-                            hour12: true
-                        };
-                        return formattedTime.toLocaleString('en-US', options);
-                    }
-
-                    const dailyAppointments = appointments.filter(app => {
-                        const appDate = new Date(app.date);
-                        return appDate.getDate() === day && appDate.getMonth() === month && appDate
-                            .getFullYear() === year;
-                    });
-
-                    if (dailyAppointments.length > 0) {
-                        const appointmentList = document.createElement('div');
-
-                        let bgColor = "";
-                        switch (dailyAppointments[0].status) {
-                            case 'Pending':
-                                bgColor = "bg-yellow-200 shadow-lg";
-                                break;
-                            case 'Approved':
-                                bgColor = "bg-blue-200 shadow-lg";
-                                break;
-                            case 'Attended':
-                                bgColor = "bg-green-200 shadow-lg";
-                                break;
-                            case 'Unattended':
-                                bgColor = "bg-red-200 shadow-lg";
-                                break;
-                            default:
-                                bgColor = "bg-gray-200 shadow-lg";
+                            // Create the second diagonal line (\)
+                            let line2 = document.createElement("div");
+                            line2.style.cssText = lineStyles;
+                            line2.style.transform = "translate(-50%, -50%) rotate(-45deg)";
+                            daySlot.appendChild(line1);
+                            daySlot.appendChild(line2);
+                            daySlot.style.pointerEvents = "none";
                         }
-                        appointmentList.className =
-                            `${bgColor} mt-1 text-sm px-2 py-1 rounded-lg overflow-auto`;
-                        dailyAppointments.forEach(res => {
-                            const item = document.createElement('p');
-                            item.className = "text-gray-800 text-sm font-semibold";
-                            const formattedTime = formatTimeTo12Hour(res.time);
-                            item.innerText = `${res.status} - ${formattedTime}`;
-                            appointmentList.appendChild(item);
-                        });
-                        appointmentList.classList.add("relative");
-                        daySlot.appendChild(appointmentList);
-                    }
-                    calendar.appendChild(daySlot);
-                }
-            }
 
-            monthSelect.addEventListener('change', function() {
+                        if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                            daySlot.classList.add("text-black", "ring-4", "ring-green-500");
+
+                            const todayLabel = document.createElement('span');
+                            todayLabel.className =
+                                "text-sm font-bold text-white bg-green-500 px-2 py-0.5 rounded-md mt-1";
+                            todayLabel.innerText = "Today";
+
+                            daySlot.appendChild(todayLabel);
+                        }
+
+                        daySlot.appendChild(dayNumber);
+
+                        function formatTimeTo12Hour(time) {
+                            const [hour, minute] = time.split(':');
+                            const formattedTime = new Date();
+                            formattedTime.setHours(parseInt(hour));
+                            formattedTime.setMinutes(parseInt(minute));
+                            const options = {
+                                hour: 'numeric',
+                                minute: 'numeric',
+                                hour12: true
+                            };
+                            return formattedTime.toLocaleString('en-US', options);
+                        }
+
+                        const dailyAppointments = appointments.filter(app => {
+                            const appDate = new Date(app.date);
+                            return appDate.getDate() === day && appDate.getMonth() === month && appDate
+                                .getFullYear() === year;
+                        });
+
+                        if (dailyAppointments.length > 0) {
+                            const appointmentList = document.createElement('div');
+
+                            let bgColor = "";
+                            switch (dailyAppointments[0].status) {
+                                case 'Pending':
+                                    bgColor = "bg-yellow-200 shadow-lg";
+                                    break;
+                                case 'Approved':
+                                    bgColor = "bg-blue-200 shadow-lg";
+                                    break;
+                                case 'Attended':
+                                    bgColor = "bg-green-200 shadow-lg";
+                                    break;
+                                case 'Unattended':
+                                    bgColor = "bg-red-200 shadow-lg";
+                                    break;
+                                default:
+                                    bgColor = "bg-gray-200 shadow-lg";
+                            }
+                            appointmentList.className =
+                                `${bgColor} mt-1 text-sm px-2 py-1 rounded-lg overflow-auto`;
+                            dailyAppointments.forEach(res => {
+                                const item = document.createElement('p');
+                                item.className = "text-gray-800 text-sm font-semibold";
+                                const formattedTime = formatTimeTo12Hour(res.time);
+                                item.innerText = `${res.status} - ${formattedTime}`;
+                                appointmentList.appendChild(item);
+                            });
+                            appointmentList.classList.add("relative");
+                            daySlot.appendChild(appointmentList);
+                        }
+                        calendar.appendChild(daySlot);
+                    }
+                }
+
+
+
+            }
+            window.addEventListener("resize", () => renderCalendar(new Date().getMonth(), new Date().getFullYear()));
+            renderCalendar(new Date().getMonth(), new Date().getFullYear());
+
+            monthSelect.addEventListener('change', function () {
                 renderCalendar(parseInt(monthSelect.value), parseInt(yearSelect.value));
             });
 
-            yearSelect.addEventListener('change', function() {
+            yearSelect.addEventListener('change', function () {
                 renderCalendar(parseInt(monthSelect.value), parseInt(yearSelect.value));
             });
             renderCalendar(currentMonth, currentYear);
         });
     </script>
+
+    <style>
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        #create-appointment-modal:target {
+            display: flex;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #create-appointment-modal:target .modal-content {
+            animation: modalFadeIn 2s ease-in;
+        }
+
+        @keyframes borderAnimation {
+            0% {
+                box-shadow: 0 0 5px rgba(20, 184, 166, 0.5);
+                border-color: rgba(20, 184, 166, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 0 15px rgba(20, 184, 166, 1);
+                border-color: rgba(20, 184, 166, 1);
+            }
+
+            100% {
+                box-shadow: 0 0 5px rgba(20, 184, 166, 0.5);
+                border-color: rgba(20, 184, 166, 0.5);
+            }
+        }
+
+        .highlight {
+            transition: background-color s ease-in-out;
+        }
+
+        .animate-border {
+            animation: borderAnimation 2s infinite ease-in-out;
+        }
+    </style>
 </x-patientnav-layout>

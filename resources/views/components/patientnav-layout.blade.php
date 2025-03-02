@@ -11,6 +11,7 @@
     @vite('resources/css/app.css')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js" defer></script>
     <link rel="stylesheet" href="/fontawesome/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 
 <style>
@@ -84,7 +85,8 @@
                                 data-drawer-show="drawer-right-example" data-drawer-placement="right"
                                 aria-controls="drawer-right-example" class="relative p-2 rounded-full bg-white shadow-xs ring-1 ring-gray-300
                                 hover:bg-gray-50">
-                                <i class="fa-solid fa-bell text-teal-600"></i>
+                                <i class="fa-solid fa-bell  text-teal-600 fa-shake"
+                                    style="--fa-animation-duration: 3s;"></i>
                                 <span
                                     class="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 text-xs font-bold text-white bg-red-500 rounded-full">
                                     {{ $notifcount }}
@@ -109,7 +111,6 @@
                                 <div class="p-4 pl-2">
                                     <div class="grid grid-cols-1 gap-4 overflow-y-auto p-2">
                                         @foreach ($notifications as $notifs)
-
                                                                                 <div
                                                                                     class="m-4 p-3 bg-white justify-center  border border-teal-300 border-l-4 border-t-0 border-b-0 border-r-0 shadow-lg rounded-md">
 
@@ -137,9 +138,9 @@
                                                 'Pending' => 'p-2 bg-orange-100 text-orange-700 border-orange-500',
                                                 default => 'p-2 bg-gray-100 text-gray-700 border-gray-500',
                                             };
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ?>
+                                                                                                                                                                                                                                                                                                ?>
                                                                                     <p class="rounded-lg shadow-lg border-l-4 text-center {{ $statusClass }}">
-                                                                                        {{ $notifs->status}} Appointment
+                                                                                        {{ $notifs->status }} Appointment
                                                                                     </p>
 
                                                                                     <button onclick="window.location.href='{{ route('history') }}'"
@@ -172,10 +173,11 @@
                     <div class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hidden"
                         id="menu-items">
                         <div class="py-1" role="none">
-                            <a href="#" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
-                                id="menu-item-2">
+                            <a href="{{ route('messages') }}" class="text-gray-700 block px-4 py-2 text-sm"
+                                role="menuitem" tabindex="-1" id="menu-item-2">
                                 <i class="fas fa-envelope text-teal-500 mr-2"></i> Messages
                             </a>
+
                             <a href="{{ route('profile') }}" class="text-gray-700 block px-4 py-2 text-sm"
                                 role="menuitem" tabindex="-1" id="menu-item-2">
                                 <i class="fas fa-user text-teal-500 mr-2"></i> Update Profile
