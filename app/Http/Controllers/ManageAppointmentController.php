@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Mail\MessageNotification;
+use App\Models\Receipt;
 use Illuminate\Support\Facades\Mail;
 
 class ManageAppointmentController extends Controller
@@ -56,6 +57,23 @@ class ManageAppointmentController extends Controller
         switch ($request->action) {
             case 'approve':
                 $appointment->update(['status' => 'Approved']);
+        
+                // Check if file is provided and not null
+                if ($request->hasFile('receipt_file')) {
+                    $receiptNumber = 'RCPT-' . strtoupper(uniqid());
+                    $filePath = $request->file('receipt_file')->store('receipts');
+        
+                    $receipt = new Receipt();
+                    $receipt->receipt_number = $receiptNumber;
+                    $receipt->file_path = $filePath;
+                    $receipt->appointment_id = $appointment->id; // Example to link with appointment
+                    $receipt->save();
+        
+                    return redirect()->route('receipt.show', ['id' => $receipt->id])
+                                    ->with('success', 'Receipt created successfully');
+                } else {
+                    return redirect()->back()->withErrors('Receipt file is required');
+                }
                 break;
             case 'cancel':
                 $appointment->update(['status' => 'Unattended']);

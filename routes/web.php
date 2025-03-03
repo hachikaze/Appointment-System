@@ -20,7 +20,11 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 // Test route
-Route::get('/test', [PaymentController::class, 'receipt'])->name('payment');
+//Route::get('/test', [PaymentController::class, 'receipt'])->name('payment');
+
+Route::get('/test', function () {
+    return view('payment.index');
+});
 
 Route::get('/receipts', [PaymentController::class, 'index'])->name('receipts.create');
 Route::post('/receipts', [PaymentController::class, 'store'])->name('receipts.store');

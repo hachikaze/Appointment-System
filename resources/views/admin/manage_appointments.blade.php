@@ -472,11 +472,12 @@
                     id="messageForm"
                     method="POST"
                     action="{{ route('appointments.updateStatus') }}"
+                    enctype="multipart/form-data"
                     class="flex flex-col space-y-4">
                     @csrf
                     <input type="hidden" id="appointmentId" name="id" />
                     <input type="hidden" id="actionType" name="action" />
-                    
+
                     <div>
                         <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message (Optional)</label>
                         <textarea
@@ -487,7 +488,13 @@
                             class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm resize-none">
                         </textarea>
                     </div>
-                    
+
+                    <!-- File Upload Field -->
+                    <div>
+                        <label for="receipt_file" class="block text-sm font-medium text-gray-700 mb-1">Receipt File (Required for Approval)</label>
+                        <input type="file" name="receipt_file" id="receipt_file" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" required>
+                    </div>
+
                     <!-- Action Buttons -->
                     <div class="flex justify-end gap-3 pt-2">
                         <button

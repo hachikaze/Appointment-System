@@ -20,16 +20,15 @@
         <section class="mb-6">
             <h3 class="text-md font-semibold mb-2">Patient Information</h3>
             <div class="grid grid-cols-2 gap-4 text-sm">
-                <div class="border p-2">Name: [Patient Name]</div>
-                <div class="border p-2">Address: [Patient Address]</div>
-                <div class="border p-2">Phone: [Patient Phone]</div>
+                <div class="border p-2">Name: {{ $patientName }}</div>
+                <div class="border p-2">Phone: {{ $patientPhone }} </div>
             </div>
         </section>
 
         <section class="mb-6">
             <h3 class="text-md font-semibold mb-2">Description of Services</h3>
             <div class="border p-4 flex justify-between text-sm">
-                <span>[Service Description]</span>
+                <span> {{ $serviceDesc }} </span>
                 <span>[Service Total]</span>
             </div>
         </section>

@@ -84,6 +84,7 @@ class AppointmentController extends Controller
             'time' => $time,
             'appointments' => $request->input('appointment_reason'),
             'updated_at' => null,
+            'user_id' => $user->id,
         ]);
 
         AuditTrail::create([

@@ -26,14 +26,13 @@ class RegisterController extends Controller
             'gender' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'user_type' => 'nullable|string',
+            'user_type' => 'string',
         ]);
 
-        // Concatenate the name
-        $fullName = trim("{$request->firstname} {$request->middleinitial} {$request->lastname}");
-
         User::create([
-            'name' => $fullName,
+            'firstname' => $request->firstname,
+            'middleinitial' => $request->middleinitial,
+            'lastname' => $request->lastname,
             'email' => $request->email,
             'gender' => $request->gender,
             'password' => Hash::make($request->password),
