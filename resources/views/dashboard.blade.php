@@ -176,11 +176,7 @@
                 </div>
 
 
-
-
                 <div class="p-4  grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
-
-
                     <div
                         class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform duration-200">
                         <div class="flex justify-between items-start">
@@ -566,33 +562,19 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             let timeSlots = document.querySelectorAll(".time-slot");
-            let upcomingCountdown = document.querySelector(".upcoming-appointments")
+            let upcomingCountdown = document.querySelector(".upcoming-appointments");
+            let timeZone = "Asia/Singapore";
+            let now = new Date(new Date().toLocaleString("en-US", { timeZone }));
+            let closestAppointment = null;
+            let closestTimeDifference = Infinity;
 
             timeSlots.forEach(slot => {
                 let timeRange = slot.getAttribute("data-time"); // e.g., "10:00 AM - 12:00 PM"
                 let appointmentDate = slot.getAttribute("data-date"); // e.g., "2024-03-03"
                 let countdownElement = slot.nextElementSibling; // Get the countdown span
-                let timeZone = "Asia/Singapore";
-                let now = new Date(new Date().toLocaleString("en-US", { timeZone }));
-
-                console.log(`Now: ${now.toLocaleString("en-US", { timeZone })}`);
-
-                let appointmentDateObj = new Date(appointmentDate + "T00:00:00");
-
-                if (now.toDateString() > appointmentDateObj.toDateString()) {
-                    countdownElement.innerHTML = "Appointment Already Passed";
-                    countdownElement.classList.add("text-gray-500");
-                    upcomingCountdown.innerHTML = "Appointment Already Passed";
-                    upcomingCountdown.classList.add("text-gray-500");
-                    return;
-                }
-
                 let [startStr, endStr] = timeRange.split(" - ");
                 let startTimeObj = new Date(`${appointmentDate} ${startStr}`);
                 let endTimeObj = new Date(`${appointmentDate} ${endStr}`);
-
-                console.log(`Start Time: ${startTimeObj}`);
-                console.log(`End Time: ${endTimeObj}`);
 
                 function updateCountdown() {
                     let now = new Date(new Date().toLocaleString("en-US", { timeZone }));
@@ -603,25 +585,39 @@
                         let minutes = Math.floor((diff % 3600) / 60);
                         let seconds = diff % 60;
                         countdownElement.innerHTML = `Starts in: ${hours}h ${minutes}m ${seconds}s`;
+
+                        // Update closest upcoming appointment
+                        if (diff < closestTimeDifference) {
+                            closestTimeDifference = diff;
+                            closestAppointment = `Next appointment starts in: ${hours}h ${minutes}m ${seconds}s`;
+                        }
                     } else if (now >= startTimeObj && now <= endTimeObj) {
                         let diff = Math.floor((endTimeObj - now) / 1000);
                         let minutes = Math.floor(diff / 60);
                         let seconds = diff % 60;
                         countdownElement.innerHTML = `Ends in: ${minutes}m ${seconds}s`;
                         countdownElement.classList.add("text-green-500");
-                        upcomingCountdown.innerHTML = `Ends in: ${minutes}m ${seconds}s`;
-                        upcomingCountdown.classList.add("text-green-500");
+
+                        // If an appointment is ongoing, prioritize it in upcoming countdown
+                        closestAppointment = `Ongoing appointment ends in: ${minutes}m ${seconds}s`;
                     } else {
                         countdownElement.innerHTML = "Appointment Finished";
                         countdownElement.classList.add("text-gray-500");
-                        upcomingCountdown.innerHTML = "Appointment Finished";
-                        upcomingCountdown.classList.add("text-gray-500");
                     }
                 }
 
                 updateCountdown();
                 setInterval(updateCountdown, 1000);
             });
+
+            // Update the upcoming appointments section
+            if (closestAppointment) {
+                upcomingCountdown.innerHTML = closestAppointment;
+                upcomingCountdown.classList.add("text-blue-500");
+            } else {
+                upcomingCountdown.innerHTML = "No upcoming appointments";
+                upcomingCountdown.classList.add("text-gray-500");
+            }
         });
 
 

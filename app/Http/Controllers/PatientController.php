@@ -70,9 +70,11 @@ class PatientController extends Controller
 
 
         $upcomingappointment = Appointment::where('status', 'Approved')
-            ->whereDate('date', '>=', $now)
+            ->where('email', Auth::user()->email) // Filter by the logged-in user
+            ->whereDate('date', '>=', now()) // Use Laravel's helper for current timestamp
             ->orderBy('date', 'asc')
             ->first();
+
 
 
         return view('dashboard', compact(
