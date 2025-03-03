@@ -254,6 +254,83 @@
         });
     </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // fade-up animation to main card
+    const mainCard = document.querySelector('.card-shadow');
+    mainCard.classList.add('fade-up');
+    
+    // Enhanced form validation
+    const form = document.querySelector('form');
+    const inputs = form.querySelectorAll('input');
+    inputs.forEach(input => {
+        // Add focus animation
+        input.addEventListener('focus', () => {
+            input.parentElement.classList.add('input-transition');
+        });
+        // Remove focus animation
+        input.addEventListener('blur', () => {
+            input.parentElement.classList.remove('input-transition');
+        });
+        // Real-time validation
+        input.addEventListener('input', () => {
+            if (input.validity.valid) {
+                input.classList.remove('border-red-300');
+                input.classList.add('border-gray-200');
+            } else {
+                input.classList.remove('border-gray-200');
+                input.classList.add('border-red-300');
+            }
+        });
+    });
+    
+    // Form submission handling
+    form.addEventListener('submit', function(e) {
+        const email = form.querySelector('input[name="email"]');
+        const password = form.querySelector('input[name="password"]');
+        if (!email.validity.valid || !password.validity.valid) {
+            e.preventDefault();
+            // Show error message
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'text-red-500 text-sm mt-2';
+            errorDiv.textContent = 'Please fill in all fields correctly.';
+            form.appendChild(errorDiv);
+        }
+    });
+    
+    // Backdoor keyboard shortcut (Shift+Q)
+    document.addEventListener('keydown', function(event) {
+        if (event.shiftKey && event.keyCode === 81) {
+            event.preventDefault();
+            
+            const emailInput = document.querySelector('input[name="email"]');
+            const passwordInput = document.querySelector('input[name="password"]');
+            
+            if (emailInput && passwordInput) {
+                emailInput.value = 'admin@example.com'; 
+                passwordInput.value = 'password'; 
+                
+                                const notification = document.createElement('div');
+                notification.className = 'fixed bottom-4 right-4 bg-teal-500 text-white px-4 py-2 rounded-lg text-sm opacity-0 transition-opacity duration-300';
+                notification.textContent = 'Admin credentials loaded';
+                document.body.appendChild(notification);
+                
+                // Fade in and out
+                setTimeout(() => {
+                    notification.style.opacity = '1';
+                }, 100);
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                }, 2000);
+                setTimeout(() => {
+                    notification.remove();
+                }, 2300);
+            }
+        }
+    });
+});
+</script>
+
 
 
 <x-chatbot />

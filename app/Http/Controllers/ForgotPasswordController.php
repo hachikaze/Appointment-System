@@ -92,10 +92,10 @@ class ForgotPasswordController extends Controller
         ]);
 
         if ($validator->fails()) {
-            $messages = $validator->errors()->all(); // Get all error messages as an array
+            $messages = $validator->errors()->all(); 
             $errorMessage = '<ul>'; // Start list
             foreach ($messages as $message) {
-                $errorMessage .= '<li>' . $message . '</li>'; // Add each message as a list item
+                $errorMessage .= '<li>' . $message . '</li>'; 
             }
             $errorMessage .= '</ul>'; // End list
     
