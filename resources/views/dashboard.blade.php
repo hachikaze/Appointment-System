@@ -1,6 +1,6 @@
 <x-patientnav-layout>
     <div class="py-12">
-        <div class="max-w-8xl mx-auto px-6 lg:px-8 grid lg:gap-8 gap-4 lg:grid-cols-4 md:grid-cols-1 sm:grid-cols-1">
+        <div class="max-w-8xl mx-auto px-6 lg:px-8  lg:gap-8 gap-4 xl:grid grid-cols-4 lg:grid grid-cols-1   ">
             <!-- First Column: Avatar and Buttons (1/4 of the width) -->
             <div
                 class="bg-white fade-up overflow-hidden sm:rounded-lg shadow-lg  xl:col-span-1 md:col-span-2 sm:col-span-2  col-span-2">
@@ -10,7 +10,8 @@
                     </h3>
                 </div>
                 <div class="flex flex-col bg-gray-100 rounded-b-lg  border-b-4 border-teal-500 items-center p-6">
-                    <img src="{{ asset(path: 'images/logo.png') }}" alt="Clinic Logo"
+                    <img src="{{ $user->image_path ? asset('storage/' . $user->image_path) : asset('images/default-avatar.png') }}"
+                        alt="Clinic Logo"
                         class="h-40 w-40 bg-white border-2 border-teal-500 rounded-full m-4 shadow-lg object-contain aspect-square">
 
                     <form action="{{ route('calendar') }}" method="GET" class="w-full">
@@ -142,7 +143,10 @@
                     <!-- Welcome Section -->
                     <div
                         class="mb-2 bg-white p-4  rounded-lg border-l-4 border-teal-500 shadow-lg transform hover:scale-105 transition-transform duration-200">
-                        <h1 class="text-3xl font-bold text-gray-800">Welcome back, {{ Auth::user()->name }}! 👋</h1>
+                        <h1 class="text-3xl font-bold text-gray-800">Welcome back,
+                            {{ Auth::user()->firstname . ' ' . Auth::user()->middleinitial . ' ' . Auth::user()->lastname }}!
+                            👋
+                        </h1>
                         <p class="text-gray-600 mt-2">Here's what's happening in your dental clinic today.</p>
                     </div>
 
@@ -152,10 +156,10 @@
                         <i class="fas fa-user-md"></i> DENTAL CLINIC LOCATION
                     </h3>
                 </div>
-                <iframe width="100%" height="300" style="border:0" loading="lazy" allowfullscreen
+                {{-- <iframe width="100%" height="300" style="border:0" loading="lazy" allowfullscreen
                     referrerpolicy="no-referrer-when-downgrade"
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.2050300674914!2d121.04021859999999!3d14.587389799999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c8312ce6011f%3A0x3b9575c6988133e6!2sANA%20FATIMA%20BARROSO%2C%20DMD%20Dental%20Clinic!5e0!3m2!1sen!2sph!4v1739887099838!5m2!1sen!2sph">
-                </iframe>
+                </iframe> --}}
 
                 <!-- Upcoming Appointments Section -->
                 <div class="bg-white  overflow-hidden  col-span-2 ">
@@ -173,12 +177,53 @@
                                 class="bg-gray-100 border-l-4 border-teal-500 p-4 rounded-lg shadow-md flex justify-between items-center   ">
                                 <div>
                                     <p class="font-semibold text-lg">
-                                        {{ $appointments->date }}
+                                        {{ \Carbon\Carbon::parse($appointments->date)->format('F j, Y') }}
                                     </p>
 
-                                    <p class="text-sm text-gray-600 ">
+                                    <span class="time-slot" data-time="{{ $appointments->time_slot }}">
                                         {{ $appointments->time_slot }}
-                                    </p>
+                                    </span>
+                                    <span
+                                        class="countdown text-red-500 bg-red-100 border-red-500 p-1 font-semibold rounded-lg m-2"></span>
+                                    <script>
+                                        document.addEventListener("DOMContentLoaded", function() {
+                                            let timeSlots = document.querySelectorAll(".time-slot");
+
+                                            timeSlots.forEach(slot => {
+                                                let timeRange = slot.getAttribute("data-time"); // "8:00 AM - 9:00 AM"
+                                                let countdownElement = slot.nextElementSibling; // Get the countdown span
+                                                let startTime = new Date();
+                                                let [startStr, endStr] = timeRange.split(" - ");
+
+                                                let startTimeObj = new Date(startTime.toDateString() + " " + startStr);
+                                                let endTimeObj = new Date(startTime.toDateString() + " " + endStr);
+
+                                                function updateCountdown() {
+                                                    let now = new Date();
+
+                                                    if (now < startTimeObj) {
+                                                        let diff = Math.floor((startTimeObj - now) / 1000);
+                                                        let hours = Math.floor(diff / 3600);
+                                                        let minutes = Math.floor((diff % 3600) / 60);
+                                                        let seconds = diff % 60;
+                                                        countdownElement.innerHTML = `Starts in: ${hours}h ${minutes}m ${seconds}s`;
+                                                    } else if (now >= startTimeObj && now <= endTimeObj) {
+                                                        let diff = Math.floor((endTimeObj - now) / 1000);
+                                                        let minutes = Math.floor(diff / 60);
+                                                        let seconds = diff % 60;
+                                                        countdownElement.innerHTML = `Ends in: ${minutes}m ${seconds}s`;
+                                                        countdownElement.classList.add("text-green-500");
+                                                    } else {
+                                                        countdownElement.innerHTML = "Appointment Finished";
+                                                        countdownElement.classList.add("text-gray-500");
+                                                    }
+                                                }
+                                                updateCountdown();
+                                                setInterval(updateCountdown, 1000);
+                                            });
+                                        });
+                                    </script>
+
                                 </div>
                                 <span
                                     class="bg-teal-600 text-white px-3 py-1 rounded-full text-md transform hover:scale-105 transition-transform duration-200">{{ $appointments->max_slots }}

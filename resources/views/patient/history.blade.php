@@ -68,7 +68,7 @@
                                 </tr>
                             </thead>
                             <tbody class="text-lg">
-                                @foreach ($appointments as $appointment)
+                                @forelse ($appointments as $appointment)
                                     <tr class="bg-white border-b  border-gray-200">
                                         <th scope="row"
                                             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
@@ -134,7 +134,8 @@
                                                 </p>
                                                 <p class="text-gray-700 text-md mb-2"><strong>Reason:</strong> <span
                                                         id="appointmentReason">Loading...</span></p>
-                                                <p class="text-gray-700 text-md mb-2"><strong>Appointment Date:</strong>
+                                                <p class="text-gray-700 text-md mb-2"><strong>Appointment
+                                                        Date:</strong>
                                                     <span id="appointmentDate">Loading...</span>
                                                 </p>
                                                 <p class="text-gray-700 text-md mb-2"><strong>Time:</strong> <span
@@ -181,7 +182,20 @@
                                             }
                                         </script>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center text-teal-700  p-6 font-bold">
+                                            <div class="flex items-center justify-center">
+                                                <div
+                                                    class="rounded-full bg-teal-200  p-4 flex items-center justify-center">
+                                                    <i class="fa-solid fa-face-frown text-4xl text-teal-600"></i>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            No appointment history available.
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>

@@ -23,7 +23,7 @@ class AppointmentController extends Controller
         $appointment = Appointment::find($id);
 
         if ($appointment) {
-            $appointment->updated_at = now(); 
+            $appointment->updated_at = now();
             $appointment->save();
             return back()->with('success', 'Appointment marked as read.');
         }
@@ -36,7 +36,7 @@ class AppointmentController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'phone' => 'required|string',
+            'phone' => 'required|digits:11',
             'date' => 'required|date',
             'time' => 'required|string',
             'appointment_reason' => 'required|string',
@@ -55,6 +55,7 @@ class AppointmentController extends Controller
 
         $existingAppointment = Appointment::where('email', $user->email)
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->where('status', 'Approved]')
             ->exists();
 
         if ($existingAppointment) {
@@ -66,7 +67,7 @@ class AppointmentController extends Controller
         }
 
         Appointment::create([
-            'patient_name' => $user->name,
+            'patient_name' => $user->firstname . " " . $user->middleinitial . " " . $user->lastname,
             'email' => $user->email,
             'doctor' => 'Ana Fatima Barroso',
             'status' => 'Pending',

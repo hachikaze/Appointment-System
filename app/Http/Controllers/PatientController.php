@@ -18,6 +18,8 @@ class PatientController extends Controller
     public function index()
     {
         $userEmail = Auth::user()->email;
+        $user = Auth::user();
+
         $availableDates = AvailableAppointment::count();
         $currentAppointments = AvailableAppointment::whereDate('date', (Carbon::today()))->count();
         $canceledAppointments = Appointment::where('status', 'Canceled')->count();
@@ -25,13 +27,14 @@ class PatientController extends Controller
         $auditTrails = AuditTrail::where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
             ->get();
-            
+
         $availableAppointments = AvailableAppointment::whereDate('date', Carbon::today())
             ->orderBy('date', 'desc')
             ->get();
 
         return view('dashboard', compact(
             'auditTrails',
+            'user',
             // 'notifications',
             'availableAppointments',
             'availableDates',
@@ -39,7 +42,7 @@ class PatientController extends Controller
             'canceledAppointments'
         ));
     }
-    
+
 
     public function calendar(Request $request)
     {
@@ -55,7 +58,6 @@ class PatientController extends Controller
         $appointments = Appointment::where('email', $userEmail)
             ->select('id', 'patient_name', 'phone', 'date', 'time', 'status')
             ->get();
-
         $availableappointments = $selectedDate
             ? AvailableAppointment::where('date', $selectedDate)
             ->select('time_slot', 'max_slots')
@@ -64,7 +66,9 @@ class PatientController extends Controller
                 // Count how many appointments are booked for this time slot
                 $bookedSlots = Appointment::where('date', $selectedDate)
                     ->where('time', $appointment->time_slot)
+                    ->where('status', 'pending')
                     ->count();
+
 
                 // Deduct booked slots from max slots
                 $appointment->remaining_slots = max(0, $appointment->max_slots - $bookedSlots);
@@ -76,6 +80,12 @@ class PatientController extends Controller
         return view('patient.calendar', compact('appointments', 'availableappointments', 'selectedDate', 'availableslots'));
     }
 
+    public function messages()
+    {
+        
+        return view('patient.messages');
+    }
+
 
 
 
@@ -85,7 +95,9 @@ class PatientController extends Controller
         $appointments = Appointment::where('email', $userEmail)
             ->select('id', 'patient_name', 'phone', 'date', 'time', 'status', 'appointments')
             ->get();
-        return view('patient.history', ['appointments' => $appointments]);
+        $isEmpty = $appointments->isEmpty();
+
+        return view('patient.history', ['appointments' => $appointments, 'isEmpty' => $isEmpty]);
     }
 
     //For Displaying the Modal Details 
@@ -112,14 +124,15 @@ class PatientController extends Controller
     }
 
 
-    public function destroy($id)
+    public function cancel($id)
     {
         $appointment = Appointment::findorFail($id);
-        $appointment->delete();
+        $appointment->status = 'Cancelled';
+        $appointment->save();
 
         AuditTrail::create([
             'user_id' => Auth::user()->id,
-            'action' => 'Delete Appointment',
+            'action' => 'Cancelled Appointment',
             'model' => 'User',
             'changes' => null,
             'ip_address' => request()->ip(),
