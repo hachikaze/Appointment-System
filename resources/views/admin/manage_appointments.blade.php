@@ -350,36 +350,76 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm">
-                            <div class="flex gap-2">
-                                <!-- Approve -->
+                            @if($appointment->status === 'Pending')
+                                <!-- When Pending, show Approve and Cancel -->
+                                <div class="flex gap-2">
+                                    <!-- Approve button -->
+                                    <button
+                                        onclick="openModal('{{ $appointment->id }}', 'approve')"
+                                        class="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-3 py-1.5 rounded-md text-xs hover:from-teal-600 hover:to-teal-700 transition shadow-sm flex items-center gap-1 border border-teal-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        Approve
+                                    </button>
+                                    <!-- Cancel button -->
+                                    <button
+                                        onclick="openModal('{{ $appointment->id }}', 'cancel')"
+                                        class="bg-gradient-to-r from-rose-500 to-rose-600 text-white px-3 py-1.5 rounded-md text-xs hover:from-rose-600 hover:to-rose-700 transition shadow-sm flex items-center gap-1 border border-rose-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                        Cancel
+                                    </button>
+                                </div>
+                            @elseif($appointment->status === 'Approved')
+                                <!-- When Approved, show Attended and Cancel -->
+                                <div class="flex gap-2">
+                                    <!-- Attended button -->
+                                    <button
+                                        onclick="openModal('{{ $appointment->id }}', 'attended')"
+                                        class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1.5 rounded-md text-xs hover:from-blue-600 hover:to-blue-700 transition shadow-sm flex items-center gap-1 border border-blue-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        Attended
+                                    </button>
+                                    <!-- Cancel button -->
+                                    <button
+                                        onclick="openModal('{{ $appointment->id }}', 'cancel')"
+                                        class="bg-gradient-to-r from-rose-500 to-rose-600 text-white px-3 py-1.5 rounded-md text-xs hover:from-rose-600 hover:to-rose-700 transition shadow-sm flex items-center gap-1 border border-rose-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                        Cancel
+                                    </button>
+                                </div>
+                            @elseif($appointment->status === 'Attended')
+                                <!-- When Attended, show Completed message -->
+                                <span class="text-sm font-medium text-gray-600">Completed</span>
+                            @elseif($appointment->status === 'Unattended')
+                                <!-- When Unattended, show Reschedule button -->
                                 <button
-                                    onclick="openModal('{{ $appointment->id }}', 'approve')"
-                                    class="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-3 py-1.5 rounded-md text-xs hover:from-teal-600 hover:to-teal-700 transition shadow-sm flex items-center gap-1 border border-teal-700">
+                                    onclick="openModal('{{ $appointment->id }}', 'reschedule')"
+                                    class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-3 py-1.5 rounded-md text-xs hover:from-yellow-600 hover:to-yellow-700 transition shadow-sm flex items-center gap-1 border border-yellow-700">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                        <!-- Example icon for reschedule -->
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6" />
                                     </svg>
-                                    Approve
+                                    Reschedule
                                 </button>
-                                <!-- Mark Attended -->
-                                <button
-                                    onclick="openModal('{{ $appointment->id }}', 'attended')"
-                                    class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1.5 rounded-md text-xs hover:from-blue-600 hover:to-blue-700 transition shadow-sm flex items-center gap-1 border border-blue-700">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    Attended
-                                </button>
-                                <!-- Cancel -->
-                                <button
-                                    onclick="openModal('{{ $appointment->id }}', 'cancel')"
-                                    class="bg-gradient-to-r from-rose-500 to-rose-600 text-white px-3 py-1.5 rounded-md text-xs hover:from-rose-600 hover:to-rose-700 transition shadow-sm flex items-center gap-1 border border-rose-700">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                    Cancel
-                                </button>
-                            </div>
+                            @elseif($appointment->status === 'Cancelled')
+                                <!-- When Cancelled, display red text only -->
+                                <span class="text-xs font-medium text-red-600 flex items-center gap-1">
+                                    Cancelled
+                                </span>
+                            @else
+                                <!-- Fallback for any other status -->
+                                <span class="text-sm font-medium text-gray-600">{{ $appointment->status }}</span>
+                            @endif
                         </td>
+
+
                     </tr>
                     @endforeach
                 </tbody>
