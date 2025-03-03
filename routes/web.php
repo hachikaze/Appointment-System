@@ -13,6 +13,7 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Middleware\PreventBackHistory;
+use App\Http\Middleware\PreventUpdateOnSentMessages;
 use App\Mail\ForgotPassword;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Auth;
@@ -58,6 +59,8 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::post('/patient/messages/{messageId}/replies', [MessageController::class, 'postReply'])->name('messages.replies.post');
         Route::get('/api/upcoming-appointment', [PatientController::class, 'getUpcomingAppointment']);
 
+        // FOR UPDATING THE READ_aT
+        Route::post('/update-seen-status/{id}', [MessageController::class, 'updateSeenStatus']);
     });
 
     // FOR APPOINTMENT
@@ -118,12 +121,10 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::post('/admin/inventory/{id}/adjust', [InventoryController::class, 'adjustQuantity'])->name('admin.inventory.adjust');
         Route::post('/admin/inventory/order-critical', [InventoryController::class, 'orderCriticalItem'])->name('admin.inventory.order-critical');
         Route::put('/admin/inventory/categories/{category}', [InventoryController::class, 'updateCategory'])->name('admin.inventory.categories.update');
-
         // Category Management Routes - UPDATED
         Route::post('/admin/inventory/categories', [InventoryController::class, 'storeCategory'])->name('admin.inventory.categories.store');
         Route::delete('/admin/inventory/categories/{category}', [InventoryController::class, 'destroyCategory'])->name('admin.inventory.categories.destroy');
         Route::put('/admin/inventory/categories/{category}', [InventoryController::class, 'updateCategory'])->name('admin.inventory.categories.update');
-
     });
 });
 

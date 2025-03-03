@@ -70,12 +70,17 @@ class PatientController extends Controller
 
 
         $upcomingappointment = Appointment::where('status', 'Approved')
-            ->where('email', Auth::user()->email) // Filter by the logged-in user
-            ->whereDate('date', '>=', now()) // Use Laravel's helper for current timestamp
-            ->orderBy('date', 'asc')
+            ->whereRaw("time LIKE '% - %'") // Ensure time format is correct
+            ->orderByRaw("time ASC") // Sort by time string 
             ->first();
 
 
+        // Extract the start time
+        $timeRange = $upcomingappointment->time ?? ''; // Ensure it's at least an empty string
+        $times = explode(' - ', $timeRange);
+
+        $start_time = $times[0] ?? null;
+        $end_time = $times[1] ?? null;
 
         return view('dashboard', compact(
             'auditTrails',
@@ -91,7 +96,9 @@ class PatientController extends Controller
             'canceledAppointments',
             'attendedCount',
             'totalEligible',
-            'upcomingappointment'
+            'upcomingappointment',
+            'start_time',
+            'end_time'
         ));
     }
 
@@ -120,7 +127,7 @@ class PatientController extends Controller
 
         $availableappointments = $selectedDate
             ? AvailableAppointment::where('date', $selectedDate)
-                ->select('time_slot', 'max_slots')
+                ->select('date', 'time_slot', 'max_slots') // Add 'date' here
                 ->get()
                 ->map(function ($appointment) use ($selectedDate) {
                     // Count how many appointments are booked for this time slot

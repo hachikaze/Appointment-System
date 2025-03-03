@@ -20,9 +20,7 @@
                                 class="w-full h-full bg-gradient-to-r from-teal-200  to-emerald-600 rounded-full object-cover p-2 
                                 border-4 shadow-lg border-white transform hover:scale-105 transition-transform duration-200">
                         </div>
-
                     </div>
-
 
                     <form action="{{ route('calendar') }}" method="GET" class="w-full">
                         <button
@@ -93,11 +91,12 @@
                         </div>
                     </div>
                     <div class="py-6 mt-4 grid place-items-center px-2">
-                        @if($appointmentCategories->isEmpty())
+                        @if ($appointmentCategories->isEmpty())
                             <div class="bg-red-400 p-6 m-2 rounded-lg ">
                                 <p class="text-white">No appointment data available. Click <span
                                         class="rounded-lg bg-teal-600 p-1 shadow cursor-pointer"
-                                        onclick="window.location.href='{{ route('calendar') }}'">here</span> to add one.</p>
+                                        onclick="window.location.href='{{ route('calendar') }}'">here</span> to add one.
+                                </p>
                             </div>
                         @else
                             <p class="bg-teal-100 p-2 border-2 border-teal-600 rounded-lg shadow-lg">
@@ -150,16 +149,13 @@
 
                     const piechart = new ApexCharts(document.querySelector("#pie-chart"), piechartConfig);
                     piechart.render();
-
                 </script>
 
 
             </div>
 
-
             <div
                 class="bg-white  border-t-4 border-teal-400 fade-up overflow-hidden sm:rounded-lg shadow-lg  col-span-2">
-
                 <div class="w-lg m-4 bg-teal-50 border border-teal-400 rounded-xl shadow-lg" role="alert" tabindex="-1"
                     aria-labelledby="hs-toast-message-with-loading-indicator-label">
                     <div class="flex items-center w-full p-4">
@@ -168,13 +164,64 @@
 
                         <!-- Message -->
                         <p id="hs-toast-message-with-loading-indicator-label"
-                            class="upcoming-appointments ml-3 text-md text-gray-700"
-                            data-date="{{ $upcomingappointment->date }}" data-time="{{ $upcomingappointment->time }}">
-                            Action in progress...
+                            class="ml-3 text-lg font-semibold  text-teal-700"
+                            data-date="{{ isset($upcomingappointment) ? \Carbon\Carbon::parse($upcomingappointment->date)->format('F j, Y') : 'No Date Available' }}"
+                            data-time="{{ $start_time ?? 'N/A' }}" data-end-time="{{ $end_time ?? 'N/A' }}">
+                            Upcoming Appointment...
+                            {{ $start_time ?? 'N/A' }} - {{ $end_time ?? 'N/A' }}
+                            {{ isset($upcomingappointment) ? \Carbon\Carbon::parse($upcomingappointment->date)->format('F j, Y') : 'No Date Available' }}
                         </p>
+
                     </div>
                 </div>
+                <script>
+                    function startCountdown(targetDate, targetTime, endTime, countdownElementId) {
+                        const countdownElement = document.getElementById(countdownElementId);
 
+                        function updateCountdown() {
+                            const now = new Date();
+                            const appointmentStartTime = new Date(targetDate + ' ' + targetTime);
+                            const appointmentEndTime = new Date(targetDate + ' ' + endTime);
+
+                            if (!targetDate || !targetTime) {
+                                countdownElement.textContent = "No upcoming appointment.";
+                                return;
+                            }
+
+                            if (now >= appointmentEndTime) {
+                                countdownElement.textContent = "Appointment has ended!";
+                                clearInterval(interval);
+                                setTimeout(() => {
+                                    countdownElement.style.display = "none";
+                                }, 5000);
+                                return;
+                            }
+
+                            if (now >= appointmentStartTime) {
+                                countdownElement.textContent = "Appointment is happening now!";
+                                return;
+                            }
+
+                            const timeDiff = appointmentStartTime - now;
+                            const hours = Math.floor((timeDiff / (1000 * 60 * 60)) % 24);
+                            const minutes = Math.floor((timeDiff / (1000 * 60)) % 60);
+                            const seconds = Math.floor((timeDiff / 1000) % 60);
+                            countdownElement.textContent = `Upcoming Appointment in ${hours}h ${minutes}m ${seconds}s`;
+                        }
+
+                        updateCountdown();
+                        const interval = setInterval(updateCountdown, 1000);
+                    }
+
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const countdownElement = document.getElementById("hs-toast-message-with-loading-indicator-label");
+                        const targetDate = countdownElement.getAttribute("data-date");
+                        const targetTime = countdownElement.getAttribute("data-time");
+                        const endTime = countdownElement.getAttribute("data-end-time");
+
+                        startCountdown(targetDate, targetTime, endTime, "hs-toast-message-with-loading-indicator-label");
+                    });
+                </script>
 
                 <div class="p-4  grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
                     <div
@@ -261,7 +308,10 @@
                         Stats
                     </h3>
                 </div>
-                <div class="relative flex flex-col  bg-white bg-clip-border text-gray-700 shadow-md">
+                {{-- <iframe width="100%" height="300" style="border:0" loading="lazy" allowfullscreen
+                    referrerpolicy="no-referrer-when-downgrade"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.2050300674914!2d121.04021859999999!3d14.587389799999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c8312ce6011f%3A0x3b9575c6988133e6!2sANA%20FATIMA%20BARROSO%2C%20DMD%20Dental%20Clinic!5e0!3m2!1sen!2sph!4v1739887099838!5m2!1sen!2sph">
+                </iframe> --}}<div class="relative flex flex-col  bg-white bg-clip-border text-gray-700 shadow-md">
                     <div
                         class="relative mx-4 mt-4 flex flex-col gap-4 overflow-hidden rounded-none bg-transparent bg-clip-border text-gray-700 shadow-none md:flex-row md:items-center">
                         <div class="w-max rounded-lg bg-teal-500 shadow-lg p-5 text-white">
@@ -282,13 +332,15 @@
                             </p>
                         </div>
                     </div>
-                    @if($monthlyAppointments->isEmpty())
+                    @if ($monthlyAppointments->isEmpty())
                         <div class="text-center p-6 bg-red-400 m-4 rounded-lg shadow-lg">
                             <p class="text-white text-lg">Still no appointments? Click <span
                                     class="rounded-lg bg-teal-600 p-1 shadow cursor-pointer"
-                                    onclick="window.location.href='{{ route('calendar') }}'">here</span> to be included in a
+                                    onclick="window.location.href='{{ route('calendar') }}'">here</span> to be
+                                included in a
                                 slot.</p>
-                    </div> @else
+                        </div>
+                    @else
                         <div class="pt-6 px-2 pb-0">
                             <div id="line-chart"></div>
                         </div>
@@ -315,11 +367,12 @@
                             </p>
                         </div>
                     </div>
-                    @if($monthlyAppointments->isEmpty())
+                    @if ($monthlyAppointments->isEmpty())
                         <div class="text-center p-6 bg-red-400 m-4 rounded-lg shadow-lg">
                             <p class="text-white text-lg">Still no appointments? Click <span
                                     class="rounded-lg bg-teal-600 p-1 shadow cursor-pointer"
-                                    onclick="window.location.href='{{ route('calendar') }}'">here</span> to be included in a
+                                    onclick="window.location.href='{{ route('calendar') }}'">here</span> to be
+                                included in a
                                 slot.</p>
                         </div>
                     @else
@@ -328,7 +381,6 @@
                         </div>
                     @endif
                 </div>
-                <!-- Upcoming Appointments Section -->
                 <div class="bg-white  overflow-hidden  col-span-2 ">
                     <h3 class="bg-teal-500 p-4 font-bold text-xl text-white flex justify-between items-center">
                         <span><i class="fas fa-calendar-alt fa-beat-fade mx-2" style="--fa-animation-duration: 3s;"></i>
@@ -354,7 +406,6 @@
                                     </span>
                                     <span
                                         class="countdown text-red-500 bg-red-100 border-red-500 p-1 font-semibold rounded-lg m-2"></span>
-
 
                                 </div>
                                 <span
@@ -412,20 +463,22 @@
                             @php
 
                                 if ($totalAppointments == 0) {
-                                    $message = "No attendance records found. Please schedule an appointment to track your attendance.";
-                                    $color = "text-gray-700 border-gray-500 bg-gray-50";
+                                    $message =
+                                        'No attendance records found. Please schedule an appointment to track your attendance.';
+                                    $color = 'text-gray-700 border-gray-500 bg-gray-50';
                                 } elseif ($attendanceRate >= 90) {
-                                    $message = "Excellent attendance! Keep up the great work!";
-                                    $color = "text-green-700 border-green-500 bg-green-50";
+                                    $message = 'Excellent attendance! Keep up the great work!';
+                                    $color = 'text-green-700 border-green-500 bg-green-50';
                                 } elseif ($attendanceRate >= 75) {
-                                    $message = "Good attendance! A little more consistency will make it even better.";
-                                    $color = "text-blue-700 border-blue-500 bg-blue-50";
+                                    $message = 'Good attendance! A little more consistency will make it even better.';
+                                    $color = 'text-blue-700 border-blue-500 bg-blue-50';
                                 } elseif ($attendanceRate >= 50) {
-                                    $message = "Fair attendance. Try to improve your consistency.";
-                                    $color = "text-yellow-700 border-yellow-500 bg-yellow-50";
+                                    $message = 'Fair attendance. Try to improve your consistency.';
+                                    $color = 'text-yellow-700 border-yellow-500 bg-yellow-50';
                                 } else {
-                                    $message = "Poor attendance! Consider improving your participation to avoid any issues.";
-                                    $color = "text-red-700 border-red-500 bg-red-50";
+                                    $message =
+                                        'Poor attendance! Consider improving your participation to avoid any issues.';
+                                    $color = 'text-red-700 border-red-500 bg-red-50';
                                 }
                             @endphp
 
@@ -562,49 +615,60 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             let timeSlots = document.querySelectorAll(".time-slot");
-            let upcomingCountdown = document.querySelector(".upcoming-appointments");
-            let timeZone = "Asia/Singapore";
-            let now = new Date(new Date().toLocaleString("en-US", { timeZone }));
-            let closestAppointment = null;
-            let closestTimeDifference = Infinity;
 
             timeSlots.forEach(slot => {
                 let timeRange = slot.getAttribute("data-time"); // e.g., "10:00 AM - 12:00 PM"
                 let appointmentDate = slot.getAttribute("data-date"); // e.g., "2024-03-03"
                 let countdownElement = slot.nextElementSibling; // Get the countdown span
+                let timeZone = "Asia/Singapore";
+                let now = new Date(new Date().toLocaleString("en-US", {
+                    timeZone
+                }));
+
+                console.log(`Now: ${now.toLocaleString("en-US", { timeZone })}`);
+
+                let appointmentDateObj = new Date(appointmentDate + "T00:00:00");
+
+                if (now.toDateString() > appointmentDateObj.toDateString()) {
+                    countdownElement.innerHTML = "Appointment Already Passed";
+                    countdownElement.classList.add("text-gray-500");
+                    return;
+                }
+
                 let [startStr, endStr] = timeRange.split(" - ");
                 let startTimeObj = new Date(`${appointmentDate} ${startStr}`);
                 let endTimeObj = new Date(`${appointmentDate} ${endStr}`);
 
                 function updateCountdown() {
-                    let now = new Date(new Date().toLocaleString("en-US", { timeZone }));
+                    let now = new Date(new Date().toLocaleString("en-US", {
+                        timeZone: "Asia/Singapore"
+                    }));
 
                     if (now < startTimeObj) {
                         let diff = Math.floor((startTimeObj - now) / 1000);
-                        let hours = Math.floor(diff / 3600);
-                        let minutes = Math.floor((diff % 3600) / 60);
-                        let seconds = diff % 60;
-                        countdownElement.innerHTML = `Starts in: ${hours}h ${minutes}m ${seconds}s`;
+                        let hours = String(Math.floor(diff / 3600)).padStart(2, "0");
+                        let minutes = String(Math.floor((diff % 3600) / 60)).padStart(2, "0");
+                        let seconds = String(diff % 60).padStart(2, "0");
 
-                        // Update closest upcoming appointment
-                        if (diff < closestTimeDifference) {
-                            closestTimeDifference = diff;
-                            closestAppointment = `Next appointment starts in: ${hours}h ${minutes}m ${seconds}s`;
-                        }
+                        countdownElement.innerHTML = `Starts in: ${hours}h ${minutes}m ${seconds}s`;
+                        countdownElement.classList.remove("text-green-500", "text-gray-500");
+                        countdownElement.classList.add("text-blue-500"); // Indicating upcoming appointment
                     } else if (now >= startTimeObj && now <= endTimeObj) {
                         let diff = Math.floor((endTimeObj - now) / 1000);
-                        let minutes = Math.floor(diff / 60);
-                        let seconds = diff % 60;
-                        countdownElement.innerHTML = `Ends in: ${minutes}m ${seconds}s`;
-                        countdownElement.classList.add("text-green-500");
+                        let hours = String(Math.floor(diff / 3600)).padStart(2, "0");
+                        let minutes = String(Math.floor((diff % 3600) / 60)).padStart(2, "0");
+                        let seconds = String(diff % 60).padStart(2, "0");
 
-                        // If an appointment is ongoing, prioritize it in upcoming countdown
-                        closestAppointment = `Ongoing appointment ends in: ${minutes}m ${seconds}s`;
+                        countdownElement.innerHTML = `Ends in: ${hours}h ${minutes}m ${seconds}s`;
+                        countdownElement.classList.remove("text-blue-500", "text-gray-500");
+                        countdownElement.classList.add("text-green-500"); // Active appointment
                     } else {
                         countdownElement.innerHTML = "Appointment Finished";
+                        countdownElement.classList.remove("text-blue-500", "text-green-500");
                         countdownElement.classList.add("text-gray-500");
                     }
                 }
+
 
                 updateCountdown();
                 setInterval(updateCountdown, 1000);
@@ -626,12 +690,10 @@
         const dailycategories = @json($dailyAppointments->keys());
 
         const linechartConfig = {
-            series: [
-                {
-                    name: "Monthly Appointments",
-                    data: monthlyappointmentsData,
-                },
-            ],
+            series: [{
+                name: "Monthly Appointments",
+                data: monthlyappointmentsData,
+            },],
             chart: {
                 type: "line",
                 height: 240,
@@ -726,12 +788,10 @@
         linechart.render();
 
         const linechartConfig2 = {
-            series: [
-                {
-                    name: "Daily Appointments",
-                    data: dailyappointmentsData,
-                },
-            ],
+            series: [{
+                name: "Daily Appointments",
+                data: dailyappointmentsData,
+            },],
             chart: {
                 type: "line",
                 height: 240,
@@ -769,7 +829,10 @@
                     },
                     formatter: function (value) {
                         const date = new Date(value);
-                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                        return date.toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric'
+                        });
                     }
                 },
                 categories: dailycategories,
@@ -817,6 +880,5 @@
         };
         const linechart2 = new ApexCharts(document.querySelector("#line-chart2"), linechartConfig2);
         linechart2.render();
-
     </script>
 </x-patientnav-layout>

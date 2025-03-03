@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\UserMessages;
 use App\Models\Reply;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Carbon;
 
 class MessageController extends Controller
 {
@@ -33,7 +35,7 @@ class MessageController extends Controller
         // Create a message
         UserMessages::create([
             'message_id' => $messageId,
-            'user_id' => auth()->id(),
+            'user_id' => Auth::user()->id,
             'message' => $usermessage,
             'subject' => $request->subject,
             'status' => 'sent',
@@ -43,6 +45,27 @@ class MessageController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'message uploaded');
+    }
+
+
+    public function updateSeenStatus($id, Request $request)
+    {
+        $message = UserMessages::find($id);
+        if (!$message) {
+            return response()->json(['success' => false, 'message' => 'Message not found'], 404);
+        }
+        if ($request->query('status') === 'sent') {
+            return response()->json(['success' => false, 'message' => 'Cannot update message status on sent messages'], 403);
+        }
+
+        if ($message->status === 'sent') {
+            return response()->json(['success' => false, 'message' => 'Unauthorized action'], 403);
+        }
+
+        $message->read_at = Carbon::now();
+        $message->save();
+
+        return response()->json(['success' => true, 'message' => 'Message marked as seen']);
     }
 
     public function getMessages(Request $request)
@@ -119,10 +142,6 @@ class MessageController extends Controller
             'to_user_id' => $toUser->id,
         ]);
 
-
-
-
         return redirect()->back()->with('success', 'Reply sent successfully!');
     }
-
 }

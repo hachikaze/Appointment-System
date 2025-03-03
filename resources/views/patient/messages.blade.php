@@ -22,9 +22,9 @@
                     </div>
 
                 </div>
-                <div class="bg-white max-h-full overflow-y-auto  p-4 text-xl">
+                <div class="bg-white max-h-full   p-4 text-xl">
 
-                    @if(session('success'))
+                    @if (session('success'))
                         <div class="bg-green-500 text-white rounded-lg shadow-lg text-md p-3 w-full mb-4">
                             {{ session('success') }}
                         </div>
@@ -80,12 +80,15 @@
                                 <div
                                     class="mt-4 space-y-2 h-full max-h-[800px] overflow-y-auto p-5 pr-0 pl-0  flex flex-col min-h-0">
                                     @foreach ($messages as $message)
-                                        <div class="message-item border-1 rounded-lg shadow-lg p-4 bg-teal-50 border-l-4 border-teal-500 hover:bg-teal-100 transition-all duration-300 ease-in-out cursor-pointer"
+                                        @php
+                                            $bgclass = $message->read_at ? 'bg-teal-50' : 'bg-gray-100';
+                                        @endphp
+                                        <div class="message-item  border-1 rounded-lg shadow-lg p-4 {{ $bgclass }} border-l-4 border-teal-500 hover:bg-teal-100 transition-all duration-300 ease-in-out cursor-pointer"
                                             data-message-id="{{ $message->id }}" data-message="{{ $message->message }}"
                                             data-subject="{{ $message->subject }}"
                                             data-sender="{{ $message->sender->email }}"
                                             data-time="{{ $message->created_at->format('F j, Y') }}"
-                                            data-receiver={{$message->receiver->email}}>
+                                            data-receiver={{ $message->receiver->email }}>
                                             <div class="flex items-center gap-3">
                                                 <img src="{{ $message->sender->profile_image ?? '/images/default-avatar.png' }}"
                                                     alt="Avatar"
@@ -98,25 +101,75 @@
                                                         <p class="text-sm">
                                                             {{ $message->created_at->format('F j, Y h:i A') }}
                                                         </p>
-                                                        <i class="fa-solid fa-eye text-teal-700 text-sm"></i>
+
+                                                        @if (!$message->read_at)
+                                                            <i
+                                                                class="fa-solid fa-eye-slash text-red-500 text-sm read-status-icon"></i>
+                                                        @else
+                                                            <i
+                                                                class="fa-solid fa-eye text-teal-700 text-sm read-status-icon"></i>
+                                                        @endif
+
                                                     </div>
                                                 </div>
                                             </div>
                                             <p class="search-content  text-gray-600 line-clamp-2 text-sm my-4 ">
-                                                <i class="fa-solid fa-arrow-up-right-from-square text-teal-500 mx-2"></i>
+                                                <i
+                                                    class="fa-solid fa-arrow-up-right-from-square text-teal-500 mx-2"></i>
                                                 {{ $message->message }}
                                             </p>
-                                            <x-message-modal :modalid="'replymodal'" :route="route('messages.replies.post', $message->id)" title="Reply Message" :userToEmail="'iconnelly@example.net'"
-                                                :userFromEmail="Auth::user()->email" />
+                                            <x-message-modal :modalid="'replymodal'" :route="route('messages.replies.post', $message->id)" title="Reply Message"
+                                                :userToEmail="'iconnelly@example.net'" :userFromEmail="Auth::user()->email" />
 
                                             <x-message-modal :modalid="'createmodal'" :route="route('messages.create.post', $message->id)" title="Compose Message"
-                                                :userToEmail="'iconnelly@example.net'"
-                                                :userFromEmail="Auth::user()->email" />
+                                                :userToEmail="'iconnelly@example.net'" :userFromEmail="Auth::user()->email" />
                                         </div>
                                     @endforeach
                                 </div>
                             </div>
                         </div>
+
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function() {
+                                document.querySelectorAll(".message-item").forEach(item => {
+                                    item.addEventListener("click", function() {
+                                        const messageId = this.getAttribute("data-message-id");
+                                        console.log(messageId);
+
+                                        // if (window.location.href.includes("status=sent")) {
+                                        //     console.warn("Cannot update message status on sent messages.");
+                                        //     return;
+                                        // }
+
+                                        fetch(`/update-seen-status/${messageId}`, {
+                                                method: "POST",
+                                                headers: {
+                                                    "Content-Type": "application/json",
+                                                    "X-CSRF-TOKEN": document.querySelector(
+                                                        'meta[name="csrf-token"]').getAttribute("content")
+                                                },
+                                                body: JSON.stringify({})
+                                            })
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                if (data.success) {
+                                                    item.classList.add("bg-teal-50");
+                                                    item.classList.remove("bg-gray-100");
+
+                                                    const icon = item.querySelector(".read-status-icon");
+                                                    if (icon) {
+                                                        icon.classList.remove("fa-eye-slash", "text-teal-500");
+                                                        icon.classList.add("fa-eye", "text-teal-700");
+                                                    }
+                                                } else {
+                                                    console.error("Failed to update message status.");
+                                                }
+                                            })
+                                            .catch(error => console.error("Error updating message status:", error));
+                                    });
+                                });
+                            });
+                        </script>
 
                         <!-- Message Details Section -->
                         <div
@@ -180,11 +233,11 @@
                             <div class="mt-10">
                                 <div
                                     class="bg-slate-500 p-2 flex items-center justify-between text-white border-l-6 border-blue-600 bg-gradient-to-r from-emerald-600 to-teal-400">
-                                    <div class="mx-4 font-semibold">
+                                    <div class="mx-4 text-2xl font-semibold">
                                         <h1>REPLIES</h1>
                                     </div>
-                                    <a href="#replymodal"
-                                        class="btn p-2 shadow-lg font-semibold text-sm bg-teal-600 rounded-lg hover:bg-teal-200 hover:text-black transition-all duration-300 ease-in-out m-2">
+                                    <a href="#replymodal" id="replymodalbtn"
+                                        class="hidden btn p-2 shadow-lg font-semibold text-sm bg-teal-600 rounded-lg hover:bg-teal-200 hover:text-black transition-all duration-300 ease-in-out m-2">
                                         Reply
                                         <i class="fa-solid fa-reply"></i>
                                     </a>
@@ -216,19 +269,22 @@
 
     <script>
         //SEARCH JS
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const searchInput = document.getElementById("message-search");
             const messageItems = document.querySelectorAll(".message-item");
 
-            searchInput.addEventListener("input", function () {
+            searchInput.addEventListener("input", function() {
                 const searchTerm = searchInput.value.toLowerCase();
 
                 messageItems.forEach(element => {
-                    const subject = element.querySelector(".search-subject").textContent.toLowerCase();
-                    const content = element.querySelector(".search-content").textContent.toLowerCase();
+                    const subject = element.querySelector(".search-subject").textContent
+                        .toLowerCase();
+                    const content = element.querySelector(".search-content").textContent
+                        .toLowerCase();
                     const sender = element.getAttribute("data-sender").toLowerCase();
 
-                    if (subject.includes(searchTerm) || content.includes(searchTerm) || sender.includes(searchTerm)) {
+                    if (subject.includes(searchTerm) || content.includes(searchTerm) || sender
+                        .includes(searchTerm)) {
                         element.style.display = "block";
                     } else {
                         element.style.display = "none";
@@ -239,7 +295,7 @@
 
 
         //GET MESSAGE CONTENT JS
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const messageItems = document.querySelectorAll(".message-item");
             const messageContent = document.getElementById("message-container");
             const messageSender = document.getElementById("message-sender");
@@ -248,22 +304,30 @@
             const messageTime = document.getElementById("message-time");
             const repliesContainer = document.getElementById('replies-container');
             const repliesList = document.getElementById('replies-list');
-
+            const replymodalBtn = document.getElementById('replymodalbtn')
             messageItems.forEach(item => {
-                item.addEventListener("click", function () {
+                item.addEventListener("click", function() {
                     const message = this.getAttribute("data-message");
                     const sender = this.getAttribute("data-sender");
                     const receiver = this.getAttribute("data-receiver");
                     const time = this.getAttribute("data-time");
                     const subject = this.getAttribute("data-subject");
-
                     const messageId = this.getAttribute('data-message-id');
+
+                    if (replymodalBtn) {
+                        replymodalBtn.style.display = "block";
+                    } else {
+                        console.error("Reply modal not found");
+                    }
 
                     //MESSAGE CONTENT
                     messageContent.textContent = `${message}`;
-                    messageSender.innerHTML = `<i class="fa-solid fa-user text-teal-600 mr-2"></i> From: ${sender}`;
-                    messageReceiver.innerHTML = `<i class="fa-solid fa-user text-teal-600 mr-2"></i> To: ${receiver}`;
-                    messageSubject.innerHTML = `<i class="fa-solid fa-envelope text-white mr-2"></i> Subject: ${subject}`;
+                    messageSender.innerHTML =
+                        `<i class="fa-solid fa-user text-teal-600 mr-2"></i> From: ${sender}`;
+                    messageReceiver.innerHTML =
+                        `<i class="fa-solid fa-user text-teal-600 mr-2"></i> To: ${receiver}`;
+                    messageSubject.innerHTML =
+                        `<i class="fa-solid fa-envelope text-white mr-2"></i> Subject: ${subject}`;
                     messageTime.textContent = `${time}`;
 
                     //REPLIES
@@ -273,7 +337,8 @@
                             repliesList.innerHTML = '';
                             repliesContainer.classList.remove('hidden');
                             if (data.length === 0) {
-                                repliesList.innerHTML = `<p class="text-gray-500">No replies yet.</p>`;
+                                repliesList.innerHTML =
+                                    `<p class="text-gray-500">No replies yet.</p>`;
                             } else {
                                 data.forEach(reply => {
                                     repliesList.innerHTML += `
