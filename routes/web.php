@@ -33,11 +33,13 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
     Route::middleware(['patientMiddleware'])->group(function () {
         Route::get('/patient/dashboard', [PatientController::class, 'index'])->name('patient.dashboard');
         Route::get('/patient/calendar', [PatientController::class, 'calendar'])->name('calendar');
+        Route::get('/patient/messaging', [PatientController::class, 'messages'])->name('messages');
+
         Route::get('/patient/notifications', [PatientController::class, 'notifications'])->name('notifications');
         Route::get('/patient/history', [PatientController::class, 'history'])->name('history');
         Route::get('/view-history/{appointmentId}', [PatientController::class, 'viewHistory'])->name('viewhistory');
 
-        Route::delete('/patient/appointments/{id}', [PatientController::class, 'destroy'])->name('appointments.destroy');
+        Route::put('/patient/appointments/{id}', [PatientController::class, 'cancel'])->name('appointments.cancel');
         Route::get('/patient/profile', [LoginController::class, 'profile'])->name('profile');
         Route::put('patient/users/{id}', [LoginController::class, 'update'])->name('profile.update');
     });

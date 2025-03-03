@@ -1,6 +1,6 @@
 <x-patientnav-layout>
     <div class="py-12">
-        <div class="max-w-8xl mx-auto px-6 lg:px-8 grid lg:gap-8 gap-4 lg:grid-cols-4 md:grid-cols-1 sm:grid-cols-1">
+        <div class="max-w-8xl mx-auto px-6 lg:px-8  lg:gap-8 gap-4 xl:grid grid-cols-4 lg:grid grid-cols-1   ">
             <!-- First Column: Avatar and Buttons (1/4 of the width) -->
             <div
                 class="bg-white fade-up overflow-hidden sm:rounded-lg shadow-lg  xl:col-span-1 md:col-span-2 sm:col-span-2  col-span-2">
@@ -177,12 +177,53 @@
                                 class="bg-gray-100 border-l-4 border-teal-500 p-4 rounded-lg shadow-md flex justify-between items-center   ">
                                 <div>
                                     <p class="font-semibold text-lg">
-                                        {{ $appointments->date }}
+                                        {{ \Carbon\Carbon::parse($appointments->date)->format('F j, Y') }}
                                     </p>
 
-                                    <p class="text-sm text-gray-600 ">
+                                    <span class="time-slot" data-time="{{ $appointments->time_slot }}">
                                         {{ $appointments->time_slot }}
-                                    </p>
+                                    </span>
+                                    <span
+                                        class="countdown text-red-500 bg-red-100 border-red-500 p-1 font-semibold rounded-lg m-2"></span>
+                                    <script>
+                                        document.addEventListener("DOMContentLoaded", function() {
+                                            let timeSlots = document.querySelectorAll(".time-slot");
+
+                                            timeSlots.forEach(slot => {
+                                                let timeRange = slot.getAttribute("data-time"); // "8:00 AM - 9:00 AM"
+                                                let countdownElement = slot.nextElementSibling; // Get the countdown span
+                                                let startTime = new Date();
+                                                let [startStr, endStr] = timeRange.split(" - ");
+
+                                                let startTimeObj = new Date(startTime.toDateString() + " " + startStr);
+                                                let endTimeObj = new Date(startTime.toDateString() + " " + endStr);
+
+                                                function updateCountdown() {
+                                                    let now = new Date();
+
+                                                    if (now < startTimeObj) {
+                                                        let diff = Math.floor((startTimeObj - now) / 1000);
+                                                        let hours = Math.floor(diff / 3600);
+                                                        let minutes = Math.floor((diff % 3600) / 60);
+                                                        let seconds = diff % 60;
+                                                        countdownElement.innerHTML = `Starts in: ${hours}h ${minutes}m ${seconds}s`;
+                                                    } else if (now >= startTimeObj && now <= endTimeObj) {
+                                                        let diff = Math.floor((endTimeObj - now) / 1000);
+                                                        let minutes = Math.floor(diff / 60);
+                                                        let seconds = diff % 60;
+                                                        countdownElement.innerHTML = `Ends in: ${minutes}m ${seconds}s`;
+                                                        countdownElement.classList.add("text-green-500");
+                                                    } else {
+                                                        countdownElement.innerHTML = "Appointment Finished";
+                                                        countdownElement.classList.add("text-gray-500");
+                                                    }
+                                                }
+                                                updateCountdown();
+                                                setInterval(updateCountdown, 1000);
+                                            });
+                                        });
+                                    </script>
+
                                 </div>
                                 <span
                                     class="bg-teal-600 text-white px-3 py-1 rounded-full text-md transform hover:scale-105 transition-transform duration-200">{{ $appointments->max_slots }}

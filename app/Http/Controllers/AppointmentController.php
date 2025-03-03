@@ -36,7 +36,7 @@ class AppointmentController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'phone' => 'required|string',
+            'phone' => 'required|digits:11',
             'date' => 'required|date',
             'time' => 'required|string',
             'appointment_reason' => 'required|string',
@@ -55,6 +55,7 @@ class AppointmentController extends Controller
 
         $existingAppointment = Appointment::where('email', $user->email)
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->where('status', 'Approved]')
             ->exists();
 
         if ($existingAppointment) {
