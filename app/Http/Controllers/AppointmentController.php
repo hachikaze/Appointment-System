@@ -89,9 +89,6 @@ class AppointmentController extends Controller
         return back()->with('success', 'Appointment successfully booked.');
     }
 
-
-
-
     public function graph()
     {
         $today = Carbon::today()->toDateString();
@@ -99,11 +96,11 @@ class AppointmentController extends Controller
 
         // Count today's appointments and remaining slots
         $appointmentsToday = Appointment::whereDate('date', $today)->count();
-        $remainingSlotsToday = max(0, 10 - $appointmentsToday); // Adjust max slots as needed
+        $remainingSlotsToday = max(0, 10 - $appointmentsToday); 
 
         // Count monthly appointments and remaining slots
         $monthlyAppointments = Appointment::where('date', 'like', "$monthly%")->count();
-        $remainingSlotsMonthly = max(0, 100 - $monthlyAppointments); // Adjust max slots as needed
+        $remainingSlotsMonthly = max(0, 100 - $monthlyAppointments); 
 
         // Get appointments over time
         $appointmentsOverTime = Appointment::selectRaw("strftime('%m', date) as month, COUNT(*) as total")
