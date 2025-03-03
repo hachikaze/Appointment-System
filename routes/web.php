@@ -42,6 +42,15 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::put('/patient/appointments/{id}', [PatientController::class, 'cancel'])->name('appointments.cancel');
         Route::get('/patient/profile', [LoginController::class, 'profile'])->name('profile');
         Route::put('patient/users/{id}', [LoginController::class, 'update'])->name('profile.update');
+        
+        //FOR RESCHEDULING
+        Route::get('/patient/appointments/available-slots', [PatientController::class, 'getAvailableSlots'])
+        ->name('appointments.available-slots');
+
+        Route::get('/get-available-slots', [PatientController::class, 'getAvailableSlots']);
+
+        Route::put('/patient/appointments/reschedule/{id}', [PatientController::class, 'reschedule'])
+        ->name('appointments.reschedule');
     });
 
     // FOR APPOINTMENT

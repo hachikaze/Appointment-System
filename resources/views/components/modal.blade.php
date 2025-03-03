@@ -45,10 +45,16 @@
                         };
                     @endphp
                     <div class="flex items-center justify-end gap-3">
-                        <button data-modal-hide="default-modal" type="submit"
+                        <!-- <button data-modal-hide="default-modal" type="submit"
+                            class="text-white p-2 font-bold shadow-lg rounded-lg {{ $buttonClass }}">
+                            {{ $buttonText }}
+                        </button> -->
+
+                        <button data-modal-hide="{{ $modalId }}" type="submit"
                             class="text-white p-2 font-bold shadow-lg rounded-lg {{ $buttonClass }}">
                             {{ $buttonText }}
                         </button>
+
                         <button type="button" data-modal-hide="{{ $modalId }}"
                             class="text-gray-700 bg-gray-300 hover:bg-gray-400 p-2 font-bold shadow-lg rounded-lg">
                             Cancel
