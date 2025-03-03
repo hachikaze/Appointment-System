@@ -273,10 +273,6 @@
                                 <td class="px-6 py-4">{{ Carbon::parse($appointment->date)->format('F j, Y') }}</td>
                                 <td class="px-6 py-4">{{ $appointment->time }}</td>
                                 <td class="px-6 py-4">
-<<<<<<< HEAD
-                                    <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
-                                        {{ $appointment->status }}
-=======
 
 
 
@@ -297,43 +293,10 @@
                                     <span
                                         class="px-2 py-1 font-semibold leading-tight {{ $buttonClass }} rounded-full text-white">
                                         {{ ucfirst($appointment->status) }}
->>>>>>> bcc66504a889cd32a41a4d5544594673c914ce56
                                     </span>
 
                                 </td>
                                 <td class="px-6 py-4">
-<<<<<<< HEAD
-                                    @if($appointment->status === 'Pending')
-                                        <!-- When Pending, show Cancel button -->
-                                        <button data-modal-target="delete-appointment-modal"
-                                            data-modal-toggle="delete-appointment-modal"
-                                            class="bg-red-500 hover:bg-red-700 text-white font-bold p-2 rounded-xl shadow-lg">
-                                            Cancel
-                                        </button>
-                                    @elseif($appointment->status === 'Approved')
-                                        <!-- When Approved, show text (for example, "Approved") -->
-                                        <span class="font-bold text-blue-600">In Progress</span>
-                                    @elseif($appointment->status === 'Attended')
-                                        <!-- When Attended, show Completed text -->
-                                        <span class="font-bold text-green-600">Completed</span>
-                                    @elseif($appointment->status === 'Unattended')
-                                        <!-- When Attended, show Completed text -->
-                                        <button class="bg-red-500 hover:bg-red-700 text-white font-bold p-2 rounded-xl shadow-lg">
-                                            Reschedule
-                                        </button>
-                                    @else
-                                        <!-- Fallback if needed -->
-                                        <span class="font-bold text-gray-600">{{ $appointment->status }}</span>
-                                    @endif
-                                </td>
-
-                                @unless($appointment->status === 'Approved')
-                                    <x-modal modalId="delete-appointment-modal" title="Delete this Appointment"
-                                        message="Are you sure you want to delete this appointment?"
-                                        route="{{ route('appointments.destroy', ['id' => $appointment->id]) }}"
-                                        method="DELETE" buttonText="Delete" />
-                                @endunless
-=======
                                     <button data-modal-target="update-appointment-modal"
                                         data-modal-toggle="update-appointment-modal"
                                         class="bg-red-500 hover:bg-red-700 text-white font-bold p-2 rounded-xl shadow-lg">
@@ -345,7 +308,6 @@
                                     message="Are you sure you want to cancel this appointment?"
                                     route="{{ route('appointments.cancel', ['id' => $appointment->id]) }}"
                                     method="PUT" buttonText="Cancel" />
->>>>>>> bcc66504a889cd32a41a4d5544594673c914ce56
                             </tr>
                         @endforeach
                     </tbody>
