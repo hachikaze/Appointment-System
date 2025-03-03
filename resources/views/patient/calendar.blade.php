@@ -197,7 +197,7 @@
                                         class="inline-flex items-center px-3 text-sm text-gray-900 bg-teal-200 border rounded-e-0 border-gray-800 border-e-0 rounded-s-md">
                                         <i class="fa-solid fa-phone text-teal-700 shadow-lg"></i>
                                     </span>
-                                    <input type="text" id="phone" name="phone"
+                                    <input type="text" id="phone" name="phone" maxlength="11"
                                         class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-md border-gray-800 p-2.5 placeholder-gray-500"
                                         placeholder="Ex. 09123456789">
                                 </div>
@@ -267,32 +267,51 @@
                     </thead>
                     <tbody class="bg-white border">
                         @foreach ($appointments as $appointment)
-                            <tr class="border-b text-black hover:bg-teal-200 ">
+                            <tr class="border-b text-black hover:bg-teal-200">
                                 <td class="px-6 py-4">{{ $appointment->patient_name }}</td>
                                 <td class="px-6 py-4">{{ $appointment->phone }}</td>
                                 <td class="px-6 py-4">{{ Carbon::parse($appointment->date)->format('F j, Y') }}</td>
                                 <td class="px-6 py-4">{{ $appointment->time }}</td>
                                 <td class="px-6 py-4">
+
+
+
+
+                                    @php
+                                        $buttonClass = match (strtolower($appointment->status)) {
+                                            'cancelled',
+                                            'delete',
+                                            'unattended'
+                                                => 'bg-red-600 hover:bg-red-700', // Red for cancelled states
+                                            'approved' => 'bg-green-600 hover:bg-green-700', // Green for approved
+                                            'pending' => 'bg-orange-600 hover:bg-orange-700', // Orange for pending
+                                            'attended' => 'bg-blue-600 hover:bg-blue-700', // Blue for attended
+                                            default => 'bg-gray-600 hover:bg-gray-700', // Default Gray
+                                        };
+                                    @endphp
+
                                     <span
-                                        class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
-                                        {{ $appointment->status }}
+                                        class="px-2 py-1 font-semibold leading-tight {{ $buttonClass }} rounded-full text-white">
+                                        {{ ucfirst($appointment->status) }}
                                     </span>
+
                                 </td>
                                 <td class="px-6 py-4">
-                                    <button data-modal-target="delete-appointment-modal"
-                                        data-modal-toggle="delete-appointment-modal"
+                                    <button data-modal-target="update-appointment-modal"
+                                        data-modal-toggle="update-appointment-modal"
                                         class="bg-red-500 hover:bg-red-700 text-white font-bold p-2 rounded-xl shadow-lg">
                                         Cancel
                                     </button>
                                 </td>
 
-                                <x-modal modalId="delete-appointment-modal" title="Delete this Appointment"
-                                    message="Are you sure you want to delete this appointment?"
-                                    route="{{ route('appointments.destroy', ['id' => $appointment->id]) }}"
-                                    method="DELETE" buttonText="Delete" />
+                                <x-modal modalId="update-appointment-modal" title="Cancel this Appointment?"
+                                    message="Are you sure you want to cancel this appointment?"
+                                    route="{{ route('appointments.cancel', ['id' => $appointment->id]) }}"
+                                    method="PUT" buttonText="Cancel" />
                             </tr>
                         @endforeach
                     </tbody>
+
                 </table>
             </div>
         </div>

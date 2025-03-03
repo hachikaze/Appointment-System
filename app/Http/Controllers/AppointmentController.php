@@ -45,7 +45,7 @@ class AppointmentController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'phone' => 'required|string',
+            'phone' => 'required|digits:11',
             'date' => 'required|date',
             'time' => 'required|string',
             'appointment_reason' => 'required|string',
@@ -64,6 +64,7 @@ class AppointmentController extends Controller
 
         $existingAppointment = Appointment::where('email', $user->email)
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->where('status', 'Approved]')
             ->exists();
 
         if ($existingAppointment) {
@@ -84,7 +85,6 @@ class AppointmentController extends Controller
             'time' => $time,
             'appointments' => $request->input('appointment_reason'),
             'updated_at' => null,
-            'user_id' => $user->id,
         ]);
 
         AuditTrail::create([
@@ -106,11 +106,11 @@ class AppointmentController extends Controller
 
         // Count today's appointments and remaining slots
         $appointmentsToday = Appointment::whereDate('date', $today)->count();
-        $remainingSlotsToday = max(0, 10 - $appointmentsToday); // Adjust max slots as needed
+        $remainingSlotsToday = max(0, 10 - $appointmentsToday); 
 
         // Count monthly appointments and remaining slots
         $monthlyAppointments = Appointment::where('date', 'like', "$monthly%")->count();
-        $remainingSlotsMonthly = max(0, 100 - $monthlyAppointments); // Adjust max slots as needed
+        $remainingSlotsMonthly = max(0, 100 - $monthlyAppointments); 
 
         // Get appointments over time
         $appointmentsOverTime = Appointment::selectRaw("strftime('%m', date) as month, COUNT(*) as total")

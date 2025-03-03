@@ -1,5 +1,5 @@
-@props(['method' => 'POST']) 
-@props(['modalId' => 'create']) 
+@props(['method' => 'POST'])
+@props(['modalId' => 'create'])
 
 <div id="{{ $modalId }}" tabindex="-1" aria-hidden="true"
     class="hidden fixed inset-0 z-50 flex items-center justify-center w-full max-h-full bg-black bg-opacity-50">
@@ -30,17 +30,18 @@
             <div class="flex items-center justify-end p-4 md:p-5 rounded-b">
                 <form action="{{ $route }}" method="{{ $method === 'GET' ? 'GET' : 'POST' }}">
                     @csrf
-                    @if ($method === 'PATCH')
-                        @method('PATCH')
+                    @if ($method === 'PUT')
+                        @method('PUT')
                     @elseif ($method === 'DELETE')
                         @method('DELETE')
                     @endif
                     @php
                         $buttonClass = match (strtolower($buttonText)) {
-                            'confirm', 'delete' => 'bg-red-600 hover:bg-red-700',  // Red for Delete/Confirm
-                            'update' => 'bg-blue-600 hover:bg-blue-700',           // Blue for Update
-                            'create' => 'bg-green-600 hover:bg-green-700',         // Green for Create
-                            default => 'bg-gray-600 hover:bg-gray-700'             // Default Gray
+                            'confirm', 'delete' => 'bg-red-600 hover:bg-red-700', // Red for Delete/Confirm
+                            'update' => 'bg-blue-600 hover:bg-blue-700', // Blue for Update
+                            'create' => 'bg-green-600 hover:bg-green-700', // Green for Create
+                            'cancel' => 'bg-red-600 hover:bg-red-700', // Red for Cancel
+                            default => 'bg-gray-600 hover:bg-gray-700', // Default Gray
                         };
                     @endphp
                     <div class="flex items-center justify-end gap-3">

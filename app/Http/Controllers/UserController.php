@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\User;
@@ -12,8 +11,6 @@ class UserController extends Controller
 {
     /**
      * Display a listing of users
-     *
-     * @return \Illuminate\View\View
      */
     public function index()
     {
@@ -23,16 +20,13 @@ class UserController extends Controller
         $patientCount = User::where('user_type', 'patient')->count();
 
         // Get all users with pagination
-        $users = User::where('user_type', '!=', 'admin')->paginate(10);
-
+        $users = User::paginate(10);
+        
         return view('admin.users', compact('users', 'adminCount', 'staffCount', 'patientCount'));
     }
-
+    
     /**
      * Store a newly created user
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
@@ -79,26 +73,35 @@ class UserController extends Controller
             return back()->with('error', 'Failed to create user: ' . $e->getMessage())->withInput();
         }
     }
-
+    
     /**
      * Get user data for editing
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\JsonResponse
      */
     public function getUser(User $user)
     {
         try {
-            // Split the name into parts
-            $nameParts = explode(' ', $user->name);
+            Log::info('Fetching user data for editing', ['user_id' => $user->id]);
+            
+            // Split the name into parts - improved parsing logic
+            $nameParts = explode(' ', trim($user->name));
+            
+            // Extract name components
             $firstname = $nameParts[0] ?? '';
-            $lastname = count($nameParts) > 1 ? end($nameParts) : '';
+            
+            // Handle middle initial - it should be just one character
             $middleinitial = '';
-
             if (count($nameParts) > 2) {
-                // If there are more than 2 parts, everything between first and last is middle
-                $middleParts = array_slice($nameParts, 1, -1);
-                $middleinitial = implode(' ', $middleParts);
+                $middleinitial = $nameParts[1] ?? '';
+                // If it's longer than 1 character, just take the first character
+                if (strlen($middleinitial) > 1) {
+                    $middleinitial = substr($middleinitial, 0, 1);
+                }
+            }
+            
+            // Last name is the last part
+            $lastname = '';
+            if (count($nameParts) > 1) {
+                $lastname = count($nameParts) > 2 ? $nameParts[2] : $nameParts[1];
             }
 
             $userData = [
@@ -110,26 +113,26 @@ class UserController extends Controller
                 'gender' => $user->gender,
                 'user_type' => $user->user_type,
             ];
-
-            Log::info('User data retrieved successfully', ['user_id' => $user->id]);
-
+            
+            Log::info('User data retrieved successfully', [
+                'user_id' => $user->id,
+                'parsed_data' => $userData
+            ]);
+            
             return response()->json($userData);
         } catch (\Exception $e) {
             Log::error('Error retrieving user data', [
                 'user_id' => $user->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
-
-            return response()->json(['error' => 'Failed to retrieve user data'], 500);
+            
+            return response()->json(['error' => 'Failed to retrieve user data: ' . $e->getMessage()], 500);
         }
     }
-
+    
     /**
      * Update the specified user
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, User $user)
     {
@@ -153,23 +156,28 @@ class UserController extends Controller
                 $request->validate([
                     'password' => 'string|min:8',
                 ]);
-
                 $user->password = Hash::make($request->password);
             }
-
-            // Concatenate full name
-            // $fullName = trim("{$request->firstname} {$request->middleinitial} {$request->lastname}");
-
-            $user->firstname = $request->firstname;
-            $user->middleinitial = $request->middleinitial;
-            $user->lastname = $request->lastname;
+            
+            // Concatenate full name - ensure proper spacing
+            $middleInitial = $request->middleinitial ? " {$request->middleinitial} " : " ";
+            $fullName = $request->firstname . $middleInitial . $request->lastname;
+            $fullName = preg_replace('/\s+/', ' ', trim($fullName)); // Remove extra spaces
+            
+            // Update user fields
+            $user->name = $fullName;
             $user->email = $request->email;
             $user->gender = $request->gender;
             $user->user_type = $request->user_type;
+            
+            // Save changes
             $user->save();
-
-            Log::info('User updated successfully', ['user_id' => $user->id]);
-
+            
+            Log::info('User updated successfully', [
+                'user_id' => $user->id,
+                'updated_name' => $fullName
+            ]);
+            
             return redirect()->route('admin.users')->with('success', 'User updated successfully!');
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Validation failed during user update:', $e->errors());
@@ -177,17 +185,15 @@ class UserController extends Controller
         } catch (\Exception $e) {
             Log::error('User update failed:', [
                 'user_id' => $user->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
             return back()->with('error', 'Failed to update user: ' . $e->getMessage())->withInput();
         }
     }
-
+    
     /**
      * Remove the specified user
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(User $user)
     {
@@ -202,7 +208,8 @@ class UserController extends Controller
         } catch (\Exception $e) {
             Log::error('User deletion failed:', [
                 'user_id' => $user->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
 
             return back()->with('error', 'Failed to delete user: ' . $e->getMessage());

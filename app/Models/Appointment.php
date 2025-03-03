@@ -11,8 +11,6 @@ class Appointment extends Model
 
     protected $table = 'appointments';
 
-    protected $guarded = [];
-
     /**
      * Get the user that owns the appointment.
      */
@@ -24,5 +22,41 @@ class Appointment extends Model
     public function receipts()
     {
         return $this->hasMany(Receipt::class);
+    }
+
+    protected $fillable = [
+        'patient_name',
+        'email',
+        'phone',
+        'date',
+        'time',
+        'doctor',
+        'appointments',
+        'status'
+    ];
+    
+    // Define date fields
+    protected $dates = [
+        'date',
+        'created_at',
+        'updated_at'
+    ];
+    
+    // Define relationship with InventoryUsage
+    public function inventoryUsage()
+    {
+        return $this->hasMany(InventoryUsage::class, 'appointment_id');
+    }
+    
+    // Format time for display
+    public function getFormattedTimeAttribute()
+    {
+        return date('g:i A', strtotime($this->time));
+    }
+    
+    // Format date for display
+    public function getFormattedDateAttribute()
+    {
+        return date('M d, Y', strtotime($this->date));
     }
 }

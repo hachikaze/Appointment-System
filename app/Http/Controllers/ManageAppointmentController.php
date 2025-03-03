@@ -88,10 +88,10 @@ class ManageAppointmentController extends Controller
 
         if ($request->filled('message')) {
             DB::table('messages')->insert([
-                'appointment_id' => $appointment->id,
-                'message' => $request->message,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'appointment_id' => $request->id,
+                'message' => $messageContent,
+                // 'created_at' => now(),
+                // 'updated_at' => now(),
             ]);
         
             if (!empty($appointment->email)) {

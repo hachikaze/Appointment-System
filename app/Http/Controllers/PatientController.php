@@ -66,7 +66,9 @@ class PatientController extends Controller
                 // Count how many appointments are booked for this time slot
                 $bookedSlots = Appointment::where('date', $selectedDate)
                     ->where('time', $appointment->time_slot)
+                    ->where('status', 'pending')
                     ->count();
+
 
                 // Deduct booked slots from max slots
                 $appointment->remaining_slots = max(0, $appointment->max_slots - $bookedSlots);
@@ -77,6 +79,17 @@ class PatientController extends Controller
         $availableslots = $availableappointments->sum('remaining_slots');
         return view('patient.calendar', compact('appointments', 'availableappointments', 'selectedDate', 'availableslots'));
     }
+
+<<<<<<< HEAD
+
+
+=======
+    public function messages()
+    {
+        
+        return view('patient.messages');
+    }
+>>>>>>> 192015dabb55c2a9eb351d8d920121c1ab4cccbd
 
 
 
@@ -116,14 +129,19 @@ class PatientController extends Controller
     }
 
 
+<<<<<<< HEAD
     public function destroy($id)
+=======
+    public function cancel($id)
+>>>>>>> 192015dabb55c2a9eb351d8d920121c1ab4cccbd
     {
         $appointment = Appointment::findorFail($id);
-        $appointment->delete();
+        $appointment->status = 'Cancelled';
+        $appointment->save();
 
         AuditTrail::create([
             'user_id' => Auth::user()->id,
-            'action' => 'Delete Appointment',
+            'action' => 'Cancelled Appointment',
             'model' => 'User',
             'changes' => null,
             'ip_address' => request()->ip(),

@@ -1,6 +1,5 @@
 <?php
 namespace App\Http\Controllers;
-
 use App\Models\User;
 use App\Models\Appointment;
 use App\Models\AvailableAppointment;
@@ -8,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class AdminAppointmentController extends Controller
@@ -26,7 +26,34 @@ class AdminAppointmentController extends Controller
     }
 
     /**
-     * Add new staff or admin user
+     * Display the form to create available appointments and list existing ones
+     */
+    public function create()
+    {
+        // Get all available appointments
+        $availableAppointments = AvailableAppointment::orderBy('date', 'asc')
+            ->orderBy('time_slot', 'asc')
+            ->get();
+        
+        // Get counts of booked appointments for each date/time slot
+        $bookedAppointments = Appointment::select('date', 'time', DB::raw('count(*) as count'))
+            ->groupBy('date', 'time')
+            ->get();
+        
+        // Create a structured array to easily access the counts
+        $slotCounts = [];
+        foreach ($bookedAppointments as $appointment) {
+            if (!isset($slotCounts[$appointment->date])) {
+                $slotCounts[$appointment->date] = [];
+            }
+            $slotCounts[$appointment->date][$appointment->time] = $appointment->count;
+        }
+        
+        return view('admin.appointments.create', compact('availableAppointments', 'slotCounts'));
+    }
+
+    /**
+     * Store a newly created available appointment
      */
     public function store(Request $request)
     {
@@ -43,7 +70,41 @@ class AdminAppointmentController extends Controller
         ]);
 
         return redirect()->route('admin.appointments.create')
-                        ->with('success', 'Available appointment added successfully.');
+            ->with('success', 'Available appointment added successfully.');
+    }
+
+    /**
+     * Update an existing available appointment
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'date' => 'required|date',
+            'time_slot' => 'required|string',
+            'max_slots' => 'required|integer|min:1'
+        ]);
+
+        $appointment = AvailableAppointment::findOrFail($id);
+        $appointment->update([
+            'date' => $request->date,
+            'time_slot' => $request->time_slot,
+            'max_slots' => $request->max_slots,
+        ]);
+
+        return redirect()->route('admin.appointments.create')
+            ->with('success', 'Appointment slot updated successfully.');
+    }
+
+    /**
+     * Delete an available appointment slot
+     */
+    public function delete($id)
+    {
+        $appointment = AvailableAppointment::findOrFail($id);
+        $appointment->delete();
+
+        return redirect()->route('admin.appointments.create')
+            ->with('success', 'Appointment slot deleted successfully.');
     }
 
     /**
@@ -51,7 +112,7 @@ class AdminAppointmentController extends Controller
      */
     public function users()
     {
-        // You might want to fetch users to display in the view
+        // fetch users to display in the view
         $users = User::where('user_type', '!=', 'patient')->get();
         return view('admin.users', compact('users'));
     }
@@ -85,30 +146,27 @@ class AdminAppointmentController extends Controller
         $appointmentsJson = $appointments->map(function($appointment) {
             // Parse the date to get components
             $date = Carbon::parse($appointment->date);
-            
             return [
                 'id' => $appointment->id,
                 'patient' => $appointment->patient_name,
                 'date' => $appointment->date,
                 'time' => $appointment->time,
                 'status' => $appointment->status,
-                'service' => $appointment->appointments, // Assuming this field contains the service/reason
                 'notes' => $appointment->notes ?? 'No additional notes',
                 'email' => $appointment->email,
                 'phone' => $appointment->phone,
-                // Add these fields for easier JavaScript processing
                 'day' => $date->day,
-                'month' => $date->month - 1, // JavaScript months are 0-indexed
+                'month' => $date->month - 1, 
                 'year' => $date->year
             ];
         });
-        
+
         return view('admin.calendar', [
             'appointments' => $appointments,
             'appointmentsJson' => $appointmentsJson->toJson()
         ]);
     }
-    
+
     /**
      * Get appointments for a specific month (AJAX endpoint)
      */
@@ -117,16 +175,15 @@ class AdminAppointmentController extends Controller
         // Get month and year from request, default to current month/year
         $month = $request->input('month', Carbon::now()->month);
         $year = $request->input('year', Carbon::now()->year);
-        
+
         // Query appointments for the specified month/year
         $appointments = Appointment::whereMonth('date', $month)
-                                  ->whereYear('date', $year)
-                                  ->get();
-        
+            ->whereYear('date', $year)
+            ->get();
+
         // Format appointments for the calendar
         $formattedAppointments = $appointments->map(function($appointment) {
             $date = Carbon::parse($appointment->date);
-            
             return [
                 'id' => $appointment->id,
                 'patient' => $appointment->patient_name,
@@ -142,8 +199,42 @@ class AdminAppointmentController extends Controller
                 'year' => $date->year
             ];
         });
-        
+
         return response()->json($formattedAppointments);
+    }
+
+    /**
+     * Get available appointment slots (for patient booking)
+     */
+    public function getAvailableSlots(Request $request)
+    {
+        $date = $request->input('date');
+        
+        // Get available appointment slots
+        $availableSlots = AvailableAppointment::where('date', $date)
+            ->orderBy('time_slot', 'asc')
+            ->get();
+        
+        // Get counts of booked appointments for the requested date
+        $bookedAppointments = Appointment::select('time', DB::raw('count(*) as count'))
+            ->where('date', $date)
+            ->groupBy('time')
+            ->get();
+        
+        // Create a lookup array for booked counts
+        $bookedCounts = [];
+        foreach ($bookedAppointments as $appointment) {
+            $bookedCounts[$appointment->time] = $appointment->count;
+        }
+        
+        // Add the booked count to each available slot
+        $availableSlots = $availableSlots->map(function($slot) use ($bookedCounts) {
+            $slot->slots_taken = $bookedCounts[$slot->time_slot] ?? 0;
+            $slot->slots_available = $slot->max_slots - $slot->slots_taken;
+            return $slot;
+        });
+        
+        return response()->json($availableSlots);
     }
 
     /**
@@ -199,10 +290,12 @@ class AdminAppointmentController extends Controller
     public function deleteUser($id)
     {
         $user = User::findOrFail($id);
+        
         // Prevent deleting yourself
         if ($user->id === Auth::id()) {
             return back()->with('error', 'You cannot delete your own account.');
         }
+
         $user->delete();
         return back()->with('success', 'User deleted successfully.');
     }
