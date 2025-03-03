@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>ANA FATIMA BARROSO Dental Clinic Appointment</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,6 +12,7 @@
     @vite('resources/css/app.css')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js" defer></script>
     <link rel="stylesheet" href="/fontawesome/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 
 <style>
@@ -85,7 +87,8 @@
                                 aria-controls="drawer-right-example"
                                 class="relative p-2 rounded-full bg-white shadow-xs ring-1 ring-gray-300
                                 hover:bg-gray-50">
-                                <i class="fa-solid fa-bell text-teal-600"></i>
+                                <i class="fa-solid fa-bell  text-teal-600 fa-shake"
+                                    style="--fa-animation-duration: 3s;"></i>
                                 <span
                                     class="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 text-xs font-bold text-white bg-red-500 rounded-full">
                                     {{ $notifcount }}

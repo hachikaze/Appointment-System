@@ -178,8 +178,7 @@
                 <div class="bg-slate-50 rounded-xl p-6">
                     <div class="flex items-center justify-between mb-4">
                         <div class="bg-slate-100 p-3 rounded-lg">
-                            <svg class="w-8 h-8 text-slate-600" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
+                            <svg class="w-8 h-8 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                             </svg>
@@ -193,8 +192,7 @@
                 <div class="bg-rose-50 rounded-xl p-6">
                     <div class="flex items-center justify-between mb-4">
                         <div class="bg-rose-100 p-3 rounded-lg">
-                            <svg class="w-8 h-8 text-rose-600" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
+                            <svg class="w-8 h-8 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
                                 </path>
@@ -209,8 +207,7 @@
                 <div class="bg-emerald-50 rounded-xl p-6">
                     <div class="flex items-center justify-between mb-4">
                         <div class="bg-emerald-100 p-3 rounded-lg">
-                            <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
+                            <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
@@ -262,8 +259,7 @@
                 <!-- Activity Item -->
                 <div class="flex items-center p-4 bg-gray-50 rounded-xl">
                     <div class="bg-green-100 p-3 rounded-lg">
-                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
@@ -284,7 +280,7 @@
 
     @push('scripts')
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 // Monthly Overview Chart
                 const ctx = document.getElementById('monthlyOverviewChart').getContext('2d');
                 const monthlyChart = new Chart(ctx, {
@@ -292,29 +288,29 @@
                     data: {
                         labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
                         datasets: [{
-                                label: 'Total Appointments',
-                                data: [12, 19, 15, 17],
-                                borderColor: 'rgb(59, 130, 246)',
-                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                                tension: 0.4,
-                                fill: true
-                            },
-                            {
-                                label: 'Completed',
-                                data: [8, 15, 12, 14],
-                                borderColor: 'rgb(99, 102, 241)',
-                                backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                                tension: 0.4,
-                                fill: true
-                            },
-                            {
-                                label: 'Pending',
-                                data: [4, 4, 3, 3],
-                                borderColor: 'rgb(6, 182, 212)',
-                                backgroundColor: 'rgba(6, 182, 212, 0.1)',
-                                tension: 0.4,
-                                fill: true
-                            }
+                            label: 'Total Appointments',
+                            data: [12, 19, 15, 17],
+                            borderColor: 'rgb(59, 130, 246)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Completed',
+                            data: [8, 15, 12, 14],
+                            borderColor: 'rgb(99, 102, 241)',
+                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Pending',
+                            data: [4, 4, 3, 3],
+                            borderColor: 'rgb(6, 182, 212)',
+                            backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
                         ]
                     },
                     options: {
@@ -372,7 +368,7 @@
                 });
 
                 // Handle month selection change
-                document.getElementById('monthSelect').addEventListener('change', function(e) {
+                document.getElementById('monthSelect').addEventListener('change', function (e) {
                     // Example data updates based on selection
                     let newData;
                     switch (e.target.value) {

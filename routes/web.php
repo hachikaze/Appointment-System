@@ -8,10 +8,12 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ManageAppointmentController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Middleware\PreventBackHistory;
+use App\Http\Middleware\PreventUpdateOnSentMessages;
 use App\Mail\ForgotPassword;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Auth;
@@ -33,7 +35,7 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
     Route::middleware(['patientMiddleware'])->group(function () {
         Route::get('/patient/dashboard', [PatientController::class, 'index'])->name('patient.dashboard');
         Route::get('/patient/calendar', [PatientController::class, 'calendar'])->name('calendar');
-        Route::get('/patient/messaging', [PatientController::class, 'messages'])->name('messages');
+        // Route::get('/patient/messaging', [PatientController::class, 'messages'])->name('messages');
 
         Route::get('/patient/notifications', [PatientController::class, 'notifications'])->name('notifications');
         Route::get('/patient/history', [PatientController::class, 'history'])->name('history');
@@ -41,7 +43,24 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
 
         Route::put('/patient/appointments/{id}', [PatientController::class, 'cancel'])->name('appointments.cancel');
         Route::get('/patient/profile', [LoginController::class, 'profile'])->name('profile');
-        Route::put('patient/users/{id}', [LoginController::class, 'update'])->name('profile.update');
+        Route::put('/patient/users/{id}', [LoginController::class, 'update'])->name('profile.update');
+
+
+        //FOR GETTING MESSAGES
+        Route::get('/patient/messaging', [MessageController::class, 'getMessages'])->name('messages');
+
+        //FOR GETTING REPLIES
+        Route::get('/patient/messages/{messageId}/replies', [MessageController::class, 'getReplies'])->name('messages.replies');
+
+        //FOR POSTING A MESSAGE
+        Route::post('/patient/messages/{messageId}/messages', [MessageController::class, 'postMessage'])->name('messages.create.post');
+
+        //FOR POSTING A REPLY
+        Route::post('/patient/messages/{messageId}/replies', [MessageController::class, 'postReply'])->name('messages.replies.post');
+        Route::get('/api/upcoming-appointment', [PatientController::class, 'getUpcomingAppointment']);
+
+        // FOR UPDATING THE READ_aT
+        Route::post('/update-seen-status/{id}', [MessageController::class, 'updateSeenStatus']);
     });
 
     // FOR APPOINTMENT
@@ -102,12 +121,10 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::post('/admin/inventory/{id}/adjust', [InventoryController::class, 'adjustQuantity'])->name('admin.inventory.adjust');
         Route::post('/admin/inventory/order-critical', [InventoryController::class, 'orderCriticalItem'])->name('admin.inventory.order-critical');
         Route::put('/admin/inventory/categories/{category}', [InventoryController::class, 'updateCategory'])->name('admin.inventory.categories.update');
-                
         // Category Management Routes - UPDATED
         Route::post('/admin/inventory/categories', [InventoryController::class, 'storeCategory'])->name('admin.inventory.categories.store');
         Route::delete('/admin/inventory/categories/{category}', [InventoryController::class, 'destroyCategory'])->name('admin.inventory.categories.destroy');
         Route::put('/admin/inventory/categories/{category}', [InventoryController::class, 'updateCategory'])->name('admin.inventory.categories.update');
-
     });
 });
 

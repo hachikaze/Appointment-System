@@ -55,7 +55,7 @@ class AppointmentController extends Controller
 
         $existingAppointment = Appointment::where('email', $user->email)
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
-            ->where('status', 'Approved]')
+            ->whereIn('status', ['Approved', 'Pending'])
             ->exists();
 
         if ($existingAppointment) {
