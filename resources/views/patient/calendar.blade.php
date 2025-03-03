@@ -267,32 +267,51 @@
                     </thead>
                     <tbody class="bg-white border">
                         @foreach ($appointments as $appointment)
-                            <tr class="border-b text-black hover:bg-teal-200 ">
+                            <tr class="border-b text-black hover:bg-teal-200">
                                 <td class="px-6 py-4">{{ $appointment->patient_name }}</td>
                                 <td class="px-6 py-4">{{ $appointment->phone }}</td>
                                 <td class="px-6 py-4">{{ Carbon::parse($appointment->date)->format('F j, Y') }}</td>
                                 <td class="px-6 py-4">{{ $appointment->time }}</td>
                                 <td class="px-6 py-4">
-                                    <span
-                                        class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
+                                    <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
                                         {{ $appointment->status }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <button data-modal-target="delete-appointment-modal"
-                                        data-modal-toggle="delete-appointment-modal"
-                                        class="bg-red-500 hover:bg-red-700 text-white font-bold p-2 rounded-xl shadow-lg">
-                                        Cancel
-                                    </button>
+                                    @if($appointment->status === 'Pending')
+                                        <!-- When Pending, show Cancel button -->
+                                        <button data-modal-target="delete-appointment-modal"
+                                            data-modal-toggle="delete-appointment-modal"
+                                            class="bg-red-500 hover:bg-red-700 text-white font-bold p-2 rounded-xl shadow-lg">
+                                            Cancel
+                                        </button>
+                                    @elseif($appointment->status === 'Approved')
+                                        <!-- When Approved, show text (for example, "Approved") -->
+                                        <span class="font-bold text-blue-600">In Progress</span>
+                                    @elseif($appointment->status === 'Attended')
+                                        <!-- When Attended, show Completed text -->
+                                        <span class="font-bold text-green-600">Completed</span>
+                                    @elseif($appointment->status === 'Unattended')
+                                        <!-- When Attended, show Completed text -->
+                                        <button class="bg-red-500 hover:bg-red-700 text-white font-bold p-2 rounded-xl shadow-lg">
+                                            Reschedule
+                                        </button>
+                                    @else
+                                        <!-- Fallback if needed -->
+                                        <span class="font-bold text-gray-600">{{ $appointment->status }}</span>
+                                    @endif
                                 </td>
 
-                                <x-modal modalId="delete-appointment-modal" title="Delete this Appointment"
-                                    message="Are you sure you want to delete this appointment?"
-                                    route="{{ route('appointments.destroy', ['id' => $appointment->id]) }}"
-                                    method="DELETE" buttonText="Delete" />
+                                @unless($appointment->status === 'Approved')
+                                    <x-modal modalId="delete-appointment-modal" title="Delete this Appointment"
+                                        message="Are you sure you want to delete this appointment?"
+                                        route="{{ route('appointments.destroy', ['id' => $appointment->id]) }}"
+                                        method="DELETE" buttonText="Delete" />
+                                @endunless
                             </tr>
                         @endforeach
                     </tbody>
+
                 </table>
             </div>
         </div>

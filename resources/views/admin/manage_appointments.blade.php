@@ -340,36 +340,46 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <div class="flex gap-2">
-                                        <!-- Approve -->
-                                        <button
-                                            onclick="openModal('{{ $appointment->id }}', 'approve')"
-                                            class="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1.5 rounded-md text-xs hover:from-green-600 hover:to-green-700 transition shadow-sm flex items-center gap-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                            Approve
+                                    @if($appointment->status === 'Pending')
+                                        <!-- When Pending, show Approve and Cancel -->
+                                        <div class="flex gap-2">
+                                            <button onclick="openModal('{{ $appointment->id }}', 'approve')"
+                                                class="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1.5 rounded-md text-xs hover:from-green-600 hover:to-green-700 transition shadow-sm flex items-center gap-1">
+                                                Approve
+                                            </button>
+                                            <button onclick="openModal('{{ $appointment->id }}', 'cancel')"
+                                                class="bg-gradient-to-r from-rose-500 to-rose-600 text-white px-3 py-1.5 rounded-md text-xs hover:from-rose-600 hover:to-rose-700 transition shadow-sm flex items-center gap-1">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    @elseif($appointment->status === 'Approved')
+                                        <!-- When Approved, hide the Approve button and show Attended and Cancel -->
+                                        <div class="flex gap-2">
+                                            <button onclick="openModal('{{ $appointment->id }}', 'attended')"
+                                                class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1.5 rounded-md text-xs hover:from-blue-600 hover:to-blue-700 transition shadow-sm flex items-center gap-1">
+                                                Attended
+                                            </button>
+                                            <button onclick="openModal('{{ $appointment->id }}', 'cancel')"
+                                                class="bg-gradient-to-r from-rose-500 to-rose-600 text-white px-3 py-1.5 rounded-md text-xs hover:from-rose-600 hover:to-rose-700 transition shadow-sm flex items-center gap-1">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    @elseif($appointment->status === 'Attended')
+                                        <!-- When Attended, show only a "Completed" message -->
+                                        <span class="text-sm font-medium text-gray-600">Completed</span>
+                                    @elseif($appointment->status === 'Unattended')
+                                        <!-- When Unattended, show only the Reschedule button -->
+                                        <button onclick="openModal('{{ $appointment->id }}', 'reschedule')"
+                                            class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-3 py-1.5 rounded-md text-xs hover:from-yellow-600 hover:to-yellow-700 transition shadow-sm flex items-center gap-1">
+                                            Reschedule
                                         </button>
-                                        <!-- Mark Attended -->
-                                        <button
-                                            onclick="openModal('{{ $appointment->id }}', 'attended')"
-                                            class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1.5 rounded-md text-xs hover:from-blue-600 hover:to-blue-700 transition shadow-sm flex items-center gap-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            Attended
-                                        </button>
-                                        <!-- Cancel -->
-                                        <button
-                                            onclick="openModal('{{ $appointment->id }}', 'cancel')"
-                                            class="bg-gradient-to-r from-rose-500 to-rose-600 text-white px-3 py-1.5 rounded-md text-xs hover:from-rose-600 hover:to-rose-700 transition shadow-sm flex items-center gap-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                            </svg>
-                                            Cancel
-                                        </button>
-                                    </div>
+                                    @else
+                                        <!-- Fallback for any other status -->
+                                        <span class="text-sm font-medium text-gray-600">{{ $appointment->status }}</span>
+                                    @endif
                                 </td>
+
+
                             </tr>
                         @endforeach
                     </tbody>
@@ -428,13 +438,13 @@
             <!-- Modal Header  -->
             <div id="modalHeader" class="px-6 py-4 bg-green-500 text-white relative">
                 <div class="absolute top-3 right-3">
-                    <button
+                    <!-- <button
                         onclick="closeModal()"
                         class="text-white bg-white bg-opacity-20 rounded-full p-1 hover:bg-opacity-30 transition focus:outline-none">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
-                    </button>
+                    </button> -->
                 </div>
                 <div class="flex items-center gap-3">
                     <div id="modalIconContainer" class="bg-white bg-opacity-20 rounded-full p-2">
@@ -602,7 +612,7 @@
                     modalSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />';
                     break;
                     
-                    case 'cancel':
+                case 'cancel':
                     modalTitle.textContent = 'Cancel Appointment';
                     modalDescription.textContent = 'This will mark the appointment as unattended and notify the patient.';
                     confirmButton.className = 'bg-rose-600 text-white px-5 py-2 rounded-lg hover:bg-rose-700 transition shadow-sm font-medium flex items-center gap-2';
@@ -611,6 +621,17 @@
                     modalHeader.className = 'px-6 py-4 bg-rose-500 text-white relative';
                     modalIconContainer.className = 'bg-white bg-opacity-20 rounded-full p-2';
                     modalSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />';
+                    break;
+
+                case 'reschedule':
+                    modalTitle.textContent = 'Reschedule Appointment';
+                    modalDescription.textContent = 'This appointment is unattended. Please select a new date/time.';
+                    confirmButton.className = 'bg-yellow-600 text-white px-5 py-2 rounded-lg hover:bg-yellow-700 transition shadow-sm font-medium flex items-center gap-2';
+                    confirmButtonText.textContent = 'Reschedule';
+                    // Optionally, update the modal icon and header for rescheduling
+                    modalHeader.className = 'px-6 py-4 bg-yellow-500 text-white relative';
+                    modalIconContainer.className = 'bg-white bg-opacity-20 rounded-full p-2';
+                    modalSvg.innerHTML = '<!-- Add appropriate icon path for rescheduling here -->';
                     break;
                     
                 default:
