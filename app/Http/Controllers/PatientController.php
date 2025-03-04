@@ -141,4 +141,87 @@ class PatientController extends Controller
 
         return redirect()->back();
     }
+
+    //Reschedule
+    public function getAvailableSlots(Request $request)
+    {
+        $selectedDate = $request->input('date');
+        if (!$selectedDate) {
+            return response()->json(['error' => 'Date not provided'], 400);
+        }
+
+        $availableappointments = AvailableAppointment::where('date', $selectedDate)
+            ->select('time_slot', 'max_slots')
+            ->get()
+            ->map(function ($appointment) use ($selectedDate) {
+                // Count how many appointments are booked for this slot
+                $bookedSlots = Appointment::where('date', $selectedDate)
+                    ->where('time', $appointment->time_slot)
+                    ->whereIn('status', ['pending', 'approved'])
+                    ->count();
+
+                // Deduct booked slots from max slots to get remaining slots
+                $appointment->remaining_slots = max(0, $appointment->max_slots - $bookedSlots);
+                return $appointment;
+            });
+
+        return response()->json($availableappointments);
+    }
+
+    public function reschedule(Request $request, $id)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'selectedDate' => 'required|date',
+            'time'         => 'required|string',
+        ]);
+
+        // Find the appointment to reschedule
+        $appointment = Appointment::findOrFail($id);
+
+        // Parse the new date and time
+        $newDate = Carbon::parse($request->input('selectedDate'))->format('Y-m-d');
+        $newTime = $request->input('time');
+
+        // Check if the selected slot exists
+        $availableSlot = AvailableAppointment::where('date', $newDate)
+            ->where('time_slot', $newTime)
+            ->first();
+
+        if (!$availableSlot) {
+            return redirect()->back()->with('error', 'The selected time slot is not available.');
+        }
+
+        // Count booked slots for the selected date and time
+        $bookedSlots = Appointment::where('date', $newDate)
+            ->where('time', $newTime)
+            ->whereIn('status', ['pending', 'approved'])
+            ->count();
+
+        // Check if the slot is fully booked
+        if ($bookedSlots >= $availableSlot->max_slots) {
+            return redirect()->back()->with('error', 'The selected time slot is fully booked.');
+        }
+
+        // Update only the date and time of the appointment
+        $appointment->update([
+            'date' => $newDate,
+            'time' => $newTime,
+            'status' => 'Pending', // Reset status to pending for approval
+        ]);
+
+        // Log the change in the audit trail
+        AuditTrail::create([
+            'user_id'    => Auth::user()->id,
+            'action'     => 'Rescheduled Appointment',
+            'model'      => 'Appointment',
+            'changes'    => json_encode(['new_date' => $newDate, 'new_time' => $newTime]),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->header('User-Agent'),
+        ]);
+
+        return redirect()->back()->with('success', 'Appointment rescheduled successfully.');
+    }
+
+
 }

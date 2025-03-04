@@ -29,15 +29,18 @@ class RegisterController extends Controller
             'user_type' => 'string',
         ]);
 
-        User::create([
+        // Concatenate the name
+        // $fullName = trim("{$request->firstname} {$request->middleinitial} {$request->lastname}");
+
+        $user = User::create([
             'firstname' => $request->firstname,
             'middleinitial' => $request->middleinitial,
             'lastname' => $request->lastname,
             'email' => $request->email,
             'gender' => $request->gender,
             'password' => Hash::make($request->password),
-            'user_type' => $request->user_type ?? 'patient', // Default to 'patient' if not provided
-        ]);
+            'user_type' => $request->user_type ?? 'patient',
+        ]);        
 
         return redirect()->route('login')->with('success', 'Registration successful. Please verify your email.');
     }

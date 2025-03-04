@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminAppointmentController;
+use App\Http\Controllers\AdminPatientRecordsController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -56,6 +57,15 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::put('/patient/appointments/{id}', [PatientController::class, 'cancel'])->name('appointments.cancel');
         Route::get('/patient/profile', [LoginController::class, 'profile'])->name('profile');
         Route::put('patient/users/{id}', [LoginController::class, 'update'])->name('profile.update');
+        
+        //FOR RESCHEDULING
+        Route::get('/patient/appointments/available-slots', [PatientController::class, 'getAvailableSlots'])
+        ->name('appointments.available-slots');
+
+        Route::get('/get-available-slots', [PatientController::class, 'getAvailableSlots']);
+
+        Route::put('/patient/appointments/reschedule/{id}', [PatientController::class, 'reschedule'])
+        ->name('appointments.reschedule');
     });
 
     // FOR APPOINTMENT
@@ -128,6 +138,17 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::delete('/admin/inventory/categories/{category}', [InventoryController::class, 'destroyCategory'])->name('admin.inventory.categories.destroy');
         Route::put('/admin/inventory/categories/{category}', [InventoryController::class, 'updateCategory'])->name('admin.inventory.categories.update');
 
+        // Patient Records
+        Route::get('/admin/patient-records', [AdminPatientRecordsController::class, 'records'])
+            ->name('admin.patient_records');
+
+        // Update a specific patient record (triggered from your edit modal)
+        Route::put('/admin/patient-records/{id}', [AdminPatientRecordsController::class, 'update'])
+            ->name('admin.patient_records.update');
+
+        // Delete a specific patient record
+        Route::delete('/admin/patient-records/{id}', [AdminPatientRecordsController::class, 'destroy'])
+            ->name('admin.patient_records.destroy');
     });
 });
 
