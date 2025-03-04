@@ -125,25 +125,46 @@ class PatientController extends Controller
             ->select('id', 'patient_name', 'phone', 'date', 'time', 'status')
             ->get();
 
+        //GET DATA FROM THE SELECTED DATA
         $availableappointments = $selectedDate
             ? AvailableAppointment::where('date', $selectedDate)
-                ->select('date', 'time_slot', 'max_slots') // Add 'date' here
-                ->get()
-                ->map(function ($appointment) use ($selectedDate) {
-                    // Count how many appointments are booked for this time slot
-                    $bookedSlots = Appointment::where('date', $selectedDate)
-                        ->where('time', $appointment->time_slot)
-                        ->where('status', 'Pending')
-                        ->count();
-                    // Deduct booked slots from max slots
-                    $appointment->remaining_slots = max(0, $appointment->max_slots - $bookedSlots);
-                    return $appointment;
-                })
+            ->select('date', 'time_slot', 'max_slots') 
+            ->get()
+            ->map(function ($appointment) use ($selectedDate) {
+                $bookedSlots = Appointment::where('date', $selectedDate)
+                    ->where('time', $appointment->time_slot)
+                    ->where('status', 'Pending')
+                    ->count();
+                $appointment->remaining_slots = max(0, $appointment->max_slots - $bookedSlots);
+                return $appointment;
+            })
             : collect();
 
+        //GET THE AVAILABLE APPOINTMENTS
+        $allData = AvailableAppointment::all();
 
+
+        //DISPLAY 
+        $fetchedData = AvailableAppointment::all()->toArray();
+        $remainingSlotsByDate = [];
+        foreach ($fetchedData as $appointment) {
+            $date = $appointment['date'];
+            $timeSlot = $appointment['time_slot'];
+            $maxSlots = $appointment['max_slots'];
+            $bookedSlots = Appointment::where('date', $date)
+                ->where('time', $timeSlot)
+                ->where('status', 'Pending')
+                ->count();
+            $remainingSlots = max(0, $maxSlots - $bookedSlots);
+
+            if (!isset($remainingSlotsByDate[$date])) {
+                $remainingSlotsByDate[$date] = 0;
+            }
+            $remainingSlotsByDate[$date] += $remainingSlots;
+        }
         $availableslots = $availableappointments->sum('remaining_slots');
-        return view('patient.calendar', compact('appointments', 'availableappointments', 'selectedDate', 'availableslots'));
+
+        return view('patient.calendar', compact('appointments','allData', 'remainingSlotsByDate', 'availableappointments', 'selectedDate', 'availableslots'));
     }
 
     // public function messages()
