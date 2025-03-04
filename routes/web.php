@@ -61,6 +61,12 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
 
         // FOR UPDATING THE READ_aT
         Route::post('/update-seen-status/{id}', [MessageController::class, 'updateSeenStatus']);
+
+        // FOR FETCHING APPOINTMENTS
+        // Route::get('/appointments/{date}', action: [PatientController::class, 'fetchAppointments']);
+
+        Route::get('/appointments', [PatientController::class, 'getAppointments'])->name('appointments.get');
+
     });
 
     // FOR APPOINTMENT
