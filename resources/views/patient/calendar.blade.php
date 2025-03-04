@@ -327,15 +327,179 @@
                             </p>
                         </div>
                     </div>
-            @endif
-            </form>
+                </div>
+            @else
+                <div class="flex items-center justify-center m-10 mt-10">
+                    <div
+                        class="bg-white relative  p-4 text-teal-600 overflow-x-auto container shadow-lg sm:rounded-lg mx-auto">
+                        <p class="text-xl font-bold">
+                            <i class="fa-solid fa-calendar-check"></i> No Date Selected
+                        </p>
+                    </div>
+                </div>
+        @endif
+        </form>
+        <div class="flex items-center  justify-center m-10 mb-0 mt-10  ">
+            <div class="relative overflow-x-auto  my-5 container shadow-lg sm:rounded-lg  pt-0 pr-0 pl-0 mx-auto">
+                <table
+                    class="w-full rounded-lg text-lg text-left rtl:text-right text-white dark:text-gray-400 shadow-lg">
+                    <thead class="text-lg text-white uppercase bg-teal-600  dark:text-white">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Patient Name</th>
+                            <th scope="col" class="px-6 py-3">Phone Number</th>
+                            <th scope="col" class="px-6 py-3">Date</th>
+                            <th scope="col" class="px-6 py-3">Time</th>
+                            <th scope="col" class="px-6 py-3">Status</th>
+                            <th scope="col" class="px-6 py-3"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white border">
+                        @foreach ($appointments as $appointment)
+                            <tr class="border-b text-black hover:bg-teal-200">
+                                <td class="px-6 py-4">{{ $appointment->patient_name }}</td>
+                                <td class="px-6 py-4">{{ $appointment->phone }}</td>
+                                <td class="px-6 py-4">{{ Carbon::parse($appointment->date)->format('F j, Y') }}</td>
+                                <td class="px-6 py-4">{{ $appointment->time }}</td>
+                                <td class="px-6 py-4">
+                                    @php
+                                        $buttonClass = match (strtolower($appointment->status)) {
+                                            'cancelled',
+                                            'delete'  => 'bg-red-600 hover:bg-red-700', // Red for cancelled states
+                                            'approved'=> 'bg-green-600 hover:bg-green-700',
+                                            'pending' => 'bg-orange-600 hover:bg-orange-700',
+                                            'attended'=> 'bg-blue-600 hover:bg-blue-700',
+                                            'unattended' => 'bg-red-600 hover:bg-red-700', // You can adjust as needed
+                                            default   => 'bg-gray-600 hover:bg-gray-700',
+                                        };
+                                    @endphp
+                                    <span class="px-2 py-1 font-semibold leading-tight {{ $buttonClass }} rounded-full text-white">
+                                        {{ ucfirst($appointment->status) }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    @php
+                                        $status = strtolower($appointment->status);
+                                    @endphp
+                                    @if ($status === 'cancelled')
+                                        <!-- If cancelled, show text -->
+                                        <span class="text-red-600 font-bold">Cancelled</span>
+                                    @elseif ($status === 'unattended')
+                                        <!-- If unattended, show Reschedule button -->
+                                        <button data-modal-target="reschedule-appointment-modal-{{ $appointment->id }}"
+                                            data-modal-toggle="reschedule-appointment-modal-{{ $appointment->id }}"
+                                            class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold p-2 rounded-xl shadow-lg">
+                                            Reschedule
+                                        </button>
 
-        </div>
-        </div>
+                                        <!-- Reschedule Modal Markup -->
+                                        <div id="reschedule-appointment-modal-{{ $appointment->id }}" class="modal hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                                            <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full relative">
+                                                <h2 class="text-xl font-bold mb-4">Reschedule Appointment</h2>
+                                                <form action="{{ route('appointments.reschedule', ['id' => $appointment->id]) }}" method="POST" id="rescheduleForm-{{ $appointment->id }}">
+                                                    @csrf
+                                                    @method('PUT')
+
+                                                    <!-- Hidden Fields for Existing Data -->
+                                                    <input type="hidden" name="phone" value="{{ $appointment->phone }}">
+                                                    <input type="hidden" name="appointment_reason" value="{{ $appointment->appointment_reason }}">
+
+                                                    <!-- Date Picker -->
+                                                    <div class="mb-4">
+                                                        <label for="reschedule-date-{{ $appointment->id }}" class="block text-md font-medium text-gray-900">Select New Date</label>
+                                                        <input type="date" id="reschedule-date-{{ $appointment->id }}" name="selectedDate" class="mt-1 block w-full border-gray-300 rounded-md" required onchange="handleDateSelection({{ $appointment->id }})">
+                                                    </div>
+
+                                                    <!-- Hidden Input for Time -->
+                                                    <input type="hidden" name="time" id="reschedule-time-{{ $appointment->id }}">
+
+                                                    <!-- Time Slots Selection -->
+                                                    <div id="time-slots-{{ $appointment->id }}" class="flex flex-wrap gap-2 mt-4">
+                                                        <!-- Time slots will be dynamically populated here -->
+                                                    </div>
+
+                                                    <!-- Submit Button -->
+                                                    <button type="submit"
+                                                        class="inline-flex items-center justify-center rounded-md border border-transparent px-4 py-2 bg-teal-600 font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none transition ease-in-out duration-150 text-md">
+                                                        <i class="fa-solid fa-check-circle mr-2"></i>
+                                                        Reschedule Appointment
+                                                    </button>
+                                                </form>
+                                                <button class="absolute top-0 right-0 m-4 text-gray-500 hover:text-gray-700" onclick="closeRescheduleModal({{ $appointment->id }})">&times;</button>
+                                            </div>
+                                        </div>
+                                    @elseif ($status === 'attended')
+                                        <!-- If attended, show Completed text in blue -->
+                                        <span class="text-blue-600 font-bold">Completed</span>
+                                    @else
+                                        <!-- Default action: show Cancel button -->
+                                        <button data-modal-target="update-appointment-modal-{{ $appointment->id }}"
+                                            data-modal-toggle="update-appointment-modal-{{ $appointment->id }}"
+                                            class="bg-red-500 hover:bg-red-700 text-white font-bold p-2 rounded-xl shadow-lg">
+                                            Cancel
+                                        </button>
+                                        <x-modal modalId="update-appointment-modal-{{ $appointment->id }}" title="Cancel this Appointment?"
+                                            message="Are you sure you want to cancel this appointment?"
+                                            route="{{ route('appointments.cancel', ['id' => $appointment->id]) }}"
+                                            method="PUT" buttonText="Cancel" />
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </body>
 
     </html>
+
+    <script>
+        function handleDateSelection(appointmentId) {
+            const dateInput = document.getElementById(`reschedule-date-${appointmentId}`);
+            const timeSlotsContainer = document.getElementById(`time-slots-${appointmentId}`);
+
+            if (dateInput.value) {
+                // Fetch available time slots for the selected date
+                fetch(`{{ route('appointments.available-slots') }}?date=${dateInput.value}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        timeSlotsContainer.innerHTML = ''; // Clear previous slots
+
+                        if (data.length > 0) {
+                            data.forEach(slot => {
+                                if (slot.remaining_slots > 0) {
+                                    const button = document.createElement('button');
+                                    button.type = 'button';
+                                    button.className = 'appointment-button px-4 py-2 text-md shadow-lg font-medium text-gray-900 bg-gray-100 border border-gray-800 rounded-lg hover:bg-teal-600 hover:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none';
+                                    button.dataset.time = slot.time_slot;
+                                    button.textContent = `${slot.time_slot} (${slot.remaining_slots} slots left)`;
+                                    button.onclick = () => selectRescheduleTime(button);
+                                    timeSlotsContainer.appendChild(button);
+                                }
+                            });
+                        } else {
+                            // Display a message if no slots are available
+                            const noSlotsMessage = document.createElement('div');
+                            noSlotsMessage.className = 'flex items-center space-x-2';
+                            noSlotsMessage.innerHTML = `
+                                <i class="fa-solid fa-xmark text-red-500 text-2xl"></i>
+                                <p class="text-lg font-bold text-teal-600">
+                                    No available time slots for ${dateInput.value}
+                                </p>
+                            `;
+                            timeSlotsContainer.appendChild(noSlotsMessage);
+                        }
+
+                        timeSlotsContainer.classList.remove('hidden');
+                    })
+                    .catch(error => {
+                        console.error('Error fetching time slots:', error);
+                    });
+            } else {
+                timeSlotsContainer.classList.add('hidden');
+            }
+        }
+    </script>
 
     <script>
         function selectAppointmentTime(button) {
@@ -350,6 +514,22 @@
             button.classList.remove('bg-gray-100', 'text-gray-900');
             button.classList.add('bg-teal-600', 'text-white');
         }
+
+        function selectRescheduleTime(button) {
+            const selectedTime = button.getAttribute('data-time');
+            // Retrieve the appointment ID from the modal's ID
+            const modalId = button.closest('.modal').id.split('-').pop();
+            document.getElementById(`reschedule-time-${modalId}`).value = selectedTime;
+
+            // Highlight the selected time slot only within the reschedule modal
+            document.querySelectorAll(`#time-slots-${modalId} .appointment-button`).forEach(btn => {
+                btn.classList.remove('bg-teal-600', 'text-white');
+                btn.classList.add('bg-gray-100', 'text-gray-900');
+            });
+            button.classList.remove('bg-gray-100', 'text-gray-900');
+            button.classList.add('bg-teal-600', 'text-white');
+        }
+
 
         document.addEventListener("DOMContentLoaded", function() {
             const appointments = @json($appointments);

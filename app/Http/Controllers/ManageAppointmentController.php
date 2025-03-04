@@ -63,8 +63,8 @@ class ManageAppointmentController extends Controller
             DB::table('messages')->insert([
                 'appointment_id' => $request->id,
                 'message' => $messageContent,
-                'created_at' => now(),
-                'updated_at' => now(),
+                // 'created_at' => now(),
+                // 'updated_at' => now(),
             ]);
         }
 

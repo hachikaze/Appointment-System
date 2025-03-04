@@ -43,24 +43,16 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
 
         Route::put('/patient/appointments/{id}', [PatientController::class, 'cancel'])->name('appointments.cancel');
         Route::get('/patient/profile', [LoginController::class, 'profile'])->name('profile');
-        Route::put('/patient/users/{id}', [LoginController::class, 'update'])->name('profile.update');
+        Route::put('patient/users/{id}', [LoginController::class, 'update'])->name('profile.update');
+        
+        //FOR RESCHEDULING
+        Route::get('/patient/appointments/available-slots', [PatientController::class, 'getAvailableSlots'])
+        ->name('appointments.available-slots');
 
+        Route::get('/get-available-slots', [PatientController::class, 'getAvailableSlots']);
 
-        //FOR GETTING MESSAGES
-        Route::get('/patient/messaging', [MessageController::class, 'getMessages'])->name('messages');
-
-        //FOR GETTING REPLIES
-        Route::get('/patient/messages/{messageId}/replies', [MessageController::class, 'getReplies'])->name('messages.replies');
-
-        //FOR POSTING A MESSAGE
-        Route::post('/patient/messages/{messageId}/messages', [MessageController::class, 'postMessage'])->name('messages.create.post');
-
-        //FOR POSTING A REPLY
-        Route::post('/patient/messages/{messageId}/replies', [MessageController::class, 'postReply'])->name('messages.replies.post');
-        Route::get('/api/upcoming-appointment', [PatientController::class, 'getUpcomingAppointment']);
-
-        // FOR UPDATING THE READ_aT
-        Route::post('/update-seen-status/{id}', [MessageController::class, 'updateSeenStatus']);
+        Route::put('/patient/appointments/reschedule/{id}', [PatientController::class, 'reschedule'])
+        ->name('appointments.reschedule');
     });
 
     // FOR APPOINTMENT

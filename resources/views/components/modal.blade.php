@@ -38,6 +38,51 @@
                     Exit
                 </button>
             </div>
+<<<<<<< HEAD
         </form>
+=======
+            <div class="p-4 my-5 md:p-5 space-y-4">
+                <p class="text-xl text-center text-black">
+                    {{ $message }}
+                </p>
+            </div>
+            <!-- Modal footer -->
+            <div class="flex items-center justify-end p-4 md:p-5 rounded-b">
+                <form action="{{ $route }}" method="{{ $method === 'GET' ? 'GET' : 'POST' }}">
+                    @csrf
+                    @if ($method === 'PUT')
+                        @method('PUT')
+                    @elseif ($method === 'DELETE')
+                        @method('DELETE')
+                    @endif
+                    @php
+                        $buttonClass = match (strtolower($buttonText)) {
+                            'confirm', 'delete' => 'bg-red-600 hover:bg-red-700', // Red for Delete/Confirm
+                            'update' => 'bg-blue-600 hover:bg-blue-700', // Blue for Update
+                            'create' => 'bg-green-600 hover:bg-green-700', // Green for Create
+                            'cancel' => 'bg-red-600 hover:bg-red-700', // Red for Cancel
+                            default => 'bg-gray-600 hover:bg-gray-700', // Default Gray
+                        };
+                    @endphp
+                    <div class="flex items-center justify-end gap-3">
+                        <!-- <button data-modal-hide="default-modal" type="submit"
+                            class="text-white p-2 font-bold shadow-lg rounded-lg {{ $buttonClass }}">
+                            {{ $buttonText }}
+                        </button> -->
+
+                        <button data-modal-hide="{{ $modalId }}" type="submit"
+                            class="text-white p-2 font-bold shadow-lg rounded-lg {{ $buttonClass }}">
+                            {{ $buttonText }}
+                        </button>
+
+                        <button type="button" data-modal-hide="{{ $modalId }}"
+                            class="text-gray-700 bg-gray-300 hover:bg-gray-400 p-2 font-bold shadow-lg rounded-lg">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+>>>>>>> 1e88ce5f60dd61ae04db4d0f05e39ba117182ffd
     </div>
 </div>
