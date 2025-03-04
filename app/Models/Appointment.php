@@ -10,7 +10,20 @@ class Appointment extends Model
     use HasFactory;
 
     protected $table = 'appointments';
-    
+
+    /**
+     * Get the user that owns the appointment.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function receipts()
+    {
+        return $this->hasMany(Receipt::class);
+    }
+
     protected $fillable = [
         'patient_name',
         'email',
@@ -19,7 +32,8 @@ class Appointment extends Model
         'time',
         'doctor',
         'appointments',
-        'status'
+        'status',
+        'user_id'
     ];
     
     // Define date fields
@@ -33,6 +47,11 @@ class Appointment extends Model
     public function inventoryUsage()
     {
         return $this->hasMany(InventoryUsage::class, 'appointment_id');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
     
     // Format time for display

@@ -18,7 +18,7 @@ class UserController extends Controller
         $adminCount = User::where('user_type', 'admin')->count();
         $staffCount = User::where('user_type', 'staff')->count();
         $patientCount = User::where('user_type', 'patient')->count();
-        
+
         // Get all users with pagination
         $users = User::paginate(10);
         
@@ -32,7 +32,7 @@ class UserController extends Controller
     {
         // Log the incoming request data for debugging
         Log::info('User creation request:', $request->all());
-        
+
         try {
             $validated = $request->validate([
                 'firstname' => 'required|string|max:255',
@@ -43,13 +43,13 @@ class UserController extends Controller
                 'password' => 'required|string|min:8',
                 'user_type' => ['required', 'string', Rule::in(['admin', 'staff', 'patient'])],
             ]);
-            
+
             // Log validation success
             Log::info('Validation passed');
-            
+
             // Concatenate full name
             $fullName = trim("{$request->firstname} {$request->middleinitial} {$request->lastname}");
-            
+
             // Create user
             $user = User::create([
                 'name' => $fullName,
@@ -58,10 +58,10 @@ class UserController extends Controller
                 'password' => Hash::make($request->password),
                 'user_type' => $request->user_type
             ]);
-            
+
             // Log user creation success
             Log::info('User created successfully:', ['id' => $user->id, 'email' => $user->email]);
-            
+
             return redirect()->route('admin.users')->with('success', 'User created successfully.');
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Log validation errors
@@ -103,7 +103,7 @@ class UserController extends Controller
             if (count($nameParts) > 1) {
                 $lastname = count($nameParts) > 2 ? $nameParts[2] : $nameParts[1];
             }
-            
+
             $userData = [
                 'id' => $user->id,
                 'firstname' => $firstname,
@@ -140,7 +140,7 @@ class UserController extends Controller
             'user_id' => $user->id,
             'request_data' => $request->except(['password', 'password_confirmation'])
         ]);
-        
+
         try {
             $validated = $request->validate([
                 'firstname' => 'required|string|max:255',
@@ -150,7 +150,7 @@ class UserController extends Controller
                 'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
                 'user_type' => ['required', 'string', Rule::in(['admin', 'staff', 'patient'])],
             ]);
-            
+
             // Only update password if provided
             if ($request->filled('password')) {
                 $request->validate([
@@ -199,11 +199,11 @@ class UserController extends Controller
     {
         try {
             Log::info('Attempting to delete user', ['user_id' => $user->id]);
-            
+
             $user->delete();
-            
+
             Log::info('User deleted successfully', ['user_id' => $user->id]);
-            
+
             return redirect()->route('admin.users')->with('success', 'User deleted successfully!');
         } catch (\Exception $e) {
             Log::error('User deletion failed:', [
@@ -211,7 +211,7 @@ class UserController extends Controller
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             return back()->with('error', 'Failed to delete user: ' . $e->getMessage());
         }
     }

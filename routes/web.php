@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminAppointmentController;
+use App\Http\Controllers\AdminPatientRecordsController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -10,8 +11,10 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ManageAppointmentController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\ReceiptController;
 use App\Http\Middleware\PreventBackHistory;
 use App\Http\Middleware\PreventUpdateOnSentMessages;
 use App\Mail\ForgotPassword;
@@ -22,7 +25,19 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 // Test route
-Route::get('test', [AppointmentController::class, 'index']);
+Route::get('/test', function () {
+
+});
+
+// VIEW CUSTOMER GCASH PAYMENTS
+Route::get('/admin/view-payments', [PaymentController::class, 'viewPayments']);
+
+// PATIENT GCASH PAYMENT
+Route::get('/patient/gcash-payment', [PaymentController::class, 'index']);
+Route::post('/payments/store', [PaymentController::class, 'store'])->name('payments.store');
+
+// RECEIPT VIEWER FOR PATIENT (ADD DOWNLOAD PDF)
+Route::get('/receipts/{id}', [ReceiptController::class, 'show'])->name('receipt.show');
 
 // LANDING PAGE
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -121,6 +136,18 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::post('/admin/inventory/categories', [InventoryController::class, 'storeCategory'])->name('admin.inventory.categories.store');
         Route::delete('/admin/inventory/categories/{category}', [InventoryController::class, 'destroyCategory'])->name('admin.inventory.categories.destroy');
         Route::put('/admin/inventory/categories/{category}', [InventoryController::class, 'updateCategory'])->name('admin.inventory.categories.update');
+
+        // Patient Records
+        Route::get('/admin/patient-records', [AdminPatientRecordsController::class, 'records'])
+            ->name('admin.patient_records');
+
+        // Update a specific patient record (triggered from your edit modal)
+        Route::put('/admin/patient-records/{id}', [AdminPatientRecordsController::class, 'update'])
+            ->name('admin.patient_records.update');
+
+        // Delete a specific patient record
+        Route::delete('/admin/patient-records/{id}', [AdminPatientRecordsController::class, 'destroy'])
+            ->name('admin.patient_records.destroy');
     });
 });
 

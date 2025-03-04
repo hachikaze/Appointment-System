@@ -12,6 +12,15 @@ use Illuminate\Support\Facades\Auth;
 class AppointmentController extends Controller
 {
 
+    public function index()
+    {
+        // Fetch all appointments
+        $appointments = Appointment::all();
+
+        // Return a view with the appointments data
+        return view('appointments.index', compact('appointments'));
+    }
+
     public function create()
     {
         $availableAppointments = AvailableAppointment::all();
@@ -76,6 +85,7 @@ class AppointmentController extends Controller
             'time' => $time,
             'appointments' => $request->input('appointment_reason'),
             'updated_at' => null,
+            'user_id' => $user->id,
         ]);
 
         AuditTrail::create([
