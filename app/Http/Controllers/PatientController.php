@@ -80,16 +80,11 @@ class PatientController extends Controller
         return view('patient.calendar', compact('appointments', 'availableappointments', 'selectedDate', 'availableslots'));
     }
 
-<<<<<<< HEAD
-
-
-=======
     public function messages()
     {
         
         return view('patient.messages');
     }
->>>>>>> 192015dabb55c2a9eb351d8d920121c1ab4cccbd
 
 
 
@@ -129,11 +124,7 @@ class PatientController extends Controller
     }
 
 
-<<<<<<< HEAD
-    public function destroy($id)
-=======
     public function cancel($id)
->>>>>>> 192015dabb55c2a9eb351d8d920121c1ab4cccbd
     {
         $appointment = Appointment::findorFail($id);
         $appointment->status = 'Cancelled';

@@ -20,11 +20,6 @@ class AdminAppointmentController extends Controller
         return view('admin.dashboard');
     }
 
-    public function create()
-    {
-        return view('admin.appointments.create');
-    }
-
     /**
      * Display the form to create available appointments and list existing ones
      */

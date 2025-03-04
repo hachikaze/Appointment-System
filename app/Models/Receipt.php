@@ -11,10 +11,15 @@ class Receipt extends Model
 
     protected $table = 'receipts';
     
-    protected $fillable = ['receipt_number', 'file_path', 'appointment_id'];
+    protected $guarded = [];
+
+    public function payment()
+    {
+        return $this->belongsTo(Payment::class);
+    }
 
     public function appointment()
     {
-        return $this->belongsTo(Appointment::class);
+        return $this->hasOneThrough(Appointment::class, Payment::class, 'id', 'id', 'payment_id', 'appointment_id');
     }
 }

@@ -32,7 +32,8 @@ class Appointment extends Model
         'time',
         'doctor',
         'appointments',
-        'status'
+        'status',
+        'user_id'
     ];
     
     // Define date fields
@@ -46,6 +47,11 @@ class Appointment extends Model
     public function inventoryUsage()
     {
         return $this->hasMany(InventoryUsage::class, 'appointment_id');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
     
     // Format time for display

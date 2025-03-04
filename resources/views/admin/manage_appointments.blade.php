@@ -539,12 +539,6 @@
                         </textarea>
                     </div>
 
-                    <!-- File Upload Field -->
-                    <div>
-                        <label for="receipt_file" class="block text-sm font-medium text-gray-700 mb-1">Receipt File (Required for Approval)</label>
-                        <input type="file" name="receipt_file" id="receipt_file" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" required>
-                    </div>
-
                     <!-- Action Buttons -->
                     <div class="flex justify-end gap-3 pt-2">
                         <button
