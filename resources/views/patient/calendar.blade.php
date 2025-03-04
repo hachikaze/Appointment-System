@@ -328,15 +328,6 @@
                         </div>
                     </div>
                 </div>
-            @else
-                <div class="flex items-center justify-center m-10 mt-10">
-                    <div
-                        class="bg-white relative  p-4 text-teal-600 overflow-x-auto container shadow-lg sm:rounded-lg mx-auto">
-                        <p class="text-xl font-bold">
-                            <i class="fa-solid fa-calendar-check"></i> No Date Selected
-                        </p>
-                    </div>
-                </div>
         @endif
         </form>
         <div class="flex items-center  justify-center m-10 mb-0 mt-10  ">

@@ -29,13 +29,15 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/doctor', [HomeController::class, 'doctor'])->name('doctor');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+Route::get('/service', [HomeController::class, 'service'])->name('service');
+
 
 Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(function () {
     // FOR PATIENT USERS
     Route::middleware(['patientMiddleware'])->group(function () {
         Route::get('/patient/dashboard', [PatientController::class, 'index'])->name('patient.dashboard');
         Route::get('/patient/calendar', [PatientController::class, 'calendar'])->name('calendar');
-        // Route::get('/patient/messaging', [PatientController::class, 'messages'])->name('messages');
+        Route::get('/patient/messaging', [PatientController::class, 'messages'])->name('messages');
 
         Route::get('/patient/notifications', [PatientController::class, 'notifications'])->name('notifications');
         Route::get('/patient/history', [PatientController::class, 'history'])->name('history');

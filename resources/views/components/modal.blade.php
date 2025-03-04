@@ -38,9 +38,6 @@
                     Exit
                 </button>
             </div>
-<<<<<<< HEAD
-        </form>
-=======
             <div class="p-4 my-5 md:p-5 space-y-4">
                 <p class="text-xl text-center text-black">
                     {{ $message }}
@@ -83,6 +80,5 @@
                 </form>
             </div>
         </div>
->>>>>>> 1e88ce5f60dd61ae04db4d0f05e39ba117182ffd
     </div>
 </div>
