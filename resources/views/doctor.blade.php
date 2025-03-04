@@ -230,6 +230,6 @@
         }
     </style>
 
-<x-chatbot/>
-<x-footer/>
+    <x-chatbot/>
+    <x-footer/>
 </x-navbar-layout>

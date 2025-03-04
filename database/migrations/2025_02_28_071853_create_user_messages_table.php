@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -16,7 +15,8 @@ return new class extends Migration
             $table->foreignId('sender_id')->constrained('users')->onDelete('cascade'); // Sender
             $table->foreignId('receiver_id')->constrained('users')->onDelete('cascade'); // Receiver
             $table->text('message'); // Message Content
-            $table->enum('status', ['sent', 'delivered', 'read'])->default('sent'); // Message Status
+            $table->enum('status', ['sent', 'received'])->default('received');
+            $table->text('subject');
             $table->timestamp('read_at')->nullable(); // Read timestamp
             $table->timestamps(); // Created_at and Updated_at
         });

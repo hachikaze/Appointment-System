@@ -161,7 +161,7 @@
                 </select>
             </div>
             
-            <!-- Chart Container -->
+            <!-- Larger Chart Container -->
             <div class="h-96 md:h-[400px] lg:h-[450px]">
                 <canvas id="appointmentsChart"></canvas>
             </div>
@@ -539,9 +539,9 @@
             </div>
         </div>
 
-        <!-- Recent Activities Section -->
+        <!-- Recent Activities Section (Enhanced Teal Theme) -->
         <div class="bg-white rounded-xl shadow-md overflow-hidden border border-teal-100 mb-8">
-            <!-- Header  -->
+            <!-- Header with improved gradient and icon -->
             <div class="bg-gradient-to-r from-teal-600 to-teal-500 px-6 py-4 flex items-center justify-between">
                 <div class="flex items-center">
                     <div class="bg-white bg-opacity-20 p-2 rounded-lg mr-3">
@@ -556,7 +556,7 @@
                 </span>
             </div>
             
-            <!-- Activity list -->
+            <!-- Activity list with improved styling -->
             <div class="p-0">
                 <div class="overflow-hidden">
                     <ul class="divide-y divide-teal-50">
@@ -575,7 +575,7 @@
                         @forelse($recentActivities as $activity)
                             <li class="hover:bg-teal-50 transition-colors duration-150">
                                 <div class="p-4 flex items-start">
-                                    <!-- Activity Icon  -->
+                                    <!-- Activity Icon with improved styling -->
                                     <div class="mr-4 flex-shrink-0">
                                         @switch($activity->type)
                                             @case('add')
@@ -622,7 +622,7 @@
                                         @endswitch
                                     </div>
                                     
-                                    <!-- Activity Content  -->
+                                    <!-- Activity Content with improved styling -->
                                     <div class="flex-1 min-w-0">
                                         <div class="flex justify-between items-start">
                                             <p class="text-sm font-medium text-gray-900">
