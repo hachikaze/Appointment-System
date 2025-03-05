@@ -10,8 +10,10 @@ use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ManageAppointmentController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\ReceiptController;
 use App\Http\Middleware\PreventBackHistory;
 use App\Mail\ForgotPassword;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -21,7 +23,19 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 // Test route
-Route::get('test', [AppointmentController::class, 'index']);
+Route::get('/test', function () {
+
+});
+
+// VIEW CUSTOMER GCASH PAYMENTS
+Route::get('/admin/view-payments', [PaymentController::class, 'viewPayments']);
+
+// PATIENT GCASH PAYMENT
+Route::get('/patient/gcash-payment', [PaymentController::class, 'index']);
+Route::post('/payments/store', [PaymentController::class, 'store'])->name('payments.store');
+
+// RECEIPT VIEWER FOR PATIENT (ADD DOWNLOAD PDF)
+Route::get('/receipts/{id}', [ReceiptController::class, 'show'])->name('receipt.show');
 
 // LANDING PAGE
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -184,4 +198,3 @@ Route::post('/email/verification-notification', function (Request $request) {
 Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
 Route::post('/appointments/store', [AppointmentController::class, 'store'])->name('appointments.store');
 Route::get('/admin/appointments', [AdminAppointmentController::class, 'index'])->name('admin.appointments.index');
-

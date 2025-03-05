@@ -26,7 +26,7 @@ class RegisterController extends Controller
             'gender' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'user_type' => 'nullable|string',
+            'user_type' => 'string',
         ]);
 
         // Concatenate the name
@@ -41,8 +41,6 @@ class RegisterController extends Controller
             'password' => Hash::make($request->password),
             'user_type' => $request->user_type ?? 'patient',
         ]);        
-
-        Auth::login($user);
 
         return redirect()->route('login')->with('success', 'Registration successful. Please verify your email.');
     }
