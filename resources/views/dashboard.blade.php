@@ -91,9 +91,13 @@
                         </div>
                     </div>
                     <div class="py-6 mt-4 grid place-items-center px-2">
+                        <div class="flex items-center justify-start gap-2 text-xl font-semibold text-teal-600 mx-2">
+                            <i class="fa-solid fa-calendar"></i>
+                            <p>Appointments Categories</p>
+                        </div>
                         @if ($appointmentCategories->isEmpty())
-                            <div class="bg-red-400 p-6 m-2 rounded-lg ">
-                                <p class="text-white">No appointment data available. Click <span
+                            <div class="bg-red-400 shadow-lg p-6 m-2 rounded-lg ">
+                                <p class="text-white">No attended appointments available. Click <span
                                         class="rounded-lg bg-teal-600 p-1 shadow cursor-pointer"
                                         onclick="window.location.href='{{ route('calendar') }}'">here</span> to add one.
                                 </p>
@@ -156,8 +160,8 @@
 
             <div
                 class="bg-white  border-t-4 border-teal-400 fade-up overflow-hidden sm:rounded-lg shadow-lg  col-span-2">
-                <div class="w-lg m-4 bg-teal-50 border border-teal-400 rounded-xl shadow-lg" role="alert" tabindex="-1"
-                    aria-labelledby="hs-toast-message-with-loading-indicator-label">
+                <div class="w-lg m-4 bg-teal-50 border border-teal-400 rounded-xl shadow-lg" role="alert"
+                    tabindex="-1" aria-labelledby="hs-toast-message-with-loading-indicator-label">
                     <div class="flex items-center w-full p-4">
                         <!-- Loading Spinner -->
                         <i class="fa-solid fa-sync fa-spin text-teal-600 text-2xl"></i>
@@ -213,7 +217,7 @@
                         const interval = setInterval(updateCountdown, 1000);
                     }
 
-                    document.addEventListener("DOMContentLoaded", function () {
+                    document.addEventListener("DOMContentLoaded", function() {
                         const countdownElement = document.getElementById("hs-toast-message-with-loading-indicator-label");
                         const targetDate = countdownElement.getAttribute("data-date");
                         const targetTime = countdownElement.getAttribute("data-time");
@@ -311,12 +315,13 @@
                 {{-- <iframe width="100%" height="300" style="border:0" loading="lazy" allowfullscreen
                     referrerpolicy="no-referrer-when-downgrade"
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.2050300674914!2d121.04021859999999!3d14.587389799999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c8312ce6011f%3A0x3b9575c6988133e6!2sANA%20FATIMA%20BARROSO%2C%20DMD%20Dental%20Clinic!5e0!3m2!1sen!2sph!4v1739887099838!5m2!1sen!2sph">
-                </iframe> --}}<div class="relative flex flex-col  bg-white bg-clip-border text-gray-700 shadow-md">
+                </iframe> --}}<div
+                    class="relative flex flex-col  bg-white bg-clip-border text-gray-700 shadow-md">
                     <div
                         class="relative mx-4 mt-4 flex flex-col gap-4 overflow-hidden rounded-none bg-transparent bg-clip-border text-gray-700 shadow-none md:flex-row md:items-center">
                         <div class="w-max rounded-lg bg-teal-500 shadow-lg p-5 text-white">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" aria-hidden="true" class="h-6 w-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-6 w-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3">
                                 </path>
@@ -350,8 +355,8 @@
                     <div
                         class="relative mx-4 mt-4 flex flex-col gap-4 overflow-hidden rounded-none bg-transparent bg-clip-border text-gray-700 shadow-none md:flex-row md:items-center">
                         <div class="w-max rounded-lg bg-teal-500 shadow-lg p-5 text-white">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" aria-hidden="true" class="h-6 w-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-6 w-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3">
                                 </path>
@@ -383,7 +388,8 @@
                 </div>
                 <div class="bg-white  overflow-hidden  col-span-2 ">
                     <h3 class="bg-teal-500 p-4 font-bold text-xl text-white flex justify-between items-center">
-                        <span><i class="fas fa-calendar-alt fa-beat-fade mx-2" style="--fa-animation-duration: 3s;"></i>
+                        <span><i class="fas fa-calendar-alt fa-beat-fade mx-2"
+                                style="--fa-animation-duration: 3s;"></i>
                             Appointments Today (9 AM - 6 PM)</span>
                         <button onclick="window.location.href='{{ route('calendar') }}'"
                             class="bg-white text-teal-500 text-md font-semibold px-3 py-1 rounded-lg flex items-center hover:bg-gray-100">
@@ -440,20 +446,23 @@
                     <div class="relative size-72 items-center justify-center">
                         <svg class="size-full rotate-180" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
                             <defs>
-                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%"
+                                    y2="100%">
                                     <stop offset="0%" stop-color="#4CAF50" /> <!-- Green -->
                                     <stop offset="100%" stop-color="#2196F3" /> <!-- Blue -->
                                 </linearGradient>
                             </defs>
 
                             <!-- Background Circle -->
-                            <circle cx="18" cy="18" r="16" fill="none" class="stroke-current text-gray-200"
-                                stroke-width="2" stroke-dasharray="50 100" stroke-linecap="round">
+                            <circle cx="18" cy="18" r="16" fill="none"
+                                class="stroke-current text-gray-200" stroke-width="2" stroke-dasharray="50 100"
+                                stroke-linecap="round">
                             </circle>
 
                             <!-- Gradient Progress Circle -->
-                            <circle cx="18" cy="18" r="16" fill="none" stroke="url(#gradient)" stroke-width="3"
-                                stroke-dasharray="{{ ($attendanceRate / 100) * 50 }}, 100" stroke-linecap="round">
+                            <circle cx="18" cy="18" r="16" fill="none" stroke="url(#gradient)"
+                                stroke-width="3" stroke-dasharray="{{ ($attendanceRate / 100) * 50 }}, 100"
+                                stroke-linecap="round">
                             </circle>
                         </svg>
                         <div class="absolute inset-0 flex flex-col items-center justify-center">
@@ -613,7 +622,7 @@
 
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             let timeSlots = document.querySelectorAll(".time-slot");
 
             timeSlots.forEach(slot => {
@@ -693,7 +702,7 @@
             series: [{
                 name: "Monthly Appointments",
                 data: monthlyappointmentsData,
-            },],
+            }, ],
             chart: {
                 type: "line",
                 height: 240,
@@ -751,7 +760,7 @@
                         fontFamily: "Poppins",
                         fontWeight: 400,
                     },
-                    formatter: function (value) {
+                    formatter: function(value) {
                         return Math.round(value);
                     },
                 },
@@ -791,7 +800,7 @@
             series: [{
                 name: "Daily Appointments",
                 data: dailyappointmentsData,
-            },],
+            }, ],
             chart: {
                 type: "line",
                 height: 240,
@@ -827,7 +836,7 @@
                         fontFamily: "Poppins",
                         fontWeight: 400,
                     },
-                    formatter: function (value) {
+                    formatter: function(value) {
                         const date = new Date(value);
                         return date.toLocaleDateString('en-US', {
                             month: 'short',
@@ -846,7 +855,7 @@
                         fontFamily: "Poppins",
                         fontWeight: 400,
                     },
-                    formatter: function (value) {
+                    formatter: function(value) {
                         return Math.round(value);
                     },
                 },

@@ -9,9 +9,15 @@ class Message extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $table = 'messages';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'appointment_id',
+        'user_id',
+        'message',
+    ];
 
     public function appointment()
     {

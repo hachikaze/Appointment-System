@@ -12,9 +12,13 @@ use Illuminate\Http\Request;
 use App\Models\Appointment;
 use Illuminate\Support\Facades\Log;
 use function Pest\Laravel\get;
+use Illuminate\Support\Facades\File;
+
 
 class PatientController extends Controller
 {
+
+
     public function index()
     {
         $userEmail = Auth::user()->email;
@@ -48,6 +52,7 @@ class PatientController extends Controller
 
 
         $appointmentCategories = Appointment::where('email', Auth::user()->email)
+            ->whereIn('status',['Attended'])
             ->get()
             ->groupBy('appointments')
             ->map(function ($group) {
@@ -75,7 +80,8 @@ class PatientController extends Controller
             ->first();
 
 
-        // Extract the start time
+
+
         $timeRange = $upcomingappointment->time ?? ''; // Ensure it's at least an empty string
         $times = explode(' - ', $timeRange);
 
@@ -105,18 +111,26 @@ class PatientController extends Controller
 
     public function fetchAppointments($date)
     {
-        $appointments = AvailableAppointment::where('date', $date)->get()->map(function ($slot) {
-            // Count the number of pending appointments for this date and time slot
+        $userEmail = auth()->user()->email; 
+    
+        $appointments = AvailableAppointment::where('date', $date)->get()->map(function ($slot) use ($userEmail) {
             $pendingCount = Appointment::where('date', $slot->date)
-                ->where('time', $slot->time_slot)  // Ensure `time_slot` is the correct column name
+                ->where('time', $slot->time_slot)
                 ->where('status', 'Pending')
                 ->count();
-
-            // Calculate remaining slots (prevent negative values)
+    
+            $appointmentExists = Appointment::where('date', $slot->date)
+                ->where('time', $slot->time_slot)
+                ->where('status', 'Pending')
+                ->where('email', $userEmail) 
+                ->exists();
+    
             $slot->remaining_slots = max(($slot->max_slots ?? 0) - $pendingCount, 0);
+            $slot->appointment_exists = $appointmentExists; 
+    
             return $slot;
         });
-
+    
         return response()->json($appointments);
     }
 
@@ -156,6 +170,14 @@ class PatientController extends Controller
         //GET THE AVAILABLE APPOINTMENTS
         $allData = AvailableAppointment::all();
 
+        //GET THE SERVICES
+        $filePath = public_path('jsonlist/appointments.json');
+        if (File::exists($filePath)) {
+            $services = json_decode(File::get($filePath), true)['services'] ?? [];
+        } else {
+            $services = []; 
+        }
+
 
         //DISPLAY 
         $fetchedData = AvailableAppointment::all()->toArray();
@@ -177,14 +199,78 @@ class PatientController extends Controller
         }
         $availableslots = $availableappointments->sum('remaining_slots');
 
-        return view('patient.calendar', compact('appointments', 'allData', 'remainingSlotsByDate', 'availableappointments', 'selectedDate', 'availableslots'));
+
+        
+        $services = [
+            "Braces" => [
+                "Metal Braces",
+                "Free Consultation",
+                "Free Monthly Oral Prophylaxis/Cleaning",
+                "Free Photo Analysis",
+                "Free Intraoral Photos",
+                "Free Diagnostic Cast",
+                "Free 1 set Ortho Wax",
+                "Free Interdental Brush",
+                "Referral Deductions"
+            ],
+            "Teeth Whitening" => ["Teeth Whitening"],
+            "General Procedures" => [
+                "Oral Prophylaxis",
+                "Fluoride Treatment",
+                "Tooth Filling/Pasta",
+                "Anterior Tooth Filling/Pasta sa unahan",
+                "Tooth Extraction",
+                "Odontectomy/Wisdom Tooth Removal"
+            ],
+            "Dentures" => [
+                "Complete Denture" => ["Ordinary", "Ivocap", "Thermosens"],
+                "Partial Denture" => [
+                    "Ordinary Denture US Plastic" => [
+                        "1-2 units",
+                        "3-4 units",
+                        "5 and above",
+                        "CD per arch"
+                    ],
+                    "IVOSTAR" => [
+                        "1-2 units",
+                        "3-4 units",
+                        "5 and above",
+                        "CD per arch"
+                    ],
+                    "FLEXITE" => [
+                        "1-2 Units unilateral",
+                        "2-3 Units bilateral",
+                        "4-10 Units bilateral",
+                        "10-12 Units bilateral"
+                    ]
+                ]
+            ],
+            "Fixed Bridge and Crowns" => [
+                "Porcelain with Metal",
+                "Porcelain with Tilite",
+                "Emax",
+                "Zirconia",
+                "Temporary Plastic Crown"
+            ],
+            "Maryland Bridge" => ["Plastic", "Porcelain with Metal"],
+            "Veneers" => ["Ceramage", "Emax"],
+            "Retainers" => [
+                "Retainers",
+                "Promo for braces patient",
+                "If outside patient"
+            ],
+            "X-ray" => ["Periapical X-ray"],
+            "Root Canal Treatment" => [
+                "Anterior Only",
+                "Preop Periapical X-ray",
+                "Restoration Buildup"
+            ]
+        ];
+
+
+        return view('patient.calendar', compact('appointments', 'services','allData', 'remainingSlotsByDate', 'availableappointments', 'selectedDate', 'availableslots'));
     }
 
-    // public function messages()
-    // {
-
-    //     return view('patient.messages');
-    // }
 
 
 

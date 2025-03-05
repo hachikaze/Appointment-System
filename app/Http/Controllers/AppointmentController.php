@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AuditTrail;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
+use App\Models\Message;
 use App\Models\AvailableAppointment;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -39,13 +40,15 @@ class AppointmentController extends Controller
             'phone' => 'required|digits:11',
             'date' => 'required|date',
             'time' => 'required|string',
-            'appointment_reason' => 'required|string',
+            'appointments' => 'required|array|min:3',
+            'appointments.*' => 'string', 
         ]);
+
+
 
         $selectedDate = $request->date;
         $time = $request->input('time', '00:00');
 
-        // Prevent booking for past dates
         if ($selectedDate < date('Y-m-d')) {
             return back()->withErrors(['error' => 'You cannot book an appointment for a past date.']);
         }
@@ -55,7 +58,7 @@ class AppointmentController extends Controller
 
         $existingAppointment = Appointment::where('email', $user->email)
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
-            ->whereIn('status', ['Approved', 'Pending'])
+            ->whereIn('status', ['Approved'])
             ->exists();
 
         if ($existingAppointment) {
@@ -66,7 +69,7 @@ class AppointmentController extends Controller
             return back()->withErrors(['error' => 'No available slots for the selected time.']);
         }
 
-        Appointment::create([
+       $appointment = Appointment::create([
             'patient_name' => $user->firstname . " " . $user->middleinitial . " " . $user->lastname,
             'email' => $user->email,
             'doctor' => 'Ana Fatima Barroso',
@@ -74,9 +77,21 @@ class AppointmentController extends Controller
             'phone' => $request->phone,
             'date' => $request->date,
             'time' => $time,
-            'appointments' => $request->input('appointment_reason'),
+            'appointments' => implode(', ', $request->input('appointments', [])),
             'updated_at' => null,
         ]);
+
+
+        if ($appointment) {
+            Message::create([
+                'appointment_id' => $appointment->id, 
+                'message' => '',
+                'user_id' => $request->user()->id,
+            ]);
+        } else {
+            return back()->withErrors(['error' => 'Failed to create appointment.']);
+        }
+
 
         AuditTrail::create([
             'user_id' => $request->user()->id,

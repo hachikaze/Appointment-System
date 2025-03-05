@@ -28,18 +28,22 @@
                 <div class="bg-gray-200">
                     <div class="relative overflow-x-auto shadow-md ">
                         <table class="w-full text-sm text-left rtl:text-right text-gray-500">
-                            <caption class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white ">
+                            <caption
+                                class="p-5  text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white ">
                                 <div
                                     class="flex items-center justify-center text-lg sm:text-2xl lg:text-3xl font-bold text-teal-500 my-4 mx-4">
                                     <i class="fa-solid fa-history px-2"></i> APPOINTMENT HISTORY
                                 </div>
-                                <p
-                                    class="mt-1 text-lg text-teal-700 font-normal border-teal-500 border-2 rounded-lg  bg-teal-100 w-fit p-2">
-                                    Browse a
-                                    list
-                                    of
-                                    appointments of
-                                    patients. Kindly Click the "View" button to show the message.</p>
+                                <div class="flex items-center justify-center">
+                                    <p
+                                        class="mt-1  text-lg text-teal-700 font-normal border-teal-500 border-2 rounded-lg  bg-teal-100 w-fit p-2">
+                                        Browse a
+                                        list
+                                        of
+                                        appointments of
+                                        patients. Kindly Click the "View" button to show the message.</p>
+                                </div>
+
                             </caption>
                             <thead class="text-lg text-center text-gray-700 uppercase bg-gray-50  ">
                                 <tr>
@@ -105,21 +109,18 @@
 
                                         <td class="px-6 py-4 text-center">
                                             <div class="flex flex-col md:flex-row justify-start gap-2">
-                                                <!-- View Button -->
                                                 <button onclick="openModal('{{ $appointment->id }}')"
-                                                    class="bg-blue-500 font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-blue-600 transition w-full md:w-auto">
+                                                    class="bg-blue-500  font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-blue-600 transition w-full md:w-auto">
                                                     <i class="fa-solid fa-eye pr-2"></i> View
                                                 </button>
 
-                                                <!-- Reschedule Button (Only for Cancelled & Unattended) -->
                                                 @if (in_array($appointment->status, ['Cancelled', 'Unattended']))
                                                     <button onclick="window.location.href='{{ route('calendar') }}'"
-                                                        class="bg-yellow-500 font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-yellow-600 transition w-full md:w-auto">
+                                                        class="bg-yellow-500 w-full font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-yellow-600 transition w-full md:w-auto">
                                                         <i class="fa-solid fa-calendar-alt pr-2"></i> Reschedule
                                                     </button>
                                                 @endif
 
-                                                <!-- Cancel Button (Only for Approved & Pending) -->
                                                 @if (in_array($appointment->status, ['Approved', 'Pending']))
                                                     <button data-modal-target="update-appointment-modal"
                                                         data-modal-toggle="update-appointment-modal"
@@ -127,6 +128,7 @@
                                                         <i class="fa-solid fa-calendar-alt pr-2"></i> Cancel
                                                     </button>
                                                 @endif
+
                                             </div>
 
                                             <!-- Cancel Modal -->
