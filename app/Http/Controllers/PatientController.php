@@ -52,7 +52,7 @@ class PatientController extends Controller
 
 
         $appointmentCategories = Appointment::where('email', Auth::user()->email)
-            ->whereIn('status',['Attended'])
+            ->whereIn('status', ['Attended'])
             ->get()
             ->groupBy('appointments')
             ->map(function ($group) {
@@ -108,26 +108,26 @@ class PatientController extends Controller
 
     public function fetchAppointments($date)
     {
-        $userEmail = auth()->user()->email; 
-    
+        $userEmail = auth()->user()->email;
+
         $appointments = AvailableAppointment::where('date', $date)->get()->map(function ($slot) use ($userEmail) {
             $pendingCount = Appointment::where('date', $slot->date)
                 ->where('time', $slot->time_slot)
                 ->where('status', 'Pending')
                 ->count();
-    
+
             $appointmentExists = Appointment::where('date', $slot->date)
                 ->where('time', $slot->time_slot)
                 ->where('status', 'Pending')
-                ->where('email', $userEmail) 
+                ->where('email', $userEmail)
                 ->exists();
-    
+
             $slot->remaining_slots = max(($slot->max_slots ?? 0) - $pendingCount, 0);
-            $slot->appointment_exists = $appointmentExists; 
-    
+            $slot->appointment_exists = $appointmentExists;
+
             return $slot;
         });
-    
+
         return response()->json($appointments);
     }
 
@@ -260,7 +260,7 @@ class PatientController extends Controller
         ];
 
 
-        return view('patient.calendar', compact('appointments', 'services','allData', 'remainingSlotsByDate', 'availableappointments', 'selectedDate', 'availableslots'));
+        return view('patient.calendar', compact('appointments', 'services', 'allData', 'remainingSlotsByDate', 'availableappointments', 'selectedDate', 'availableslots'));
     }
 
 
@@ -279,20 +279,20 @@ class PatientController extends Controller
                 ->where('time_slot', $slot->time_slot)
                 ->where('status', 'pending')
                 ->count();
-        
-            $remainingSlots = max($slot->max_slots - $pendingCount, 0);         
+
+            $remainingSlots = max($slot->max_slots - $pendingCount, 0);
             return [
                 'id' => $slot->id,
                 'date' => $slot->date,
                 'time_slot' => $slot->time_slot,
-                'remaining_slots' => $remainingSlots, 
+                'remaining_slots' => $remainingSlots,
             ];
         })->toArray();
 
 
         return view('patient.history', ['availableAppointments' => $availableAppointments, 'appointments' => $appointments, 'isEmpty' => $isEmpty]);
     }
-     
+
 
     //For Displaying the Modal Details 
     public function viewHistory($appointmentId)
@@ -317,11 +317,12 @@ class PatientController extends Controller
         ]);
     }
 
-    public function cancelAppointment($id) {
+    public function cancelAppointment($id)
+    {
         $appointment = Appointment::findOrFail($id);
         $appointment->status = 'Cancelled';
         $appointment->save();
-        return redirect()->back();
+        return redirect()->back()->with('error', value: 'Appointment has been cancelled successfully!');
     }
 
     public function updateAppointment(Request $request, $id)
@@ -336,7 +337,7 @@ class PatientController extends Controller
         $oldAppointment->date = $newAppointment->date;
         $oldAppointment->time = $newAppointment->time_slot;
         $oldAppointment->status = 'Pending';
-        $oldAppointment->save(); 
+        $oldAppointment->save();
 
         AuditTrail::create([
             'user_id' => Auth::user()->id,
@@ -347,6 +348,6 @@ class PatientController extends Controller
             'user_agent' => request()->header('User-Agent'),
         ]);
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Appointment has been updated successfully!');
     }
 }

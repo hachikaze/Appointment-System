@@ -44,7 +44,7 @@ class MessageController extends Controller
             'read_at' => null
         ]);
 
-        return redirect()->back()->with('success', 'message uploaded');
+        return redirect()->back()->with('success', 'User Message Uploaded');
     }
 
 
