@@ -55,10 +55,10 @@
                             {{ $buttonText }}
                         </button>
 
-                        <button type="button" data-modal-hide="{{ $modalId }}"
+                        <!-- <button type="button" data-modal-hide="{{ $modalId }}"
                             class="text-gray-700 bg-gray-300 hover:bg-gray-400 p-2 font-bold shadow-lg rounded-lg">
                             Cancel
-                        </button>
+                        </button> -->
                     </div>
                 </form>
             </div>

@@ -33,7 +33,7 @@ class Appointment extends Model
         'doctor',
         'appointments',
         'status',
-        'user_id'
+        'id'
     ];
     
     // Define date fields

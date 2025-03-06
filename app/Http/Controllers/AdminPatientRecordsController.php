@@ -19,17 +19,27 @@ class AdminPatientRecordsController extends Controller
         $filter = $request->query('filter', '');
         $perPage = $request->query('perPage', 10);
 
-        $patients = PatientRecords::when($search, function ($query, $search) {
-                // Note: use 'patient_name' as per your model.
-                return $query->where('patient_name', 'like', "%{$search}%");
-            })
-            ->when($filter, function ($query, $filter) {
-                return $query->where('status', $filter);
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate($perPage);
+        // 1) Fetch a paginator of unique patient names
+        $distinctPatients = PatientRecords::select('patient_name')
+        ->when($search, function ($query, $search) {
+            return $query->where('patient_name', 'like', "%{$search}%");
+        })
+        ->groupBy('patient_name')
+        ->orderBy('patient_name', 'asc')  // or whichever column makes sense
+        ->paginate($perPage);
 
-        return view('admin.patient_records', compact('patients', 'search', 'filter'));
+        // 2) Fetch all the rows (appointments) for *only* those distinct patients
+        $allRecords = PatientRecords::whereIn('patient_name', $distinctPatients->pluck('patient_name'))
+        ->orderBy('created_at', 'desc')
+        ->get()
+        ->groupBy('patient_name');
+
+        // Then pass these two variables into your view:
+        return view('admin.patient_records', [
+        'distinctPatients' => $distinctPatients,  // This is your paginator of unique names
+        'allRecords'       => $allRecords,        // This is a grouped collection of appointments
+        ]);
+
     }
 
     /**
