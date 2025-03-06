@@ -61,18 +61,18 @@ class ManageAppointmentController extends Controller
             case 'approve':
                 $appointment->update(['status' => 'Approved']);
 
-                $paymentId = Payment::where('appointment_id', $appointment->id)->value('id');
+                // $paymentId = Payment::where('appointment_id', $appointment->id)->value('id');
             
                 // Generate a receipt number
-                $receiptNumber = 'RCPT-' . strtoupper(uniqid());
+                // $receiptNumber = 'RCPT-' . strtoupper(uniqid());
             
                 // Store the receipt info in the payments table
-                Receipt::create([
-                    'payment_id' => $paymentId,
-                    'email' => $appointment->email,
-                    'file_path' => 'bowrat', // optional, since there's no uploaded file
-                    'receipt_number' => $receiptNumber,
-                ]);
+                // Receipt::create([
+                //     'payment_id' => $paymentId,
+                //     'email' => $appointment->email,
+                //     'file_path' => 'bowrat', // optional, since there's no uploaded file
+                //     'receipt_number' => $receiptNumber,
+                // ]);
 
                 return redirect()->route('appointments.index')->with('error', 'Appointment not found.');
                 break;

@@ -642,8 +642,20 @@
             const modalIconContainer = document.getElementById('modalIconContainer');
             const modalSvg = document.getElementById('modalSvg');
 
-            // Also get the calendar section
+            // Get the calendar section and date input
             const calendarSection = document.getElementById('calendarSection');
+            const rescheduleDateInput = document.getElementById('reschedule-date');
+
+            // Adjust the date input based on action type
+            if (action === 'reschedule') {
+                calendarSection.classList.remove('hidden');
+                rescheduleDateInput.disabled = false;
+                rescheduleDateInput.setAttribute('required', 'required');
+            } else {
+                calendarSection.classList.add('hidden');
+                rescheduleDateInput.disabled = true;
+                rescheduleDateInput.removeAttribute('required');
+            }
             
             switch(action) {
                 case 'approve':
