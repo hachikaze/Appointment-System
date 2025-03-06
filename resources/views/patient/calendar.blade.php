@@ -193,24 +193,6 @@
                                 See information about all appointments
                             </p>
                         </div>
-                        {{-- <div class="flex flex-col gap-2 shrink-0 sm:flex-row">
-                            <button
-                                class="select-none rounded-lg border border-gray-900 py-2 px-4 text-center align-middle text-xs font-bold uppercase text-gray-900 transition-all hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                                type="button">
-                                view all
-                            </button>
-                            <button
-                                class="flex select-none items-center gap-3 rounded-lg bg-gray-900 py-2 px-4 text-center align-middle text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                                type="button">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                    aria-hidden="true" stroke-width="2" class="w-4 h-4">
-                                    <path
-                                        d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z">
-                                    </path>
-                                </svg>
-                                Add member
-                            </button>
-                        </div> --}}
                     </div>
                     <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
                         <div class="block w-full overflow-hidden md:w-max">
@@ -437,171 +419,9 @@
 
                     </table>
                 </div>
-                <!-- Modal -->
-                <div class="flex items-center bg-teal-500 rounded-b-lg justify-between p-4 border-t border-teal-100">
-                </div>
+
             </div>
         </div>
-
-        <div class="grid grid-cols-1 flex items-start">
-            {{-- <div class="flex items-center  justify-center m-4" id="dateformSection">
-                <form id="dateForm" class="w-full">
-                    <h2 id="selectedDate" class="text-lg font-bold hidden"></h2>
-                    <input type="hidden" id="hiddenselectedDate" name="hiddenselectedDate" value="">
-
-                    <div
-                        class="bg-teal-100 relative overflow-x-auto border-2 border-l-4 border-teal-500   shadow-lg sm:rounded-lg  p-5 w-full">
-                        <div class="flex flex-wrap gap-4">
-                            <!-- Choose a Time Slot Header -->
-                            <div class="bg-teal-500 rounded-lg w-full md:w-auto ">
-                                <h2 class="text-xl font-bold text-white p-6 shadow-lg " id="modal-title">
-                                    <i class="fa-solid fa-clock text-white px-2"></i> Choose a Time Slot
-                                </h2>
-                            </div>
-
-                            <!-- Available Slots Counter -->
-                            <div
-                                class="bg-teal-50 border-2 border-teal-500 w-full md:w-auto rounded-lg px-6 py-4 flex items-center shadow-lg">
-                                <i class="fa-solid fa-user-clock text-teal-600 text-2xl mr-2"></i>
-                                <span class="text-lg font-bold text-gray-900">
-                                    Slots Available: {{ $availableslots }}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-wrap gap-2 mt-4">
-                            @if ($selectedDate && count($availableappointments) > 0)
-                            @foreach ($availableappointments as $appointment)
-                            @if ($appointment->remaining_slots > 0)
-                            <button type="button"
-                                class="appointment-button md:w-auto w-full px-4 py-2 text-md shadow-lg font-medium text-gray-900 bg-gray-100 border border-gray-800 rounded-lg hover:bg-teal-600 hover:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                data-time="{{ $appointment->time_slot }}" onclick="selectAppointmentTime(this)">
-                                {{ $appointment->time_slot }}
-                                ({{ $appointment->remaining_slots }}
-                                slots left)
-                            </button>
-                            @endif
-                            @endforeach
-                            @else
-                            <div class="flex items-center space-x-2 ">
-                                <i class="fa-solid fa-xmark text-red-500 text-2xl"></i>
-                                <p class="text-lg font-bold text-teal-600">
-                                    No available time slots for
-                                    @if (!empty($selectedDate))
-                                    {{ date('F j, Y', strtotime($selectedDate)) }}
-                                    @else
-                                    {{ 'Choose a date in the Calendar.' }}
-                                    @endif
-                                </p>
-                            </div>
-                            @endif
-                        </div>
-                    </div>
-                </form>
-            </div> --}}
-            {{-- @if (!empty($selectedDate))
-            <form id="appointmentForm" action="{{ route('appointment.store') }}" method="POST" class="space-y-4">
-                @csrf
-                <div class="flex items-center border-teal-400 justify-center mx-4 mt-10">
-                    <div
-                        class="bg-teal-100 border-teal-500 border-2  relative overflow-x-auto w-full  mb-12 shadow-lg sm:rounded-lg ">
-                        <div class="bg-teal-600    rounded-t-lg text-white p-3">
-                            <p class="text-xl font-semibold">
-                                Please fill in the details to set your dental appointment.
-                            </p>
-                        </div>
-
-                        <!-- Two-Column Input Fields -->
-                        <div class="grid p-6 grid-cols-1 md:grid-cols-2 gap-4 ">
-
-                            <div>
-                                <label for="date" class="block mb-2 text-lg font-medium text-teal-800">Date
-                                    Selected</label>
-                                <div class="flex">
-                                    <span
-                                        class="inline-flex items-center px-3 text-md text-gray-900 bg-teal-200 border rounded-e-0 border-gray-800 border-e-0 rounded-s-md">
-                                        <i class="fa-solid fa-calendar text-teal-700 shadow-lg"></i>
-                                    </span>
-                                    <input type="text" id="date" name="date" value="{{ $selectedDate }}" readonly
-                                        class="rounded-none rounded-e-lg bg-gray-50 border text-gray-500 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-md border-gray-800 p-2.5 placeholder-gray-500"
-                                        placeholder="2025-02-20">
-                                </div>
-                            </div>
-                            <div>
-                                <label for="time" class="block mb-2 text-lg font-medium text-teal-800">Chosen
-                                    Timeslot</label>
-                                <div class="flex">
-                                    <span
-                                        class="inline-flex items-center px-3 text-md text-teal-800 bg-teal-200 border rounded-b-0 border-gray-800 border-e-0 rounded-s-md">
-                                        <i class="fa-solid fa-calendar text-teal-700 shadow-lg"></i>
-                                    </span>
-                                    <input type="text" id="time" name="time" value="" readonly
-                                        class="rounded-none rounded-e-lg bg-gray-50 border text-teal-800 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-md border-gray-800 p-2.5 placeholder-gray-500"
-                                        placeholder="Select a Time.">
-                                </div>
-                            </div>
-                            <div>
-                                <label for="phone" class="block mb-2 text-lg font-medium text-teal-800">Phone
-                                    Number</label>
-                                <div class="flex">
-                                    <span
-                                        class="inline-flex items-center px-3 text-sm text-teal-800 bg-teal-200 border rounded-e-0 border-gray-800 border-e-0 rounded-s-md">
-                                        <i class="fa-solid fa-phone text-teal-700 shadow-lg"></i>
-                                    </span>
-                                    <input type="text" id="phone" name="phone" maxlength="11"
-                                        class="rounded-none rounded-e-lg bg-gray-50 border text-teal-800 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-md border-gray-800 p-2.5 placeholder-gray-500"
-                                        placeholder="Ex. 09123456789">
-                                </div>
-                            </div>
-                            <div>
-                                <label for="appointment-reason"
-                                    class="block mb-2 text-teal-800 text-lg font-medium text-gray-900">
-                                    Reason for Appointment
-                                </label>
-                                <div class="flex">
-                                    <span
-                                        class="inline-flex items-center px-3 text-sm text-gray-900 bg-teal-200 border rounded-e-0 border-gray-800 border-e-0 rounded-s-md">
-                                        <i class="fa-solid fa-calendar text-teal-700 shadow-lg"></i>
-                                    </span>
-                                    <select id="appointment_reason" name="appointment_reason"
-                                        class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-md border-gray-800 p-2.5 placeholder-gray-500">
-                                        <option value="">Select Reason</option>
-                                        <option value="Tooth Restoration">Tooth Restoration</option>
-                                        <option value="Extraction">Extraction</option>
-                                        <option value="Teeth Whitening">Teeth Whitening</option>
-                                        <option value="Oral Prophylaxis">Oral Prophylaxis</option>
-                                        <option value="Odontectomy">Odontectomy</option>
-                                        <option value="Orthodontics">Orthodontics</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class=" p-4 sm:mt-2 flex flex-col sm:flex-row-reverse gap-3 sm:gap-2">
-                            <button type="button" data-modal-target="create-appointment-modal"
-                                data-modal-toggle="create-appointment-modal"
-                                class="inline-flex items-center justify-center rounded-md border border-transparent px-4 py-2 bg-teal-600 font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none transition ease-in-out duration-150 text-md">
-                                <i class="fa-solid fa-check-circle mr-2"></i>
-                                Set Appointment
-                            </button>
-
-                            <x-modal modalId="create-appointment-modal" title="Create this Appointment"
-                                message="Are you sure you want to create this appointment?"
-                                route="{{ route('appointments.store') }}" method="POST" buttonText="Create" />
-                        </div>
-                    </div>
-                </div>
-                @else
-                <div class="flex items-center border-teal-400 justify-center mx-4 mt-4">
-                    <div
-                        class="bg-teal-100 border-2 border-teal-500 flex justify-center items-start relative mb-10  p-6 text-teal-600 overflow-x-auto container shadow-lg sm:rounded-lg mx-auto">
-                        <p class="text-xl font-bold">
-                            <i class="fa-solid fa-calendar-check"></i> No Date Selected
-                        </p>
-                    </div>
-                </div>
-                @endif
-            </form> --}}
         </div>
 
         </div>
@@ -611,6 +431,27 @@
     </html>
 
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const checkboxes = document.querySelectorAll(".checkbox-item");
+            const clearButton = document.getElementById("clear-checkboxes");
+
+            checkboxes.forEach((checkbox) => {
+                checkbox.addEventListener("change", function() {
+                    let checkedBoxes = document.querySelectorAll(".checkbox-item:checked");
+
+                    if (checkedBoxes.length > 3) {
+                        this.checked = false;
+                        alert("You can only select up to 3 checkboxes.");
+                    }
+                });
+            });
+
+            clearButton.addEventListener("click", function(event) {
+                event.preventDefault();
+                checkboxes.forEach(checkbox => checkbox.checked = false);
+            });
+        });
+
         function selectAppointmentTime(button) {
             const selectedTime = button.getAttribute('data-time');
             document.getElementById('time').value = selectedTime;
@@ -690,24 +531,24 @@
             <td class="p-4 border-b w-full flex justify-center border-teal-100">
                 ${!appointmentExists ?
                         `<button class="relative flex p-2 bg-teal-500 flex-row space-x-2 items-center justify-center h-12 w-44 select-none rounded-lg text-center align-middle text-xs font-medium uppercase hover:bg-slate-800"
-                                                                                                                                                        type="button" data-modal-target="appointmentModal-${slot.id}" data-modal-toggle="appointmentModal-${slot.id}">
-                                                                                                                                                        <i class="fa-solid fa-pen fa-lg text-white"></i>
-                                                                                                                                                        <span class="mt-1 text-lg font-semibold text-white">CREATE</span>
-                                                                                                                                                    </button>
+                                                                                                                                                                                    type="button" data-modal-target="appointmentModal-${slot.id}" data-modal-toggle="appointmentModal-${slot.id}">
+                                                                                                                                                                                    <i class="fa-solid fa-pen fa-lg text-white"></i>
+                                                                                                                                                                                    <span class="mt-1 text-lg font-semibold text-white">CREATE</span>
+                                                                                                                                                                                </button>
 
-                                                                                                                                                    <x-modal-appointment-modal modalId="appointmentModal-${slot.id}" 
-                                                                                                                                                        dateSelected="${slot.date}" timeslot="${slot.time_slot}"
-                                                                                                                                                        title="Set Your Appointment" route="/patient/appointment/store" />`
+                                                                                                                                                                                <x-modal-appointment-modal modalId="appointmentModal-${slot.id}" 
+                                                                                                                                                                                    dateSelected="${slot.date}" timeslot="${slot.time_slot}"
+                                                                                                                                                                                    title="Set Your Appointment" route="/patient/appointment/store" />`
                         :
                         `<a href="/patient/history">
-                                                                                                                                                        <span class="px-5 py-2 text-white bg-teal-600 rounded-lg flex flex-col items-center text-center hover:bg-teal-700 transition">
-                                                                                                                                                            <span class="text-lg font-semibold">Appointment Already Set</span>
-                                                                                                                                                            <div class="flex flex-row items-center justify-center mt-1">
-                                                                                                                                                                <p class="text-sm text-gray-200 mx-2">Click to view</p>
-                                                                                                                                                                <i class="fa-solid fa-arrow-right mt-0.5"></i>
-                                                                                                                                                            </div>
-                                                                                                                                                        </span>
-                                                                                                                                                    </a>`
+                                                                                                                                                                                    <span class="px-5 py-2 text-white bg-teal-600 rounded-lg flex flex-col items-center text-center hover:bg-teal-700 transition">
+                                                                                                                                                                                        <span class="text-lg font-semibold">Appointment Already Set</span>
+                                                                                                                                                                                        <div class="flex flex-row items-center justify-center mt-1">
+                                                                                                                                                                                            <p class="text-sm text-gray-200 mx-2">Click to view</p>
+                                                                                                                                                                                            <i class="fa-solid fa-arrow-right mt-0.5"></i>
+                                                                                                                                                                                        </div>
+                                                                                                                                                                                    </span>
+                                                                                                                                                                                </a>`
                     }
             </td>
         `;
@@ -1050,27 +891,6 @@
                                 "cursor-not-allowed", "border-l-4");
 
                             daySlot.style.position = "relative";
-
-                            // const lineStyles = `
-                        //         position: absolute;
-                        //         top: 50%;
-                        //         left: 50%;
-                        //         width: 50%;
-                        //         height: 2px;
-                        //         opacity:40%;
-                        //         background-color: red;
-                        //         transform-origin: center;
-                        //     `;
-                            // let line1 = document.createElement("div");
-                            // line1.style.cssText = lineStyles;
-                            // line1.style.transform = "translate(-50%, -50%) rotate(45deg)";
-
-                            // let line2 = document.createElement("div");
-                            // line2.style.cssText = lineStyles;
-                            // line2.style.transform = "translate(-50%, -50%) rotate(-45deg)";
-                            // daySlot.appendChild(line1);
-                            // daySlot.appendChild(line2);
-                            // daySlot.style.pointerEvents = "none";
 
                         }
                         daySlot.appendChild(dayNumber);

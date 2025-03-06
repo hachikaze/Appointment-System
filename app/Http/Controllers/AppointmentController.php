@@ -40,7 +40,7 @@ class AppointmentController extends Controller
             'phone' => 'required|digits:11',
             'date' => 'required|date',
             'time' => 'required|string',
-            'appointments' => 'required|array|min:3',
+            'appointments' => 'required|array|min:1|max:3',
             'appointments.*' => 'string', 
         ]);
 
@@ -113,15 +113,12 @@ class AppointmentController extends Controller
         $today = Carbon::today()->toDateString();
         $monthly = Carbon::now()->format('Y-m');
 
-        // Count today's appointments and remaining slots
         $appointmentsToday = Appointment::whereDate('date', $today)->count();
         $remainingSlotsToday = max(0, 10 - $appointmentsToday); // Adjust max slots as needed
 
-        // Count monthly appointments and remaining slots
         $monthlyAppointments = Appointment::where('date', 'like', "$monthly%")->count();
         $remainingSlotsMonthly = max(0, 100 - $monthlyAppointments); // Adjust max slots as needed
 
-        // Get appointments over time
         $appointmentsOverTime = Appointment::selectRaw("strftime('%m', date) as month, COUNT(*) as total")
             ->groupBy('month')
             ->orderBy('month')

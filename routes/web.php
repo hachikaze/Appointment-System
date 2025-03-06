@@ -41,7 +41,8 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::get('/patient/history', [PatientController::class, 'history'])->name('history');
         Route::get('/view-history/{appointmentId}', [PatientController::class, 'viewHistory'])->name('viewhistory');
 
-        Route::put('/patient/appointments/{id}', [PatientController::class, 'cancel'])->name('appointments.cancel');
+        Route::put('/patient/appointments/update/{id}', [PatientController::class, 'updateAppointment'])->name('appointments.update');
+        Route::put('/patient/appointments/cancel/{id}', [PatientController::class, 'cancelAppointment'])->name('appointments.cancel');
         Route::get('/patient/profile', [LoginController::class, 'profile'])->name('profile');
         Route::put('/patient/users/{id}', [LoginController::class, 'update'])->name('profile.update');
 

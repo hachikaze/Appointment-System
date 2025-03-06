@@ -5,8 +5,6 @@
     <div class="py-12">
 
         <div class="max-w-8xl mx-auto  lg:px-8 grid lg:gap-8 gap-4 lg:grid-cols-1 md:grid-cols-1 sm:grid-cols-1">
-            <!-- First Column: Avatar and Buttons (1/4 of the width) -->
-
             <div
                 class="bg-teal-500 overflow-hidden mx-12 sm:rounded-t-lg shadow-lg xl:col-span-1 md:col-span-2 sm:col-span-2 col-span-2 relative">
                 <div class="flex flex-col sm:flex-row items-center justify-between py-4 gap-4 text-center">
@@ -42,6 +40,15 @@
                                         of
                                         appointments of
                                         patients. Kindly Click the "View" button to show the message.</p>
+
+                                    @if ($errors->any())
+                                        <div class=" bg-red-500  text-white text-md p-6 w-full rounded-lg my-5">
+                                            @foreach ($errors->all() as $error)
+                                                <p><i class="fas fa-exclamation-circle text-white"></i>
+                                                    {{ $error }}</p>
+                                            @endforeach
+                                        </div>
+                                    @endif
                                 </div>
 
                             </caption>
@@ -75,7 +82,7 @@
                             </thead>
                             <tbody class="text-lg">
                                 @forelse ($appointments as $appointment)
-                                    <tr class="bg-teal-50 border-teal-500 rounded-lg">
+                                    <tr class="bg-teal-50 text-center border-teal-500 rounded-lg">
                                         <th scope="row"
                                             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
                                             {{ $appointment->patient_name }}
@@ -108,34 +115,51 @@
                                         </td>
 
                                         <td class="px-6 py-4 text-center">
-                                            <div class="flex flex-col md:flex-row justify-start gap-2">
+                                            <div class="flex flex-col p-6 md:flex-row justify-start gap-2">
                                                 <button onclick="openModal('{{ $appointment->id }}')"
                                                     class="bg-blue-500  font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-blue-600 transition w-full md:w-auto">
                                                     <i class="fa-solid fa-eye pr-2"></i> View
                                                 </button>
 
-                                                @if (in_array($appointment->status, ['Cancelled', 'Unattended']))
-                                                    <button onclick="window.location.href='{{ route('calendar') }}'"
+                                                @if (in_array($appointment->status, ['Unattended']))
+                                                    <button data-modal-target="reschedule-appointment-modal"
+                                                        data-modal-toggle="reschedule-appointment-modal"
                                                         class="bg-yellow-500 w-full font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-yellow-600 transition w-full md:w-auto">
                                                         <i class="fa-solid fa-calendar-alt pr-2"></i> Reschedule
                                                     </button>
                                                 @endif
 
                                                 @if (in_array($appointment->status, ['Approved', 'Pending']))
-                                                    <button data-modal-target="update-appointment-modal"
-                                                        data-modal-toggle="update-appointment-modal"
+                                                    <button data-modal-target="cancel-appointment-modal"
+                                                        data-modal-toggle="cancel-appointment-modal"
                                                         class="bg-red-500 font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-red-600 transition w-full md:w-auto">
                                                         <i class="fa-solid fa-calendar-alt pr-2"></i> Cancel
                                                     </button>
                                                 @endif
 
+                                                {{-- @if ($appointment->status === 'Cancelled')
+                                                    <button disabled
+                                                        class="bg-red-500 font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-red-600 transition w-full md:w-auto">
+                                                        Cancelle
+                                                    </button>
+                                                @endif --}}
+
                                             </div>
 
                                             <!-- Cancel Modal -->
-                                            <x-modal modalId="update-appointment-modal" title="Cancel this Appointment?"
+
+                                            <x-modal modalId="cancel-appointment-modal" title="Cancel this Appointment?"
                                                 message="Are you sure you want to cancel this appointment?"
                                                 route="{{ route('appointments.cancel', ['id' => $appointment->id]) }}"
-                                                method="PUT" buttonText="Confirm" />
+                                                method="PUT" buttonText="Cancel Appointment" />
+
+
+
+                                            <x-modal modalId="reschedule-appointment-modal"
+                                                title="Reschedule this Appointment?" :data="$availableAppointments"
+                                                message="Are you sure you want to reschedule this appointment?"
+                                                route="{{ route('appointments.update', ['id' => $appointment->id]) }}"
+                                                method="PUT" buttonText="Reschedule" />
                                         </td>
 
 

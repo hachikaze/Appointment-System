@@ -63,17 +63,13 @@
             </div>
 
             <div class="p-6 grid grid-cols-1 gap-4">
-                <button id="dropdownSearchButton" data-dropdown-toggle="dropdownSearch"
+                <button id="dropdownSearchButton-{{ $modalId }}"
+                    data-dropdown-toggle="dropdownSearch-{{ $modalId }}"
                     class="inline-flex items-center justify-between w-full px-4 py-2 text-lg font-medium text-white bg-teal-500 rounded-lg hover:bg-teal-800 focus:ring-4 focus:outline-none focus:ring-teal-300"
                     type="button">
-
                     <span>Appointment Reason</span>
-
-                    <i class="fa-solid fa-arrow-down"></i> <!-- Icon stays at the right -->
+                    <i class="fa-solid fa-arrow-down"></i>
                 </button>
-
-
-
                 <div>
                     <label for="date" class="block mb-2 text-lg font-medium text-teal-800">Date
                         Selected</label>
@@ -97,7 +93,8 @@
 
 
                 <div class="relative max-w-full">
-                    <div id="dropdownSearch" class="hidden  absolute z-[1050] bg-white rounded-lg shadow-xl w-full">
+                    <div id="dropdownSearch-{{ $modalId }}"
+                        class="hidden  absolute z-[1050] bg-white rounded-lg shadow-xl w-full">
                         <div class="p-3">
                             <label for="input-group-search" class="sr-only">Search</label>
                             <div class="relative">
@@ -113,9 +110,6 @@
                                     placeholder="Search Procedure">
                             </div>
                         </div>
-
-
-
                         <ul id="procedure-list" class="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700"
                             aria-labelledby="dropdownSearchButton">
                             @foreach ($services as $category => $items)
@@ -147,7 +141,7 @@
                                                     <div class="flex items-center p-2 rounded-sm hover:bg-gray-100">
                                                         <input type="checkbox" id="checkbox-{{ Str::slug($subItem) }}"
                                                             value="{{ $subItem }}" name="appointments[]"
-                                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500">
+                                                            class="checkbox-item w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500">
 
 
                                                         <label for="checkbox-{{ Str::slug($subItem) }}"
@@ -163,7 +157,7 @@
                                             <div class="flex items-center p-2 rounded-sm hover:bg-gray-100">
                                                 <input type="checkbox" id="checkbox-{{ Str::slug($value) }}"
                                                     value="{{ $value }}" name="appointments[]"
-                                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500">
+                                                    class="checkbox-item w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500">
                                                 <label for="checkbox-{{ Str::slug($value) }}"
                                                     class="w-full ms-2 text-sm font-medium text-gray-600 rounded-sm">
                                                     {{ $value }}
@@ -174,13 +168,12 @@
                                 @endforeach
                             @endforeach
                         </ul>
-                        <a href="#"
-                            class="flex items-center p-3 text-sm font-medium text-red-600 border-t border-gray-200 rounded-b-lg bg-gray-50 ">
+                        <a href="#" id="clear-checkboxes"
+                            class="flex items-center p-3 text-sm font-medium text-red-600 border-t border-gray-200 rounded-b-lg bg-gray-50">
                             Clear
                         </a>
                     </div>
                 </div>
-
                 <div class="flex p-2 justify-end space-x-2">
                     <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md"
                         data-modal-hide="{{ $modalId }}">
@@ -193,5 +186,4 @@
             </div>
         </form>
     </div>
-
 </div>

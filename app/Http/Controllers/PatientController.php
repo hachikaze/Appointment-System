@@ -79,9 +79,6 @@ class PatientController extends Controller
             ->orderByRaw("time ASC") // Sort by time string 
             ->first();
 
-
-
-
         $timeRange = $upcomingappointment->time ?? ''; // Ensure it's at least an empty string
         $times = explode(' - ', $timeRange);
 
@@ -152,7 +149,6 @@ class PatientController extends Controller
             ->select('id', 'patient_name', 'phone', 'date', 'time', 'status')
             ->get();
 
-        //GET DATA FROM THE SELECTED DATA
         $availableappointments = $selectedDate
             ? AvailableAppointment::where('date', $selectedDate)
                 ->select('date', 'time_slot', 'max_slots')
@@ -167,17 +163,15 @@ class PatientController extends Controller
                 })
             : collect();
 
-        //GET THE AVAILABLE APPOINTMENTS
         $allData = AvailableAppointment::all();
 
         //GET THE SERVICES
-        $filePath = public_path('jsonlist/appointments.json');
-        if (File::exists($filePath)) {
-            $services = json_decode(File::get($filePath), true)['services'] ?? [];
-        } else {
-            $services = []; 
-        }
-
+        // $filePath = public_path('jsonlist/appointments.json');
+        // if (File::exists($filePath)) {
+        //     $services = json_decode(File::get($filePath), true)['services'] ?? [];
+        // } else {
+        //     $services = []; 
+        // }
 
         //DISPLAY 
         $fetchedData = AvailableAppointment::all()->toArray();
@@ -199,8 +193,6 @@ class PatientController extends Controller
         }
         $availableslots = $availableappointments->sum('remaining_slots');
 
-
-        
         $services = [
             "Braces" => [
                 "Metal Braces",
@@ -272,9 +264,6 @@ class PatientController extends Controller
     }
 
 
-
-
-
     public function history()
     {
         $userEmail = Auth::user()->email;
@@ -283,8 +272,27 @@ class PatientController extends Controller
             ->get();
         $isEmpty = $appointments->isEmpty();
 
-        return view('patient.history', ['appointments' => $appointments, 'isEmpty' => $isEmpty]);
+
+
+        $availableAppointments = AvailableAppointment::all()->map(function ($slot) {
+            $pendingCount = Appointment::where('date', $slot->date)
+                ->where('time_slot', $slot->time_slot)
+                ->where('status', 'pending')
+                ->count();
+        
+            $remainingSlots = max($slot->max_slots - $pendingCount, 0);         
+            return [
+                'id' => $slot->id,
+                'date' => $slot->date,
+                'time_slot' => $slot->time_slot,
+                'remaining_slots' => $remainingSlots, 
+            ];
+        })->toArray();
+
+
+        return view('patient.history', ['availableAppointments' => $availableAppointments, 'appointments' => $appointments, 'isEmpty' => $isEmpty]);
     }
+     
 
     //For Displaying the Modal Details 
     public function viewHistory($appointmentId)
@@ -309,16 +317,30 @@ class PatientController extends Controller
         ]);
     }
 
-
-    public function cancel($id)
-    {
-        $appointment = Appointment::findorFail($id);
+    public function cancelAppointment($id) {
+        $appointment = Appointment::findOrFail($id);
         $appointment->status = 'Cancelled';
         $appointment->save();
+        return redirect()->back();
+    }
+
+    public function updateAppointment(Request $request, $id)
+    {
+        $request->validate([
+            'reschedule_appointment' => 'required|exists:appointments,id',
+        ]);
+
+        $newAppointmentId = $request->input('reschedule_appointments');
+        $oldAppointment = Appointment::findOrFail($id);
+        $newAppointment = AvailableAppointment::findOrFail($newAppointmentId);
+        $oldAppointment->date = $newAppointment->date;
+        $oldAppointment->time = $newAppointment->time_slot;
+        $oldAppointment->status = 'Pending';
+        $oldAppointment->save(); 
 
         AuditTrail::create([
             'user_id' => Auth::user()->id,
-            'action' => 'Cancelled Appointment',
+            'action' => 'Rescheduled an Appointment',
             'model' => 'User',
             'changes' => null,
             'ip_address' => request()->ip(),
