@@ -94,13 +94,13 @@ class MessageController extends Controller
     {
 
         $replies = Reply::where('message_id', $messageId)
-            ->with('sender:id,firstname,image_path') // Load sender details
+            ->with('sender:id,email,image_path') // Load sender details
             ->orderBy('created_at', 'asc')
             ->get()
             ->map(function ($reply) {
                 return [
                     'id' => $reply->id,
-                    'from_user_name' => $reply->sender->firstname,
+                    'from_user_email' => $reply->sender->email,
                     'message' => $reply->message,
                     'sender_image' => $reply->sender->profile_image ?? '/images/default-avatar.png',
                     'created_at' => $reply->created_at->format('F j, Y h:i A'),
