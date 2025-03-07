@@ -35,7 +35,6 @@ class AppServiceProvider extends ServiceProvider
                     ->whereNull('updated_at')
                     ->count();
 
-                // Pass both notifications and count to all views
                 $view->with([
                     'notifications' => $notifications,
                     'notifcount' => $notifcount

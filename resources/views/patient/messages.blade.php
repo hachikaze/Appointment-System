@@ -4,7 +4,6 @@
             <div
                 class="bg-teal-500 overflow-hidden mx-12 sm:rounded-t-lg border-b-4 rounded-b-lg border-teal-600 shadow-lg xl:col-span-1 md:col-span-2 sm:col-span-2 col-span-2 relative">
                 <div class="flex flex-col sm:flex-row items-center justify-center py-4 relative">
-                    <!-- Back Button -->
                     <div class="sm:absolute sm:left-4 mb-2 sm:mb-0">
                         <form action="{{ route('patient.dashboard') }}" method="GET">
                             @csrf
@@ -14,7 +13,6 @@
                             </button>
                         </form>
                     </div>
-                    <!-- Centered Title -->
                     <div class="text-center font-bold text-3xl text-white sm:flex-1">
                         <i class="fa-solid fa-history px-2"></i>MESSAGING SYSTEM
                     </div>
@@ -32,7 +30,6 @@
                     @enderror
 
                     <div class="flex flex-col md:flex-row gap-4">
-                        <!-- Messages Section -->
                         <div class="bg-gray-100 border-r-4 border-teal-600 rounded-lg  lg:w-1/3 md:w-full ">
                             <div
                                 class="bg-teal-500 p-2 shadow-lg rounded-t-lg border-2 border-teal-500 font-bold text-md text-white">
@@ -68,7 +65,6 @@
                                 </div>
 
 
-                                <!-- Messages Container -->
                                 <div
                                     class="mt-4 space-y-2 h-full max-h-[800px] overflow-y-auto p-5 pr-0 pl-0  flex flex-col min-h-0">
                                     @foreach ($messages as $message)
@@ -250,7 +246,6 @@
                                         <i class="fa-solid fa-envelope px-1"></i> Subject: [Example Text]
                                     </h1>
 
-                                    <!-- Message Time -->
                                     <div class="rounded-lg shadow-lg bg-white p-2 w-full sm:w-auto">
                                         <p class="text-sm font-semibold text-teal-600 w-full" id="message-time">
                                             M/D/Y
@@ -401,7 +396,6 @@
                         `<i class="fa-solid fa-envelope text-white mr-2"></i> Subject: ${subject}`;
                     messageTime.textContent = `${time}`;
 
-                    //REPLIES
                     fetch(`/patient/messages/${messageId}/replies`)
                         .then(response => response.json())
                         .then(data => {

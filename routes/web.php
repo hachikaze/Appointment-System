@@ -67,10 +67,14 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::get('/appointments/{date}', action: [PatientController::class, 'fetchAppointments']);
 
 
+        Route::post('/close-audit-modal', function (Request $request) {
+            session()->forget('audit_modal_open');
+            return response()->json(['message' => 'Audit modal session closed']);
+        })->name('close.audit.modal');
 
         // Route::get('/appointments', [PatientController::class, 'getAppointments'])->name('appointments.get');
-
     });
+    
 
     // FOR APPOINTMENT
     Route::get('/patient/appointment', function () {

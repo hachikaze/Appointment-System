@@ -13,6 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js" defer></script>
     <link rel="stylesheet" href="/fontawesome/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <x-toastr-notification />
 </head>
 
 <style>
@@ -74,10 +75,14 @@
 <body class="bg-gray-100">
     <div class="grid-bg">
         <!-- Header -->
-        <header class="bg-white shadow-md p-4 pr-10 pl-10 flex justify-between items-center">
-            <a href="/patient/dashboard">
-                <img src="{{ asset('images/logo.png') }}" alt="Clinic Logo" class="h-16">
-            </a>
+        <header class="bg-white shadow-md p-4 pt-2 pr-10 pl-10 flex justify-between items-center">
+            <div class="flex sm:flex-row items-center space-x-4">
+                <a href="/patient/dashboard">
+                    <img src="{{ asset('images/logo.png') }}" alt="Clinic Logo" class="h-16 rounded-xl bg-teal-50">
+                </a>
+                <p class="hidden sm:block font-bold text-2xl text-teal-500">ANNA FATIMA <span class="">DENTAL
+                        CLINIC</span></p>
+            </div>
             <div class="flex items-center justify-between space-x-4">
                 <div class="relative inline-block text-left">
                     <div>
@@ -110,7 +115,7 @@
                                     </button>
                                 </div>
 
-                                <div class="p-4 pl-2">
+                                <div class="bg-teal-50 p-4 pl-2">
                                     <div class="grid grid-cols-1 gap-4 overflow-y-auto p-2">
                                         @foreach ($notifications as $notifs)
                                             <div
@@ -119,7 +124,7 @@
                                                 <div class="p-4 pl-0 text-start">
                                                     <p class="font-bold text-xl text-center text-teal-500">
                                                         <i
-                                                            class="fa-solid fa-tooth fa-lg px-2"></i>{{ $notifs->appointments }}
+                                                            class="fa-solid fa-tooth fa-lg px-2 "></i>{{ $notifs->appointments }}
                                                     </p>
                                                 </div>
                                                 <div
