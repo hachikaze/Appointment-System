@@ -15,6 +15,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Middleware\PreventBackHistory;
+use App\Http\Controllers\PatientRecordsExportController;
 use App\Mail\ForgotPassword;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Auth;
@@ -158,6 +159,10 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
 
         Route::put('/admin/appointments/reschedule/{id}', [ManageAppointmentController::class, 'reschedule'])
         ->name('admin.appointments.reschedule');
+
+        //EXPORTING FILES
+        Route::get('/patient/export-pdf/{patientName}', [PatientRecordsExportController::class, 'exportPdf'])
+        ->name('patient.export.pdf');
 
     });
 });

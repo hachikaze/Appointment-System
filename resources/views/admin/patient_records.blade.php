@@ -99,54 +99,73 @@
     </div>
 
     <!-- Unique Patient List -->
-    <!-- Instead of using $patients->groupBy('patient_name'), 
-     use the $distinctPatients paginator. -->
     <div class="bg-white rounded-lg shadow overflow-hidden border border-teal-100">
         @if($distinctPatients->count())
-        <div class="overflow-x-auto">
-            <table class="w-full table-auto">
-                <thead class="bg-gradient-to-r from-teal-50 to-teal-100">
-                    <tr>
-                        <th class="px-6 py-3 text-xs font-semibold text-teal-700 uppercase tracking-wider whitespace-nowrap border-r border-teal-200">
-                            Patient Name
-                        </th>
-                        <th class="px-6 py-3 text-xs font-semibold text-teal-700 uppercase tracking-wider whitespace-nowrap">
-                            Actions
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-teal-100">
-                    @foreach ($distinctPatients as $patientRow)
-                        @php
-                            $patientName = $patientRow->patient_name;
-                            $records     = $allRecords[$patientName] ?? collect([]);
-                        @endphp
-                        <tr class="hover:bg-teal-50 transition">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-teal-900 font-medium border-r border-teal-50">
-                                {{ $patientName }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <button onclick="openViewModal('{{ addslashes($patientName) }}')"
-                                        class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition">
-                                    View
-                                </button>
-                            </td>
+            <div class="overflow-x-auto">
+                <table class="w-full table-auto">
+                    <thead class="bg-gradient-to-r from-teal-50 to-teal-100">
+                        <tr>
+                            <!-- Sequence Number Column -->
+                            <th class="w-12 px-6 py-3 text-xs font-semibold text-teal-700 uppercase tracking-wider whitespace-nowrap border-r border-teal-200 text-center">
+                                #
+                            </th>
+                            <!-- Patient's Name -->
+                            <th class="w-25 px-6 py-3 text-xs font-semibold text-teal-700 uppercase tracking-wider whitespace-nowrap border-r border-teal-200 text-center">
+                                Patient Name
+                            </th>
+                            <!-- No. of Records Column -->
+                            <th class="w-22 px-6 py-3 text-xs font-semibold text-teal-700 uppercase tracking-wider text-center border-r border-teal-200">
+                                No. of Appointment Records
+                            </th>
+                            <!-- Actions Column -->
+                            <th class="px-6 py-3 text-xs font-semibold text-teal-700 uppercase tracking-wider whitespace-nowrap text-center">
+                                Actions
+                            </th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-
-        <!-- @if ($distinctPatients->total() > 0)
-            <div class="p-4 text-sm text-teal-700">
-                Showing {{ $distinctPatients->firstItem() }} to {{ $distinctPatients->lastItem() }} of {{ $distinctPatients->total() }} results
+                    </thead>
+                    <tbody class="divide-y divide-teal-100">
+                        @foreach ($distinctPatients as $patient)
+                            @php
+                                // Construct the full name exactly as stored in the appointments table
+                                $fullName = trim($patient->firstname . ' ' . $patient->middleinitial . ' ' . $patient->lastname);
+                                // Retrieve appointment records for that full name, or an empty collection if none exist
+                                $records = $allRecords[$fullName] ?? collect([]);
+                            @endphp
+                            <tr class="hover:bg-teal-50 transition">
+                                <!-- Sequence Number Cell -->
+                                <td class="w-12 px-6 py-4 whitespace-nowrap text-sm text-teal-900 font-medium text-center border-r border-teal-50">
+                                    {{ $loop->iteration }}
+                                </td>
+                                <!-- Patient Name Cell -->
+                                <td class="w-25 px-6 py-4 whitespace-nowrap text-sm text-teal-900 font-medium border-r border-teal-50">
+                                    {{ $fullName }}
+                                </td>
+                                <!-- Record Count Cell -->
+                                <td class="w-22 px-6 py-4 whitespace-nowrap text-sm text-teal-900 font-medium text-left border-r border-teal-50">
+                                    @if ($records->count() === 0)
+                                        <span class="text-red-600">No Records Found</span>
+                                    @elseif ($records->count() === 1)
+                                        1 record
+                                    @else
+                                        {{ $records->count() }} records
+                                    @endif
+                                </td>
+                                <!-- Actions Cell -->
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    <button onclick="openViewModal('{{ addslashes($fullName) }}', '{{ addslashes($patient->email) }}')"
+                                        class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                                        View
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
-        @endif -->
 
-            <!-- Now the pagination links will say "Showing 1 to X of Y" 
-                for the *unique* patients, not the total appointments. -->
+            <!-- Pagination -->
             <div class="p-4">
-            {{ $distinctPatients->appends(request()->query())->links() }}
+                {{ $distinctPatients->appends(request()->query())->links() }}
             </div>
         @else
             <div class="p-6 text-center text-teal-600">
@@ -155,12 +174,15 @@
         @endif
     </div>
 
-
     <!-- View Modal -->
-    <div id="viewModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div id="viewModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50 hidden">
         <div class="bg-white rounded-lg shadow-lg w-full max-w-lg">
             <!-- Modal Header -->
-            <div class="px-6 py-4 border-b bg-gradient-to-r from-teal-600 to-teal-700 rounded-t-lg">
+            <div class="px-6 py-4 border-b bg-gradient-to-r from-teal-600 to-teal-700 rounded-t-lg flex items-center">
+                <svg class="h-6 w-6 text-white mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
                 <h3 id="viewModalTitle" class="text-lg font-medium text-white">Patient Records</h3>
             </div>
 
@@ -172,9 +194,16 @@
             </div>
 
             <!-- Modal Footer -->
-            <div class="px-6 py-4 border-t flex justify-end">
-                <button type="button" onclick="closeViewModal()"
-                    class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">
+            <div class="px-6 py-4 border-t flex justify-between items-center">
+                <div class="flex gap-2">
+                    <a id="exportPdfBtn" href="#" target="_blank" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                        Print PDF
+                    </a>
+                    <button id="exportExcelBtn" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+                        Export to Excel
+                    </button>
+                </div>
+                <button type="button" onclick="closeViewModal()" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">
                     Close
                 </button>
             </div>
@@ -182,88 +211,120 @@
     </div>
 
     @push('scripts')
+    <!-- Include SheetJS Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <script>
         // Convert grouped patients data into a JavaScript object.
         const patientRecordsData = @json($allRecords);
 
-        function openViewModal(patientName) {
+        function openViewModal(patientName, patientEmail) {
             const records = patientRecordsData[patientName];
             let contentHtml = '';
 
             if (records && records.length > 0) {
-                // Use the first record for the common details (doctor, email, phone).
+                // Use the first record for common details.
                 const firstRecord = records[0];
 
-                // 1) Row: NAME and DOCTOR
+                // Use default values if any field is missing.
+                const doctor = firstRecord.doctor ? firstRecord.doctor : "No Records";
+                const email = firstRecord.email ? firstRecord.email : patientEmail;
+                const phone = firstRecord.phone ? firstRecord.phone : "No Records";
+
+                // Common details section.
                 contentHtml += `
                     <div class="flex gap-4 mb-4">
-                        <!-- NAME -->
                         <div class="flex-1">
                             <label class="block text-sm font-medium text-teal-700">NAME</label>
                             <p class="w-full p-2 border border-teal-200 rounded-lg bg-white">${patientName}</p>
                         </div>
-                        <!-- DOCTOR -->
                         <div class="flex-1">
-                            <label class="block text-sm font-medium text-teal-700">DOCTOR</label>
-                            <p class="w-full p-2 border border-teal-200 rounded-lg bg-white">${firstRecord.doctor}</p>
+                            <label class="block text-sm font-medium text-teal-700">DOCTOR ASSIGNED</label>
+                            <p class="w-full p-2 border border-teal-200 rounded-lg bg-white">${doctor}</p>
                         </div>
                     </div>
-                `;
-
-                // 2) Row: EMAIL and PHONE
-                contentHtml += `
                     <div class="flex gap-4 mb-4">
-                        <!-- EMAIL -->
                         <div class="flex-1">
                             <label class="block text-sm font-medium text-teal-700">EMAIL</label>
-                            <p class="w-full p-2 border border-teal-200 rounded-lg bg-white">${firstRecord.email}</p>
+                            <p class="w-full p-2 border border-teal-200 rounded-lg bg-white">${email}</p>
                         </div>
-                        <!-- PHONE -->
                         <div class="flex-1">
                             <label class="block text-sm font-medium text-teal-700">PHONE</label>
-                            <p class="w-full p-2 border border-teal-200 rounded-lg bg-white">${firstRecord.phone}</p>
+                            <p class="w-full p-2 border border-teal-200 rounded-lg bg-white">${phone}</p>
                         </div>
+                    </div>
+                    <hr>
+                    <div class="mb-4">
+                        <h3 class="text-lg font-semibold text-teal-700 mt-3">Appointments Recorded</h3>
                     </div>
                 `;
 
-                // 3) Table: Appointment details (Date, Time, Appointment)
-            contentHtml += `
-                <div class="max-h-64 overflow-y-auto">
-                <table class="w-full table-auto">
-                    <thead class="bg-gradient-to-r from-teal-50 to-teal-100">
-                        <tr>
-                            <th class="px-4 py-2 text-xs font-semibold text-teal-700 uppercase">Date</th>
-                            <th class="px-4 py-2 text-xs font-semibold text-teal-700 uppercase">Time</th>
-                            <th class="px-4 py-2 text-xs font-semibold text-teal-700 uppercase">Appointment</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-teal-100">
-            `;
-            records.forEach(record => {
+                // Appointment details table with an ID for Excel export.
                 contentHtml += `
-                <tr class="hover:bg-teal-50 transition">
-                    <td class="px-4 py-2 text-sm text-teal-600">${record.date}</td>
-                    <td class="px-4 py-2 text-sm text-teal-600">${record.time}</td>
-                    <td class="px-4 py-2 text-sm text-teal-600">${record.appointments}</td>
-                </tr>
+                    <div class="max-h-64 overflow-y-auto">
+                        <table id="appointmentsTableModal" class="w-full table-auto">
+                            <thead class="bg-gradient-to-r from-teal-50 to-teal-100">
+                                <tr>
+                                    <th class="px-4 py-2 text-xs font-semibold text-teal-700 uppercase">Date</th>
+                                    <th class="px-4 py-2 text-xs font-semibold text-teal-700 uppercase">Time</th>
+                                    <th class="px-4 py-2 text-xs font-semibold text-teal-700 uppercase">Appointment</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-teal-100">
                 `;
-            });
-            contentHtml += `
-                    </tbody>
-                </table>
-                </div>
-            `;
+
+                records.forEach(record => {
+                    contentHtml += `
+                    <tr class="hover:bg-teal-50 transition">
+                        <td class="px-4 py-2 text-sm text-teal-600">${record.date}</td>
+                        <td class="px-4 py-2 text-sm text-teal-600">${record.time}</td>
+                        <td class="px-4 py-2 text-sm text-teal-600">${record.appointments}</td>
+                    </tr>
+                    `;
+                });
+
+                contentHtml += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
             } else {
-                // If no records for that patient
-                contentHtml = '<p class="text-center text-teal-600">No records found for this patient.</p>';
+                // No appointment records.
+                contentHtml += `
+                    <div class="flex gap-4 mb-4">
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-teal-700">NAME</label>
+                            <p class="w-full p-2 border border-teal-200 rounded-lg bg-white">${patientName}</p>
+                        </div>
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-teal-700">DOCTOR ASSIGNED</label>
+                            <p class="w-full p-2 border border-teal-200 rounded-lg bg-white">No Records</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 mb-4">
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-teal-700">EMAIL</label>
+                            <p class="w-full p-2 border border-teal-200 rounded-lg bg-white">${patientEmail}</p>
+                        </div>
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-teal-700">PHONE</label>
+                            <p class="w-full p-2 border border-teal-200 rounded-lg bg-white">No Records</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="mb-4">
+                        <h3 class="text-lg font-semibold text-teal-700 mt-3">Appointments Recorded</h3>
+                    </div>
+                    <p class="text-center text-red-600">No Appointments Found</p>   
+                `;
             }
 
-            // Inject the HTML into the modal
-            document.getElementById('patientRecordsContent').innerHTML = contentHtml;
-            // Set the modal title to "Patient Records"
-            document.getElementById('viewModalTitle').textContent = 'Patient Records';
+            // Update the Print PDF link based on patient name.
+            const encodedName = encodeURIComponent(patientName);
+            document.getElementById('exportPdfBtn').href = `/patient/export-pdf/${encodedName}`;
 
-            // Show the modal
+            // Inject the generated HTML into the modal and display it.
+            document.getElementById('patientRecordsContent').innerHTML = contentHtml;
+            document.getElementById('viewModalTitle').textContent = 'Patient Records';
             document.getElementById('viewModal').classList.remove('hidden');
             document.body.classList.add('overflow-hidden');
         }
@@ -284,6 +345,17 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && !document.getElementById('viewModal').classList.contains('hidden')) {
                 closeViewModal();
+            }
+        });
+
+        // Export to Excel functionality using SheetJS.
+        document.getElementById('exportExcelBtn').addEventListener('click', function() {
+            var table = document.getElementById('appointmentsTableModal');
+            if (table) {
+                var workbook = XLSX.utils.table_to_book(table, { sheet: "Appointments" });
+                XLSX.writeFile(workbook, 'PatientAppointments.xlsx');
+            } else {
+                alert('No appointments table found to export.');
             }
         });
     </script>

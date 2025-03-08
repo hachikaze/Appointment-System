@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PatientRecords;
+use App\Models\User;
 
 class AdminPatientRecordsController extends Controller
 {
@@ -16,30 +17,34 @@ class AdminPatientRecordsController extends Controller
     public function records(Request $request)
     {
         $search = $request->query('search', '');
-        $filter = $request->query('filter', '');
         $perPage = $request->query('perPage', 10);
 
-        // 1) Fetch a paginator of unique patient names
-        $distinctPatients = PatientRecords::select('patient_name')
-        ->when($search, function ($query, $search) {
-            return $query->where('patient_name', 'like', "%{$search}%");
-        })
-        ->groupBy('patient_name')
-        ->orderBy('patient_name', 'asc')  // or whichever column makes sense
-        ->paginate($perPage);
+        // Fetch patients from the users table where user_type is 'patient'
+        $patients = User::select('id', 'firstname', 'middleinitial', 'lastname', 'user_type', 'email')
+            ->where('user_type', 'patient')
+            ->when($search, function ($query, $search) {
+                // Use SQLite string concatenation operator (||)
+                return $query->whereRaw("firstname || ' ' || middleinitial || ' ' || lastname like ?", ["%{$search}%"]);
+            })
+            ->orderBy('firstname', 'asc')
+            ->paginate($perPage);
 
-        // 2) Fetch all the rows (appointments) for *only* those distinct patients
-        $allRecords = PatientRecords::whereIn('patient_name', $distinctPatients->pluck('patient_name'))
-        ->orderBy('created_at', 'desc')
-        ->get()
-        ->groupBy('patient_name');
+        // Build an array of full names in the same format stored in the appointments table
+        $patientNames = $patients->map(function ($patient) {
+            return trim($patient->firstname . ' ' . $patient->middleinitial . ' ' . $patient->lastname);
+        })->toArray();
 
-        // Then pass these two variables into your view:
+        // Fetch all appointments for these patients (using the constructed full names)
+        $allRecords = PatientRecords::whereIn('patient_name', $patientNames)
+            ->where('status', 'Attended')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy('patient_name');
+
         return view('admin.patient_records', [
-        'distinctPatients' => $distinctPatients,  // This is your paginator of unique names
-        'allRecords'       => $allRecords,        // This is a grouped collection of appointments
+            'distinctPatients' => $patients,  
+            'allRecords'       => $allRecords,  
         ]);
-
     }
 
     /**
@@ -59,7 +64,7 @@ class AdminPatientRecordsController extends Controller
             'time'         => 'required',
             'doctor'       => 'required|string|max:255',
             'appointments' => 'required|string|max:255',
-            // 'status'       => 'required|string|in:Pending,Approved,Attended,Unattended,Cancelled',
+            'status'       => 'required|string|in:Pending,Approved,Attended,Unattended,Cancelled',
         ]);
 
         $patient = PatientRecords::findOrFail($id);
