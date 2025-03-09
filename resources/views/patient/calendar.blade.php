@@ -1,6 +1,7 @@
 @php
     use Carbon\Carbon;
 @endphp
+
 <x-patientnav-layout>
     <!DOCTYPE html>
     <html lang="en">
@@ -16,8 +17,7 @@
 
             <div
                 class="mb-4 flex flex-col sm:flex-row bg-teal-50 p-5 shadow-lg rounded-lg border-2 border-teal-400 justify-between my-12 items-center space-y-4 sm:space-y-0">
-                <a href="{{ route('patient.dashboard') }}"
-                    class="flex items-center sm:w-auto w-full bg-red-500 rounded-lg text-white p-2 text-lg shadow-lg font-semibold 
+                <a href="{{ route('patient.dashboard') }}" class="flex items-center sm:w-auto w-full bg-red-500 rounded-lg text-white p-2 text-lg shadow-lg font-semibold 
                         hover:bg-red-600 transition duration-200">
                     <i class="fa-solid fa-arrow-left mr-2"></i> Go Back
                 </a>
@@ -59,14 +59,11 @@
                 </div>
             @endif
 
-
             <div
                 class="relative flex bg-white flex-col w-full h-full text-gray-700 shadow-md rounded-xl bg-clip-border">
-
                 <div
                     class="flex-1 bg-teal-50 shadow-lg rounded-lg border-l-4 border-t-2  border-r-2 border-b-2 border-teal-400 p-6  mb-6">
-
-                    <div class="flex grid-cols-2 justify-between">
+                    <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
                         <div class="space-y-3 text-gray-600">
                             <h3 class="text-lg font-semibold text-teal-700 mb-2">
                                 Important Disclaimer
@@ -138,12 +135,8 @@
                                 </div>
                             </div>
                         </div>
-
-
                     </div>
                 </div>
-
-
 
                 <div class="justify-center ">
                     <div class="border-2 border-teal-500 p-2 rounded-lg relative animate-border" id="divborder">
@@ -198,7 +191,7 @@
                         <div class="block w-full overflow-hidden md:w-max">
                             <nav class="flex items-center gap-3">
                                 <input type="date" id="dateFilter" onchange="filterDate()"
-                                    class="h-full rounded-[7px] border border-teal-600 border-4 bg-teal-50 px-3 py-2.5 text-sm font-normal text-blue-gray-700 outline-none transition-all focus:border-2 focus:border-teal-600">
+                                    class="h-full rounded-[7px]  border-teal-600 border-4 bg-teal-50 px-3 py-2.5 text-sm font-normal text-blue-gray-700 outline-none transition-all focus:border-2 focus:border-teal-600">
 
                                 <div class="flex">
                                     <button onclick="resetFilter()"
@@ -223,7 +216,7 @@
                                 </div>
 
                                 <input oninput="filterAppointments()" id="searchInput"
-                                    class="peer h-full w-full rounded-[7px] border border-teal-600 border-4 bg-teal-50 px-3 py-2.5 !pr-9 text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-teal-600 focus:border-2 focus:border-teal-600 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                                    class="peer h-full w-full rounded-[7px]  border-teal-600 border-4 bg-teal-50 px-3 py-2.5 !pr-9 text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-teal-600 focus:border-2 focus:border-teal-600 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                     placeholder=" " />
 
 
@@ -233,55 +226,7 @@
                                 </label>
 
                                 <script>
-                                    function resetFilter() {
-                                        document.getElementById("dateFilter").value = "";
-                                        filterDate();
-                                    }
 
-                                    function filterAppointments() {
-                                        let input = document.getElementById("searchInput").value.toLowerCase();
-                                        let tableBody = document.getElementById("appointmentsTableBody");
-                                        let rows = tableBody.getElementsByTagName("tr");
-                                        for (let row of rows) {
-                                            let text = row.textContent.toLowerCase();
-                                            row.style.display = text.includes(input) ? "" : "none";
-                                        }
-                                    }
-
-                                    function filterDate() {
-                                        let dateValue = document.getElementById("dateFilter").value;
-                                        console.log("Selected Date:", dateValue);
-                                        let tableBody = document.getElementById("appointmentsTableBody");
-                                        let rows = tableBody.getElementsByTagName("tr");
-
-                                        for (let row of rows) {
-                                            let rowDateText = row.getAttribute("data-date");
-                                            let rowDate = convertDate(rowDateText);
-                                            console.log(`Row Date (Converted): ${rowDate} | Original: ${rowDateText}`);
-
-                                            if (!dateValue || rowDate === dateValue) {
-                                                row.style.display = "";
-                                                console.log(`✅ Showing row with date: ${rowDate}`);
-                                            } else {
-                                                row.style.display = "none";
-                                                console.log(`❌ Hiding row with date: ${rowDate}`);
-                                            }
-                                        }
-                                    }
-
-                                    function convertDate(dateString) {
-                                        let dateObj = new Date(dateString);
-                                        if (isNaN(dateObj)) {
-                                            console.log(`⚠️ Invalid date format: ${dateString}`);
-                                            return "";
-                                        }
-
-                                        let year = dateObj.getFullYear();
-                                        let month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
-                                        let day = dateObj.getDate().toString().padStart(2, "0");
-
-                                        return `${year}-${month}-${day}`;
-                                    }
                                 </script>
                             </div>
                         </div>
@@ -317,103 +262,75 @@
                         </thead>
                         <tbody id="appointmentsTableBody">
                             @foreach ($allData as $slots)
-                                <tr data-date="{{ \Carbon\Carbon::parse($slots->date)->format('F j, Y') }}">
-                                    <td class="p-4 border-b border-teal-100">
-                                        <div class="flex items-center justify-center gap-3">
-                                            <img src="{{ Auth::user()->image_path ? asset('storage/' . Auth::user()->image_path) : asset('images/default-avatar.png') }}"
-                                                alt="Avatar"
-                                                class="relative shadow-lg inline-block h-9 w-9 !rounded-full object-cover object-center" />
-                                            <div class="flex flex-col">
-                                                <p
-                                                    class="block text-md antialiased font-normal leading-normal text-blue-gray-900">
-                                                    {{ \Carbon\Carbon::parse($slots->date)->format('F j, Y') }}
-                                                </p>
+                                                        <tr data-date="{{ Carbon::parse($slots->date)->format('F j, Y') }}">
+                                                            <td class="p-4 border-b border-teal-100">
+                                                                <div class="flex items-center justify-center gap-3">
+                                                                    <img src="{{ Auth::user()->image_path ? asset('storage/' . Auth::user()->image_path) : asset('images/logo.png') }}"
+                                                                        alt="Avatar"
+                                                                        class="relative shadow-lg inline-block h-9 w-9 !rounded-full object-cover object-center" />
+                                                                    <div class="flex flex-col">
+                                                                        <p
+                                                                            class="block text-md antialiased font-normal leading-normal text-blue-gray-900">
+                                                                            {{ Carbon::parse($slots->date)->format('F j, Y') }}
+                                                                        </p>
 
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="p-4 border-b border-teal-100">
-                                        <div class="flex flex-col">
-                                            <p
-                                                class="block text-md antialiased font-normal leading-normal text-blue-gray-900">
-                                                {{ $slots->time_slot }}
-                                            </p>
-                                        </div>
-                                    </td>
-                                    <td class="p-4 border-b border-teal-100">
-                                        <div class="w-max">
-                                            <div
-                                                class="relative grid items-center px-2 py-1 text-md font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
-                                                <span class="">
-                                                    {{ $slots->remaining_slots ??
-                                                        $slots->max_slots -
-                                                            App\Models\Appointment::where('date', $slots->date)->where('time', $slots->time_slot)->where('status', 'Pending')->count() }}
-                                                    Slots Remaining
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="p-4 border-b w-full flex justify-center border-teal-100">
-                                        @php
-                                            $appointmentExists = App\Models\Appointment::where('date', $slots->date)
-                                                ->where('time', $slots->time_slot)
-                                                ->where('status', 'Pending')
-                                                ->exists();
-                                        @endphp
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td class="p-4 border-b border-teal-100">
+                                                                <div class="flex flex-col">
+                                                                    <p
+                                                                        class="block text-md antialiased font-normal leading-normal text-blue-gray-900">
+                                                                        {{ $slots->time_slot }}
+                                                                    </p>
+                                                                </div>
+                                                            </td>
+                                                            <td class="p-4 border-b border-teal-100">
+                                                                <div class="w-max">
+                                                                    <div
+                                                                        class="relative grid items-center px-2 py-1 text-md font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
+                                                                        <span class="">
+                                                                            {{ $slots->remaining_slots ??
+                                    $slots->max_slots -
+                                    App\Models\Appointment::where('date', $slots->date)
+                                        ->where('time', $slots->time_slot)
+                                        ->whereIn('status', ['Pending', 'Approved']) // Include Approved status
+                                        ->count()
+                                                                                                    }}
 
-                                        @if (!$appointmentExists)
-                                            <button
-                                                class="relative flex p-2 bg-teal-500 flex-row space-x-2 items-center justify-center h-12 w-44 select-none rounded-lg text-center align-middle text-xs font-medium uppercase hover:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                                                type="button"
-                                                data-modal-target="appointmentModal-{{ $slots->id }}"
-                                                data-modal-toggle="appointmentModal-{{ $slots->id }}">
-                                                <i class="fa-solid fa-pen fa-lg text-white"></i>
-                                                <span class="mt-1 text-lg font-semibold text-white">CREATE</span>
-                                            </button>
+                                                                            Slots Remaining
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td class="p-4 border-b w-full flex justify-center border-teal-100">
+                                                                @php
+                                                                    $appointmentExists = App\Models\Appointment::where('date', $slots->date)
+                                                                        ->where('time', $slots->time_slot)
+                                                                        ->whereIn('status', ['Pending', 'Approved', 'Attended'])
+                                                                        ->exists();
+                                                                @endphp
 
-                                            <x-modal-appointment-modal modalId="appointmentModal-{{ $slots->id }}"
-                                                dateSelected="{{ $slots->date }}"
-                                                timeslot="{{ $slots->time_slot }}" title="Set Your Appointment"
-                                                route="{{ route('appointment.store') }}" />
-                                            <script>
-                                                document.addEventListener("DOMContentLoaded", () => {
-                                                    const searchInput = document.getElementById("input-group-search");
-                                                    const procedureItems = document.querySelectorAll(".procedure-item");
-                                                    const categoryHeaders = document.querySelectorAll(".category-header");
-
-                                                    searchInput.addEventListener("input", () => {
-                                                        const filter = searchInput.value.toLowerCase().trim();
-                                                        const isSearching = filter.length > 0;
-
-                                                        procedureItems.forEach((item) => {
-                                                            const text = item.innerText.toLowerCase();
-                                                            item.style.display = text.includes(filter) ? "" : "none";
-                                                        });
-
-                                                        categoryHeaders.forEach((header) => {
-                                                            if (isSearching) {
-                                                                header.style.display = "none";
-                                                            } else {
-                                                                header.style.display = "";
-                                                            }
-                                                        });
-                                                    });
-                                                });
-                                            </script>
-                                        @else
-                                            <a href="{{ route('history') }}">
-                                                <span
-                                                    class="px-5 py-2 text-white bg-teal-600 rounded-lg flex flex-col items-center text-center hover:bg-teal-700 transition">
-                                                    <span class="text-lg font-semibold">Appointment Already Set</span>
-                                                    <div class="flex flex-row items-center justify-center mt-1">
-                                                        <p class="text-sm text-gray-200 mx-2">Click to view</p>
-                                                        <i class="fa-solid fa-arrow-right mt-0.5"></i>
-                                                    </div>
-                                                </span>
-                                            </a>
-                                        @endif
-                                    </td>
-                                </tr>
+                                                                @if (!$appointmentExists)
+                                                                    <a href="{{ route('patient.bookappointment', ['id' => $slots->id]) }}"
+                                                                        class="relative flex p-2 bg-teal-500 flex-row space-x-2 items-center justify-center h-12 w-44 select-none rounded-lg text-center align-middle text-xs font-medium uppercase hover:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
+                                                                        <i class="fa-solid fa-pen fa-lg text-white"></i>
+                                                                        <span class="mt-1 text-lg font-semibold text-white">CREATE</span>
+                                                                    </a>
+                                                                @else
+                                                                    <a href="{{ route('history') }}">
+                                                                        <span
+                                                                            class="px-5 py-2 text-white bg-teal-600 rounded-lg flex flex-col items-center text-center hover:bg-teal-700 transition">
+                                                                            <span class="text-lg font-semibold">Appointment Already Set</span>
+                                                                            <div class="flex flex-row items-center justify-center mt-1">
+                                                                                <p class="text-sm text-gray-200 mx-2">Click to view</p>
+                                                                                <i class="fa-solid fa-arrow-right mt-0.5"></i>
+                                                                            </div>
+                                                                        </span>
+                                                                    </a>
+                                                                @endif
+                                                            </td>
+                                                        </tr>
                             @endforeach
                         </tbody>
 
@@ -422,21 +339,67 @@
 
             </div>
         </div>
-        </div>
 
-        </div>
-        </div>
+
     </body>
 
     </html>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        function resetFilter() {
+            document.getElementById("dateFilter").value = "";
+            filterDate();
+        }
+
+        function filterAppointments() {
+            let input = document.getElementById("searchInput").value.toLowerCase();
+            let tableBody = document.getElementById("appointmentsTableBody");
+            let rows = tableBody.getElementsByTagName("tr");
+            for (let row of rows) {
+                let text = row.textContent.toLowerCase();
+                row.style.display = text.includes(input) ? "" : "none";
+            }
+        }
+
+        function filterDate() {
+            let dateValue = document.getElementById("dateFilter").value;
+            console.log("Selected Date:", dateValue);
+            let tableBody = document.getElementById("appointmentsTableBody");
+            let rows = tableBody.getElementsByTagName("tr");
+
+            for (let row of rows) {
+                let rowDateText = row.getAttribute("data-date");
+                let rowDate = convertDate(rowDateText);
+                console.log(`Row Date (Converted): ${rowDate} | Original: ${rowDateText}`);
+
+                if (!dateValue || rowDate === dateValue) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            }
+        }
+
+        function convertDate(dateString) {
+            let dateObj = new Date(dateString);
+            if (isNaN(dateObj)) {
+                console.log(`⚠️ Invalid date format: ${dateString}`);
+                return "";
+            }
+
+            let year = dateObj.getFullYear();
+            let month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
+            let day = dateObj.getDate().toString().padStart(2, "0");
+
+            return `${year}-${month}-${day}`;
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
             const checkboxes = document.querySelectorAll(".checkbox-item");
             const clearButton = document.getElementById("clear-checkboxes");
 
             checkboxes.forEach((checkbox) => {
-                checkbox.addEventListener("change", function() {
+                checkbox.addEventListener("change", function () {
                     let checkedBoxes = document.querySelectorAll(".checkbox-item:checked");
 
                     if (checkedBoxes.length > 3) {
@@ -446,7 +409,7 @@
                 });
             });
 
-            clearButton.addEventListener("click", function(event) {
+            clearButton.addEventListener("click", function (event) {
                 event.preventDefault();
                 checkboxes.forEach(checkbox => checkbox.checked = false);
             });
@@ -486,7 +449,6 @@
                 });
         }
 
-
         function updateAppointmentsTable(appointments) {
             const tableBody = document.getElementById("appointmentsTableBody");
             tableBody.innerHTML = "";
@@ -504,8 +466,7 @@
                 row.innerHTML = `
             <td class="p-4 border-b border-teal-100">
                 <div class="flex items-center justify-center gap-3">
-                    <img src="${slot.user_image ? `/storage/${slot.user_image}` : '/images/default-avatar.png'}"
-                        alt="Avatar"
+                        <img src="{{ asset('images/logo.png') }}" alt="Logo"
                         class="relative shadow-lg inline-block h-9 w-9 rounded-full object-cover object-center" />
                     <div class="flex flex-col">
                         <p class="block text-md antialiased font-normal leading-normal text-blue-gray-900">
@@ -530,73 +491,30 @@
             </td>
             <td class="p-4 border-b w-full flex justify-center border-teal-100">
                 ${!appointmentExists ?
-                        `<button class="relative flex p-2 bg-teal-500 flex-row space-x-2 items-center justify-center h-12 w-44 select-none rounded-lg text-center align-middle text-xs font-medium uppercase hover:bg-slate-800"
-                                                                                                                                                                                    type="button" data-modal-target="appointmentModal-${slot.id}" data-modal-toggle="appointmentModal-${slot.id}">
-                                                                                                                                                                                    <i class="fa-solid fa-pen fa-lg text-white"></i>
-                                                                                                                                                                                    <span class="mt-1 text-lg font-semibold text-white">CREATE</span>
-                                                                                                                                                                                </button>
-
-                                                                                                                                                                                <x-modal-appointment-modal modalId="appointmentModal-${slot.id}" 
-                                                                                                                                                                                    dateSelected="${slot.date}" timeslot="${slot.time_slot}"
-                                                                                                                                                                                    title="Set Your Appointment" route="/patient/appointment/store" />`
+                        `<a href="{{ route('patient.bookappointment', ['id' => $slots->id]) }}"
+                        class="relative flex p-2 bg-teal-500 flex-row space-x-2 items-center justify-center h-12 w-44 select-none rounded-lg text-center align-middle text-xs font-medium uppercase hover:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
+                        <i class="fa-solid fa-pen fa-lg text-white"></i>
+                        <span class="mt-1 text-lg font-semibold text-white">CREATE</span>
+                    </a>`
                         :
                         `<a href="/patient/history">
-                                                                                                                                                                                    <span class="px-5 py-2 text-white bg-teal-600 rounded-lg flex flex-col items-center text-center hover:bg-teal-700 transition">
-                                                                                                                                                                                        <span class="text-lg font-semibold">Appointment Already Set</span>
-                                                                                                                                                                                        <div class="flex flex-row items-center justify-center mt-1">
-                                                                                                                                                                                            <p class="text-sm text-gray-200 mx-2">Click to view</p>
-                                                                                                                                                                                            <i class="fa-solid fa-arrow-right mt-0.5"></i>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    </span>
-                                                                                                                                                                                </a>`
+                    <span class="px-5 py-2 text-white bg-teal-600 rounded-lg flex flex-col items-center text-center hover:bg-teal-700 transition">
+                        <span class="text-lg font-semibold">Appointment Already Set</span>
+                        <div class="flex flex-row items-center justify-center mt-1">
+                            <p class="text-sm text-gray-200 mx-2">Click to view</p>
+                            <i class="fa-solid fa-arrow-right mt-0.5"></i>
+                        </div>
+                    </span>
+                    </a>`
                     }
             </td>
         `;
                 console.log(appointmentExists);
                 tableBody.appendChild(row);
             });
-            initializeModals();
-
         }
 
-
-        function initializeModals() {
-            const modalToggles = document.querySelectorAll('[data-modal-toggle]');
-
-            modalToggles.forEach(toggle => {
-                toggle.removeEventListener('click', handleModalToggle);
-                toggle.addEventListener('click', handleModalToggle);
-            });
-
-            document.addEventListener('click', function(event) {
-                const targetModal = event.target.getAttribute('data-modal-hide');
-                if (targetModal) {
-                    const modal = document.getElementById(targetModal);
-                    if (modal) {
-                        modal.classList.remove('show');
-                        modal.style.display = 'none';
-                    }
-                }
-            });
-        }
-
-        function handleModalToggle(event) {
-            const target = event.currentTarget.getAttribute('data-modal-target');
-            if (target) {
-                const modal = document.getElementById(target);
-                if (modal) {
-                    modal.classList.toggle('show');
-                    modal.style.display = modal.classList.contains('show') ? 'flex' : 'none';
-                    modal.classList.add('bg-gray-600', 'bg-opacity-50', 'backdrop-blur-sm'); // Apply proper background
-                } else {
-                    modal.style.display = 'none';
-                    modal.classList.remove('bg-gray-600', 'bg-opacity-50', 'backdrop-blur-sm');
-                }
-            }
-        }
-        document.addEventListener('DOMContentLoaded', initializeModals);
-
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const appointments = @json($appointments);
             var remainingSlotsByDate = @json($remainingSlotsByDate);
             const calendar = document.querySelector('#calendar');
@@ -630,13 +548,14 @@
                     listContainer.className = "space-y-2 w-full";
 
                     for (let day = 1; day <= daysInMonth; day++) {
-                        const currentDate = new Date(year, month, day);
+                        const currentDate = new Date(Date.UTC(year, month, day));
+                        const dateString = currentDate.toISOString().split("T")[0];
 
                         const dayOfWeek = currentDate.getDay();
                         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
                             "Saturday"
                         ];
-                        const dayName = daysOfWeek[dayOfWeek]; // Convert index to day name
+                        const dayName = daysOfWeek[dayOfWeek];
 
                         const listItem = document.createElement("li");
                         listItem.className =
@@ -663,13 +582,17 @@
 
                         listItem.addEventListener("click", () => {
                             const modalDate = document.getElementById("selectedDate");
-                            const hiddenmodalDate = document.getElementById("hiddenselectedDate");
-                            if (!hiddenmodalDate) {
-                                console.error("Hidden input field 'hiddenselectedDate' not found.");
+                            fetchAppointments(dateString);
+                            if (!modalDate) {
+                                console.error("selecter'hiddenselectedDate' not found.");
                                 return;
                             }
+
+
+                            console.log(modalDate);
                             modalDate.innerText = `Selected Date: ${dayName}, ${formattedDate}`;
                             hiddenmodalDate.value = formattedDate;
+                            console.log("Selected Date:", formattedDate);
                             document.getElementById("dateForm").submit();
                         });
 
@@ -677,7 +600,7 @@
                     }
 
                     calendar.appendChild(listContainer);
-                } else {
+                } else {   // FOR DESKTOP VIEW
                     calendar.innerHTML = `
                         
                         <div class="hidden sm:block mb-4 text-center font-bold text-lg text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Sun</div>
@@ -714,6 +637,8 @@
 
                         const totalSlots = remainingSlotsByDate[dateString] || 0;
                         const appointment = appointments.find(app => app.date === dateString);
+
+
                         var bgColor = "bg-white";
                         var borderColor = "border-teal-500";
                         var textColor = "text-teal-700";
@@ -724,12 +649,12 @@
                             `hidden sm:flex flex-col items-center justify-center shadow-lg border-l-4 rounded-lg text-xl font-semibold transition-all duration-300 hover:bg-teal-100 hover:text-gray-700 cursor-pointer shadow-md w-full h-16 sm:h-20 md:h-18 lg:h-28 xl:h-24 2xl:h-28 ${bgColor} ${borderColor} ${textColor}`;
                         daySlot.title = tooltipText;
 
-                        // Day number element
+                        // DAY NUMBER ELEMENTS
                         const dayNumber = document.createElement('span');
                         dayNumber.className = "text-center xl:text-3xl lg:text-2xl font-bold";
                         dayNumber.innerText = day;
 
-                        daySlot.addEventListener("click", function() {
+                        daySlot.addEventListener("click", function () {
                             const tableBody = document.getElementById("appointmentsTableBody");
 
                             if (tableBody) {
@@ -750,7 +675,12 @@
                             toggleButton.type = "button";
                             toggleButton.className =
                                 "bg-teal-600 text-white shadow-lg mt-2 font-semibold px-4 py-2 rounded-lg focus:outline-none";
-                            toggleButton.innerHTML = "Slots Availability <i class='fas fa-chevron-down ml-2'></i>";
+
+                            toggleButton.innerHTML = `
+                                <span class="hidden lg:inline">Slots Availability</span>
+                                <i class='fas fa-chevron-down ml-2'></i>
+                            `;
+
 
                             const slotsInfoContainer = document.createElement('div');
                             slotsInfoContainer.className =
@@ -777,16 +707,17 @@
                                 event.preventDefault();
                                 const isHidden = slotsInfoContainer.classList.contains('hidden');
                                 slotsInfoContainer.classList.toggle('hidden', !isHidden);
-                                toggleButton.innerHTML = isHidden ?
-                                    "Hide Slot <i class='fas fa-chevron-up ml-2'></i>" :
-                                    "Slots Availability <i class='fas fa-chevron-down ml-2'></i>";
+                                toggleButton.innerHTML = isExpanded
+                                    ? `<span class="hidden lg:inline">Hide Slot</span> <i class='fas fa-chevron-up ml-2'></i>`
+                                    : `<span class="hidden lg:inline">Slots Availability</span> <i class='fas fa-chevron-down ml-2'></i>`;
+
                             });
                         } else {
                             const noSlotText = document.createElement('span');
                             noSlotText.className = "font-semibold text-red-700"
                             const icon = document.createElement('i');
                             icon.className = "fas fa-exclamation-circle text-red-400 mx-2";
-                            noSlotText.innerText = "No Slots Available";
+                            noSlotText.innerHTML = `<span class="hidden lg:inline">No Slots Available</span>`;
                             noSlotText.prepend(icon);
                             slotsContainer.appendChild(noSlotText);
                             bgColor = "bg-gray-100";
@@ -797,47 +728,63 @@
 
 
                         if (appointment) {
+                            var isClickable = false;
+                            var cursorStyle = "cursor-not-allowed";
+                            var pointerEvents = "pointer-events-none"; // Prevents all interactions
+
                             switch (appointment.status) {
                                 case "Attended":
                                     bgColor = "bg-blue-300";
                                     borderColor = "border-blue-700 border-2";
                                     textColor = "text-blue-700";
                                     tooltipText = "Attended";
+                                    isClickable = false;
                                     break;
                                 case "Unattended":
                                     bgColor = "bg-gray-300";
                                     borderColor = "border-gray-700 border-2";
                                     textColor = "text-gray-600";
                                     tooltipText = "Unattended";
+                                    isClickable = false;
                                     break;
                                 case "Pending":
-                                    bgColor = "bg-orange-300 text-white";
+                                    bgColor = "bg-orange-300 hover:bg-orange-400";
                                     borderColor = "border-orange-700 border-2";
-                                    textColor = "text-orange-600";
-                                    tooltipText = "Pending";
+                                    textColor = "text-orange-600 font-semibold";
+                                    tooltipText = "Pending - Click to take action";
+                                    isClickable = true;
                                     break;
                                 case "Cancelled":
                                     bgColor = "bg-red-300";
                                     borderColor = "border-red-600 border-2";
                                     textColor = "text-red-600";
                                     tooltipText = "Cancelled";
+                                    isClickable = true;
                                     break;
                                 case "Approved":
-                                    bgColor = "bg-teal-200";
+                                    bgColor = "bg-teal-200 hover:bg-teal-300";
                                     borderColor = "border-teal-600 border-2";
-                                    textColor = "text-teal-600";
-                                    tooltipText = "Approved";
+                                    textColor = "text-teal-600 font-semibold";
+                                    tooltipText = "Approved - Click to view details";
+                                    isClickable = true;
                                     break;
                                 default:
                                     bgColor = "bg-gray-200";
                                     borderColor = "border-teal-600";
                                     textColor = "text-teal-700";
                                     tooltipText = "No appointment";
+                                    isClickable = false;
                                     break;
                             }
+
+                            if (isClickable) {
+                                cursorStyle = "cursor-pointer";
+                                pointerEvents = "pointer-events-auto";
+                            }
+
                         }
                         daySlot.className =
-                            `hidden sm:flex flex-col items-center justify-center shadow-lg border-l-4 rounded-lg text-xl font-semibold transition-all duration-300 hover:bg-teal-100 hover:text-gray-700 cursor-pointer shadow-md w-full h-16 sm:h-20 md:h-18 lg:h-28 xl:h-24 2xl:h-28 ${bgColor} ${borderColor} ${textColor}`;
+                            `hidden sm:flex flex-col items-center justify-center shadow-lg border-l-4 rounded-lg text-xl font-semibold transition-all duration-300 hover:bg-teal-100 hover:text-gray-700 cursor-pointer shadow-md w-full h-16 sm:h-20 md:h-18 lg:h-28 xl:h-24 2xl:h-28 ${bgColor} ${borderColor} ${textColor} ${pointerEvents}`;
                         daySlot.setAttribute("data-date", dateString);
                         daySlot.appendChild(dayNumber);
                         dayNumber.appendChild(slotsContainer);
@@ -864,24 +811,6 @@
                             document.getElementById('dateForm').submit();
 
                         });
-
-                        //WHEN LOADING
-                        window.onload = () => {
-                            const targetSection = document.getElementById("dateformSection");
-                            if (targetSection) {
-                                targetSection.scrollIntoView({
-                                    behavior: "smooth",
-                                    block: "start"
-                                });
-
-                                targetSection.classList.add("highlight");
-
-                                setTimeout(() => {
-                                    targetSection.classList.remove("highlight");
-                                }, 1500);
-                            }
-                        };
-
 
                         if (currentDate < today.setHours(0, 0, 0, 0)) {
                             daySlot.classList.remove("border-teal-500", "text-teal-700");
@@ -921,11 +850,11 @@
                 .getFullYear()));
             renderCalendar(new Date().getMonth(), new Date().getFullYear());
 
-            monthSelect.addEventListener('change', function() {
+            monthSelect.addEventListener('change', function () {
                 renderCalendar(parseInt(monthSelect.value), parseInt(yearSelect.value));
             });
 
-            yearSelect.addEventListener('change', function() {
+            yearSelect.addEventListener('change', function () {
                 renderCalendar(parseInt(monthSelect.value), parseInt(yearSelect.value));
             });
             renderCalendar(currentMonth, currentYear);
@@ -944,16 +873,6 @@
                 transform: scale(1) translateY(0);
             }
         }
-
-        /* #appointmentModal:target {
-            display: flex;
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        #appointmentModal:target .modal-content {
-            animation: modalFadeIn 2s ease-in;
-        } */
 
         @keyframes borderAnimation {
             0% {

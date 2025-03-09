@@ -17,12 +17,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        // Get counts for each user type
         $adminCount = User::where('user_type', 'admin')->count();
         $staffCount = User::where('user_type', 'staff')->count();
         $patientCount = User::where('user_type', 'patient')->count();
-
-        // Get all users with pagination
         $users = User::where('user_type', '!=', 'admin')->paginate(10);
 
         return view('admin.users', compact('users', 'adminCount', 'staffCount', 'patientCount'));
@@ -50,13 +47,10 @@ class UserController extends Controller
                 'user_type' => ['required', 'string', Rule::in(['admin', 'staff', 'patient'])],
             ]);
 
-            // Log validation success
             Log::info('Validation passed');
 
-            // Concatenate full name
             $fullName = trim("{$request->firstname} {$request->middleinitial} {$request->lastname}");
 
-            // Create user
             $user = User::create([
                 'name' => $fullName,
                 'email' => $request->email,
@@ -65,16 +59,13 @@ class UserController extends Controller
                 'user_type' => $request->user_type
             ]);
 
-            // Log user creation success
             Log::info('User created successfully:', ['id' => $user->id, 'email' => $user->email]);
 
             return redirect()->route('admin.users')->with('success', 'User created successfully.');
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Log validation errors
             Log::error('Validation failed:', $e->errors());
             return back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
-            // Log any other exceptions
             Log::error('User creation failed:', ['error' => $e->getMessage()]);
             return back()->with('error', 'Failed to create user: ' . $e->getMessage())->withInput();
         }

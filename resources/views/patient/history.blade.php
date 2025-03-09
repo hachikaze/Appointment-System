@@ -179,20 +179,44 @@
                                                 </button>
 
                                                 @if (in_array($appointment->status, ['Unattended']))
-                                                    <button data-modal-target="reschedule-appointment-modal"
-                                                        data-modal-toggle="reschedule-appointment-modal"
+                                                    <button data-modal-target="reschedule-appointment-modal-{{ $appointment->id }}"
+                                                        data-modal-toggle="reschedule-appointment-modal-{{ $appointment->id }}"
                                                         class="bg-yellow-500 w-full font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-yellow-600 transition w-full md:w-auto">
                                                         <i class="fa-solid fa-calendar-alt pr-2"></i> Reschedule
                                                     </button>
                                                 @endif
 
+                                                @if ($appointment->status === 'Attended')
+                                                    <button data-modal-target="review-appointment-modal-{{ $appointment->id }}"
+                                                        data-modal-toggle="review-appointment-modal-{{ $appointment->id }}"
+                                                        class="bg-blue-500 font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-blue-600 transition w-full md:w-auto">
+                                                        <i class="fa-solid fa-star pr-2"></i> Leave a Review
+                                                    </button>
+
+                                             <!-- Review Modal Component -->
+                                                <x-review-modal 
+                                                    :modalId="'review-appointment-modal-' . $appointment->id"
+                                                    :route="route('appointments.review', ['id' => $appointment->id])"
+                                                    :services="$appointment->appointments" 
+                                                    />
+
+
+                                                @endif
+
+                                                                                                
+
                                                 @if (in_array($appointment->status, ['Approved', 'Pending']))
-                                                    <button data-modal-target="cancel-appointment-modal"
-                                                        data-modal-toggle="cancel-appointment-modal"
+                                                    <button data-modal-target="cancel-appointment-modal-{{ $appointment->id }}"
+                                                        data-modal-toggle="cancel-appointment-modal-{{ $appointment->id }}"
                                                         class="bg-red-500 font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-red-600 transition w-full md:w-auto">
                                                         <i class="fa-solid fa-calendar-alt pr-2"></i> Cancel
                                                     </button>
                                                 @endif
+
+
+
+
+
 
                                                 {{-- @if ($appointment->status === 'Cancelled')
                                                     <button disabled
@@ -205,18 +229,21 @@
 
                                             <!-- Cancel Modal -->
 
-                                            <x-modal modalId="cancel-appointment-modal" title="Cancel this Appointment?"
+                                            <x-modal modalId="cancel-appointment-modal-{{ $appointment->id }}"
+                                                title="Cancel this Appointment?"
                                                 message="Are you sure you want to cancel this appointment?"
                                                 route="{{ route('appointments.cancel', ['id' => $appointment->id]) }}"
                                                 method="PUT" buttonText="Cancel Appointment" />
 
-
-
-                                            <x-modal modalId="reschedule-appointment-modal"
-                                                title="Reschedule this Appointment?" :data="$availableAppointments"
+                                            <x-modal modalId="reschedule-appointment-modal-{{ $appointment->id }}"
+                                                title="Reschedule this Appointment?"
+                                                :data="$availableAppointments"
                                                 message="Are you sure you want to reschedule this appointment?"
                                                 route="{{ route('appointments.update', ['id' => $appointment->id]) }}"
                                                 method="PUT" buttonText="Reschedule" />
+
+
+                                                
                                         </td>
 
 

@@ -30,6 +30,7 @@ Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/doctor', [HomeController::class, 'doctor'])->name('doctor');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 
+
 Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(function () {
     // FOR PATIENT USERS
     Route::middleware(['patientMiddleware'])->group(function () {
@@ -46,9 +47,15 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::get('/patient/profile', [LoginController::class, 'profile'])->name('profile');
         Route::put('/patient/users/{id}', [LoginController::class, 'update'])->name('profile.update');
 
+        Route::get('/patient/pricing', [PatientController::class, 'pricing'])->name('pricing');
 
         //FOR GETTING MESSAGES
         Route::get('/patient/messaging', [MessageController::class, 'getMessages'])->name('messages');
+
+        // REDIRECT TO BOOK APPOINTMENT
+        Route::get('/patient/bookappointment/{id}', [PatientController::class, 'bookappointment'])
+            ->name('patient.bookappointment');
+
 
         //FOR GETTING REPLIES
         Route::get('/patient/messages/{messageId}/replies', [MessageController::class, 'getReplies'])->name('messages.replies');
@@ -72,9 +79,10 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
             return response()->json(['message' => 'Audit modal session closed']);
         })->name('close.audit.modal');
 
+        Route::post('/appointments/{id}/review', [PatientController::class, 'storeReview'])->name('appointments.review');
         // Route::get('/appointments', [PatientController::class, 'getAppointments'])->name('appointments.get');
     });
-    
+
 
     // FOR APPOINTMENT
     Route::get('/patient/appointment', function () {
@@ -134,6 +142,7 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::post('/admin/inventory/{id}/adjust', [InventoryController::class, 'adjustQuantity'])->name('admin.inventory.adjust');
         Route::post('/admin/inventory/order-critical', [InventoryController::class, 'orderCriticalItem'])->name('admin.inventory.order-critical');
         Route::put('/admin/inventory/categories/{category}', [InventoryController::class, 'updateCategory'])->name('admin.inventory.categories.update');
+
         // Category Management Routes - UPDATED
         Route::post('/admin/inventory/categories', [InventoryController::class, 'storeCategory'])->name('admin.inventory.categories.store');
         Route::delete('/admin/inventory/categories/{category}', [InventoryController::class, 'destroyCategory'])->name('admin.inventory.categories.destroy');

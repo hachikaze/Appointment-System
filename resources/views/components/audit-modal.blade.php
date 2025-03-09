@@ -12,9 +12,6 @@
         <div class="p-6">
             {{ $slot }}
         </div>
-        {{-- <div class="flex justify-end p-4 border-t">
-
-        </div> --}}
     </div>
 </div>
 
@@ -23,12 +20,26 @@
         const modal = document.getElementById(modalId);
         const modalContent = document.getElementById(`${modalId}-content`);
 
-        modal.classList.remove('hidden');
+        if (!modal || !modalContent) {
+            console.error(`Modal or modal content not found: ${modalId}`);
+            return;
+        }
+
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+
         setTimeout(() => {
-            modalContent.classList.remove('scale-95', 'opacity-0');
-            modalContent.classList.add('scale-100', 'opacity-100');
+            modalContent.classList.remove("scale-95", "opacity-0");
+            modalContent.classList.add("scale-100", "opacity-100");
         }, 50);
+
+        const url = new URL(window.location.href);
+        url.searchParams.set("auditModal", "true");
+        window.history.replaceState({}, "", url.toString());
+
+        console.log("Updated URL:", url.toString()); // Debugging
     }
+
 
     function closeModal(modalId) {
         const modal = document.getElementById(modalId);

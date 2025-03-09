@@ -11,8 +11,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use function Pest\Laravel\get;
 use Illuminate\Support\Facades\File;
+use App\Models\Review;
 
 
 class PatientController extends Controller
@@ -24,10 +26,18 @@ class PatientController extends Controller
         $now = Carbon::now('Asia/Singapore');
         $query = AuditTrail::with('user')->orderBy('created_at', 'desc');
 
-        $monthlyAppointments = Appointment::where('email', auth()->user()->email)
-            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
-            ->groupBy('date')
-            ->pluck('count', 'date');
+        $monthlyAppointments = DB::table('appointments')
+            ->selectRaw("strftime('%m', date) as month, COUNT(*) as count")
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->mapWithKeys(function ($item) {
+                // Convert "01" -> "Jan", "02" -> "Feb", etc.
+                return [Carbon::create()->month(intval($item->month))->format('M') => $item->count];
+            });
+
+        $monthlyCategories = $monthlyAppointments->keys();
+        $monthlyData = $monthlyAppointments->values();
 
 
         $dailyAppointments = Appointment::where('email', auth()->user()->email)
@@ -44,27 +54,27 @@ class PatientController extends Controller
             ->orderBy('created_at', 'desc')
             ->limit(15)
             ->get();
-            
+
         $search = $request->input('search');
         $allauditTrails = AuditTrail::where('user_id', Auth::id())
-        ->with('user')
-        ->when($search, function ($query, $search) {
-            return $query->where(function ($q) use ($search) {
-                $q->where('action', 'like', "%{$search}%")
-                    ->orWhereHas('user', function ($q) use ($search) {
-                        $q->where('firstname', 'like', "%{$search}%")
-                        ->orWhere('lastname', 'like', "%{$search}%");
-                    });
-            });
-        })
-        ->orderBy('created_at', 'desc')
-        ->paginate(10)
-        ->appends(['search' => $search]); 
-            
+            ->with('user')
+            ->when($search, function ($query, $search) {
+                return $query->where(function ($q) use ($search) {
+                    $q->where('action', 'like', "%{$search}%")
+                        ->orWhereHas('user', function ($q) use ($search) {
+                            $q->where('firstname', 'like', "%{$search}%")
+                                ->orWhere('lastname', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->appends(['search' => $search]);
+
         if ($request->has('auditModal')) {
             session(['audit_modal_open' => true]);
         }
-            
+
 
         $today = Carbon::now()->timezone('Asia/Singapore')->toDateString();
         $availableAppointments = AvailableAppointment::whereDate('date', $today)
@@ -112,7 +122,8 @@ class PatientController extends Controller
             'auditTrails',
             'user',
             'dailyAppointments',
-            'monthlyAppointments',
+            'monthlyCategories',
+            'monthlyData',
             'availableAppointments',
             'availableDates',
             'appointmentCategories',
@@ -128,83 +139,10 @@ class PatientController extends Controller
         ));
     }
 
-
-    public function fetchAppointments($date)
+    public function bookappointment($id)
     {
-        $userEmail = auth()->user()->email;
-
-        $appointments = AvailableAppointment::where('date', $date)->get()->map(function ($slot) use ($userEmail) {
-            $pendingCount = Appointment::where('date', $slot->date)
-                ->where('time', $slot->time_slot)
-                ->where('status', 'Pending')
-                ->count();
-
-            $appointmentExists = Appointment::where('date', $slot->date)
-                ->where('time', $slot->time_slot)
-                ->where('status', 'Pending')
-                ->where('email', $userEmail)
-                ->exists();
-
-            $slot->remaining_slots = max(($slot->max_slots ?? 0) - $pendingCount, 0);
-            $slot->appointment_exists = $appointmentExists;
-
-            return $slot;
-        });
-
-        return response()->json($appointments);
-    }
-
-
-
-
-    public function calendar(Request $request)
-    {
-        $userEmail = Auth::user()->email;
-        $selectedDate = $request->input('hiddenselectedDate'); // Get date from form submission
-        Log::info('Received Selected Date: ' . ($selectedDate ?? 'None'));
-        if (!empty($selectedDate)) {
-            $selectedDate = date('Y-m-d', strtotime($selectedDate)); // Convert to "YYYY-MM-DD"
-        } else {
-            $selectedDate = null;
-        }
-
-        $appointments = Appointment::where('email', $userEmail)
-            ->select('id', 'patient_name', 'phone', 'date', 'time', 'status')
-            ->get();
-
-        $availableappointments = $selectedDate
-            ? AvailableAppointment::where('date', $selectedDate)
-                ->select('date', 'time_slot', 'max_slots')
-                ->get()
-                ->map(function ($appointment) use ($selectedDate) {
-                    $bookedSlots = Appointment::where('date', $selectedDate)
-                        ->where('time', $appointment->time_slot)
-                        ->where('status', 'Pending')
-                        ->count();
-                    $appointment->remaining_slots = max(0, $appointment->max_slots - $bookedSlots);
-                    return $appointment;
-                })
-            : collect();
-
-        $allData = AvailableAppointment::all();
-        $fetchedData = AvailableAppointment::all()->toArray();
-        $remainingSlotsByDate = [];
-        foreach ($fetchedData as $appointment) {
-            $date = $appointment['date'];
-            $timeSlot = $appointment['time_slot'];
-            $maxSlots = $appointment['max_slots'];
-            $bookedSlots = Appointment::where('date', $date)
-                ->where('time', $timeSlot)
-                ->where('status', 'Pending')
-                ->count();
-            $remainingSlots = max(0, $maxSlots - $bookedSlots);
-
-            if (!isset($remainingSlotsByDate[$date])) {
-                $remainingSlotsByDate[$date] = 0;
-            }
-            $remainingSlotsByDate[$date] += $remainingSlots;
-        }
-        $availableslots = $availableappointments->sum('remaining_slots');
+        $user = Auth::user();
+        $appointment = AvailableAppointment::find($id);
 
         $services = [
             "Braces" => [
@@ -271,18 +209,167 @@ class PatientController extends Controller
                 "Restoration Buildup"
             ]
         ];
-
-
-        return view('patient.calendar', compact('appointments', 'services', 'allData', 'remainingSlotsByDate', 'availableappointments', 'selectedDate', 'availableslots'));
+        return view('patient.bookappointment', compact('appointment', 'user', 'services'));
     }
+
+    public function fetchAppointments($date)
+    {
+        $userEmail = auth()->user()->email;
+
+        $now = Carbon::now();
+
+        $appointments = AvailableAppointment::where(function ($query) use ($date, $now) {
+            $query->whereDate('date', '>', $now->toDateString()) // Future dates
+                ->orWhere(function ($q) use ($date, $now) {
+                    $q->whereDate('date', $now->toDateString()) // Same day
+                        ->whereTime('time_slot', '>', $now->toTimeString());
+                });
+        })
+            ->where('date', $date)
+            ->get()
+            ->map(function ($slot) use ($userEmail) {
+                $bookedCount = Appointment::where('date', $slot->date)
+                    ->where('time', $slot->time_slot)
+                    ->whereIn('status', ['Pending', 'Approved', 'Attended'])
+                    ->count();
+
+                $appointmentExists = Appointment::where('date', $slot->date)
+                    ->where('time', $slot->time_slot)
+                    ->whereIn('status', ['Pending', 'Approved', 'Attended'])
+                    ->where('email', $userEmail)
+                    ->exists();
+
+                $slot->remaining_slots = max(($slot->max_slots ?? 0) - $bookedCount, 0);
+                $slot->appointment_exists = $appointmentExists;
+
+                return $slot;
+            });
+
+
+        return response()->json($appointments);
+    }
+
+
+
+
+
+    public function calendar(Request $request)
+    {
+        $userEmail = Auth::user()->email;
+        $timezone = 'Asia/Singapore';
+        $now = Carbon::now($timezone)->toDateString();
+
+        $selectedDate = $request->input('hiddenselectedDate'); // Get date from form submission
+        Log::info('Received Selected Date: ' . ($selectedDate ?? 'None'));
+        if (!empty($selectedDate)) {
+            $selectedDate = date('Y-m-d', strtotime($selectedDate)); // Convert to "YYYY-MM-DD"
+        } else {
+            $selectedDate = null;
+        }
+
+        $appointments = Appointment::where('email', $userEmail)
+            ->select('id', 'patient_name', 'phone', 'date', 'time', 'status')
+            ->get();
+
+        $availableappointments = $selectedDate
+            ? AvailableAppointment::where('date', $selectedDate)
+                ->select('date', 'time_slot', 'max_slots')
+                ->get()
+                ->map(function ($appointment) use ($selectedDate) {
+                    $bookedSlots = Appointment::where('date', $selectedDate)
+                        ->where('time', $appointment->time_slot)
+                        ->where('status', 'Pending')
+                        ->count();
+                    $appointment->remaining_slots = max(0, $appointment->max_slots - $bookedSlots);
+                    return $appointment;
+                })
+            : collect();
+
+        $allData = AvailableAppointment::whereDate('date', '>=', $now)
+            ->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('appointments')
+                    ->whereColumn('appointments.date', 'available_appointments.date')
+                    ->whereColumn('appointments.time', 'available_appointments.time_slot')
+                    ->where('appointments.status', 'Unattended');
+            })
+            ->get(); // NEED WORK HERE
+
+        // $allData = AvailableAppointment::where(function ($query) use ($now) {
+        //     $query->whereDate('date', '>', $now) // Future dates
+        //         ->orWhere(function ($q) use ($now) {
+        //             $q->whereDate('date', $now) // Same day
+        //                 ->whereTime('time_slot', '>', $now); // Future time slots
+        //         });
+        // })
+        //     ->whereNotExists(function ($query) {
+        //         $query->select(DB::raw(1))
+        //             ->from('appointments')
+        //             ->whereColumn('appointments.date', 'available_appointments.date')
+        //             ->whereColumn('appointments.time', 'available_appointments.time_slot')
+        //             ->where('appointments.status', 'Unattended');
+        //     })
+        //     ->get();
+
+        dd($allData);
+        $fetchedData = AvailableAppointment::all()->toArray();
+        $remainingSlotsByDate = [];
+        foreach ($fetchedData as $appointment) {
+            $date = $appointment['date'];
+            $timeSlot = $appointment['time_slot'];
+            $maxSlots = $appointment['max_slots'];
+            $bookedSlots = Appointment::where('date', $date)
+                ->where('time', $timeSlot)
+                ->where('status', 'Pending')
+                ->count();
+            $remainingSlots = max(0, $maxSlots - $bookedSlots);
+
+            if (!isset($remainingSlotsByDate[$date])) {
+                $remainingSlotsByDate[$date] = 0;
+            }
+            $remainingSlotsByDate[$date] += $remainingSlots;
+        }
+        $availableslots = $availableappointments->sum('remaining_slots');
+
+
+
+        return view('patient.calendar', compact('appointments', 'allData', 'remainingSlotsByDate', 'availableappointments', 'selectedDate', 'availableslots'));
+    }
+
+    public function pricing()
+    {
+        return view('patient.pricing');
+    }
+
+
+    public function storeReview(Request $request, $id)
+    {
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'review' => 'required|string|max:1000',
+            'service' => 'required|string',
+
+        ]);
+
+        Review::create([
+            'appointment_id' => $id,
+            'user_id' => auth()->id(),
+            'service' => $request->service,
+            'rating' => $request->rating,
+            'review' => $request->review,
+        ]);
+
+        return back()->with('success', 'Review submitted successfully!');
+    }
+
 
     public function history(Request $request)
     {
         $userEmail = Auth::user()->email;
-    
+
         $filterDate = $request->input('date');
         $filterStatus = $request->input('status');
-    
+
         $appointments = Appointment::where('email', $userEmail)
             ->when($filterDate, function ($query, $filterDate) {
                 return $query->whereDate('date', $filterDate);
@@ -292,24 +379,26 @@ class PatientController extends Controller
             })
             ->select('id', 'patient_name', 'phone', 'date', 'time', 'status', 'appointments')
             ->get();
-    
+
         $isEmpty = $appointments->isEmpty();
-    
-        $availableAppointments = AvailableAppointment::all()->map(function ($slot) {
-            $pendingCount = Appointment::where('date', $slot->date)
-                ->where('time_slot', $slot->time_slot)
-                ->where('status', 'Pending')
-                ->count();
-    
-            $remainingSlots = max($slot->max_slots - $pendingCount, 0);
-            return [
-                'id' => $slot->id,
-                'date' => $slot->date,
-                'time_slot' => $slot->time_slot,
-                'remaining_slots' => $remainingSlots,
-            ];
-        })->toArray();
-    
+
+        $availableAppointments = AvailableAppointment::where('date', '>', Carbon::today()) // Exclude today
+            ->get()
+            ->map(function ($slot) {
+                $pendingCount = Appointment::where('date', $slot->date)
+                    ->where('time_slot', $slot->time_slot)
+                    ->where('status', 'Pending')
+                    ->count();
+
+                $remainingSlots = max($slot->max_slots - $pendingCount, 0);
+                return [
+                    'id' => $slot->id,
+                    'date' => $slot->date,
+                    'time_slot' => $slot->time_slot,
+                    'remaining_slots' => $remainingSlots,
+                ];
+            })
+            ->toArray();
         return view('patient.history', compact('availableAppointments', 'appointments', 'isEmpty', 'filterDate', 'filterStatus'));
     }
 
@@ -338,6 +427,7 @@ class PatientController extends Controller
 
     public function cancelAppointment($id)
     {
+        //FOR CANCELLING APPOINTMENTS
         $appointment = Appointment::findOrFail($id);
         $appointment->status = 'Cancelled';
         $appointment->save();
@@ -346,8 +436,9 @@ class PatientController extends Controller
 
     public function updateAppointment(Request $request, $id)
     {
+        //FOR UPDATING APPOINTMENTS
         $request->validate([
-            'reschedule_appointment' => 'required|exists:appointments,id',
+            'reschedule_appointments' => 'required|exists:appointments,id',
         ]);
 
         $newAppointmentId = $request->input('reschedule_appointments');

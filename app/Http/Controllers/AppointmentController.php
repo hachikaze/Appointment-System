@@ -9,6 +9,7 @@ use App\Models\Message;
 use App\Models\AvailableAppointment;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class AppointmentController extends Controller
 {
@@ -24,7 +25,7 @@ class AppointmentController extends Controller
         $appointment = Appointment::find($id);
 
         if ($appointment) {
-            $appointment->updated_at = now();
+            $appointment->updated_at = null;
             $appointment->save();
             return back()->with('success', 'Appointment marked as read.');
         }
@@ -34,18 +35,15 @@ class AppointmentController extends Controller
 
     public function store(Request $request)
     {
-        $user = Auth::user();
 
+        $user = Auth::user();
         $request->validate([
-            'phone' => 'required|digits:11',
+            'phone' => ['required', 'regex:/^09\d{9}$/'],
             'date' => 'required|date',
             'time' => 'required|string',
             'appointments' => 'required|array|min:1|max:3',
-            'appointments.*' => 'string', 
+            'appointments.*' => 'string',
         ]);
-
-
-
         $selectedDate = $request->date;
         $time = $request->input('time', '00:00');
 
@@ -61,6 +59,13 @@ class AppointmentController extends Controller
             ->whereIn('status', ['Approved'])
             ->exists();
 
+
+        $existingCancelledAppointment = Appointment::where('email', $user->email)
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->whereIn('status', ['Cancelled'])
+            ->first();
+
+
         if ($existingAppointment) {
             return back()->withErrors(['error' => 'You can only book one appointment per month.']);
         }
@@ -69,8 +74,20 @@ class AppointmentController extends Controller
             return back()->withErrors(['error' => 'No available slots for the selected time.']);
         }
 
-       $appointment = Appointment::create([
+        if ($existingCancelledAppointment) {
+            $existingCancelledAppointment->update([
+                'status' => 'Pending',
+                'date' => $request->date,
+                'time' => $time,
+                'appointments' => implode(', ', $request->input('appointments', [])),
+            ]);
+
+            return redirect()->route('calendar')->with('success', 'Your appointment has been rebooked.');
+        }
+
+        $appointment = Appointment::create([
             'patient_name' => $user->firstname . " " . $user->middleinitial . " " . $user->lastname,
+            'user_id' => $user->id,
             'email' => $user->email,
             'doctor' => 'Ana Fatima Barroso',
             'status' => 'Pending',
@@ -78,20 +95,17 @@ class AppointmentController extends Controller
             'date' => $request->date,
             'time' => $time,
             'appointments' => implode(', ', $request->input('appointments', [])),
-            'updated_at' => null,
         ]);
-
 
         if ($appointment) {
             Message::create([
-                'appointment_id' => $appointment->id, 
+                'appointment_id' => $appointment->id,
                 'message' => '',
                 'user_id' => $request->user()->id,
             ]);
         } else {
             return back()->withErrors(['error' => 'Failed to create appointment.']);
         }
-
 
         AuditTrail::create([
             'user_id' => $request->user()->id,
@@ -102,7 +116,7 @@ class AppointmentController extends Controller
             'user_agent' => request()->header('User-Agent'),
         ]);
 
-        return back()->with('success', 'Appointment successfully booked.');
+        return redirect()->route('calendar')->with('success', 'Appointment successfully booked.');
     }
 
 

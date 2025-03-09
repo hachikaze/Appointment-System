@@ -52,7 +52,7 @@
 
 <div id="{{ $modalId }}"
     class="fixed inset-0 flex z-50 hidden p-4 items-center justify-center bg-gray-600 bg-opacity-30 backdrop-blur-sm transition-opacity duration-300"
-    aria-hidden="true">
+   >
 
     <div class="modal-content relative w-full max-w-lg mx-auto rounded-lg overflow-hidden shadow-lg bg-white">
         <form id="appointmentForm" action="{{ $route }}" method="POST" class="">
@@ -65,11 +65,17 @@
             <div class="p-6 grid grid-cols-1 gap-4">
                 <button id="dropdownSearchButton-{{ $modalId }}"
                     data-dropdown-toggle="dropdownSearch-{{ $modalId }}"
-                    class="inline-flex items-center justify-between w-full px-4 py-2 text-lg font-medium text-white bg-teal-500 rounded-lg hover:bg-teal-800 focus:ring-4 focus:outline-none focus:ring-teal-300"
+                    class="inline-flex shadow-lg items-center justify-between w-full px-4 py-2 text-lg font-medium text-white bg-teal-500 rounded-lg hover:bg-teal-800 focus:ring-4 focus:outline-none focus:ring-teal-300"
                     type="button">
                     <span>Appointment Reason</span>
                     <i class="fa-solid fa-arrow-down"></i>
                 </button>
+
+                <a href="{{ route('pricing') }}" 
+                    class="mb-2 inline-flex shadow-lg items-center justify-center w-full px-4 py-2 text-lg font-medium text-white bg-gradient-to-r from-teal-500 to-blue-500 rounded-lg hover:from-teal-600 hover:to-blue-600 focus:ring-4 focus:outline-none focus:ring-teal-300">
+                    <i class="fa-solid fa-tags mr-2"></i> View Price List
+                </a>
+
                 <div>
                     <label for="date" class="block mb-2 text-lg font-medium text-teal-800">Date
                         Selected</label>
