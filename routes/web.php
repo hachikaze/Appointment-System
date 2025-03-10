@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminAppointmentController;
 use App\Http\Controllers\AdminPatientRecordsController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\AuditTrailController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ForgotPasswordController;
@@ -26,6 +27,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/test', function () {
 
 });
+
+// AUDIT TRAIL FOR ADMIN
+Route::get('/admin/log-history', [AuditTrailController::class, 'index'])->name('admin.log-history');
 
 // VIEW CUSTOMER GCASH PAYMENTS
 Route::get('/admin/view-payments', [PaymentController::class, 'viewPayments']);
