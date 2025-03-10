@@ -11,6 +11,8 @@ use App\Mail\MessageNotification;
 use App\Models\Payment;
 use App\Models\Receipt;
 use Illuminate\Support\Facades\Mail;
+use App\Models\AvailableAppointment;
+
 
 class ManageAppointmentController extends Controller
 {
@@ -45,7 +47,7 @@ class ManageAppointmentController extends Controller
     {
         $request->validate([
             'id' => 'required|exists:appointments,id',
-            'action' => 'required|in:approve,cancel,attended,delete',
+            'action' => 'required|in:approve,cancel,attended,delete,reschedule',
             'message' => 'nullable|string',
         ]);
 
@@ -59,20 +61,27 @@ class ManageAppointmentController extends Controller
             case 'approve':
                 $appointment->update(['status' => 'Approved']);
 
-                $paymentId = Payment::where('appointment_id', $appointment->id)->value('id');
+                // $paymentId = Payment::where('appointment_id', $appointment->id)->value('id');
             
                 // Generate a receipt number
-                $receiptNumber = 'RCPT-' . strtoupper(uniqid());
+                // $receiptNumber = 'RCPT-' . strtoupper(uniqid());
             
                 // Store the receipt info in the payments table
-                Receipt::create([
-                    'payment_id' => $paymentId,
-                    'email' => $appointment->email,
-                    'file_path' => 'bowrat', // optional, since there's no uploaded file
-                    'receipt_number' => $receiptNumber,
-                ]);
+                // Receipt::create([
+                //     'payment_id' => $paymentId,
+                //     'email' => $appointment->email,
+                //     'file_path' => 'bowrat', // optional, since there's no uploaded file
+                //     'receipt_number' => $receiptNumber,
+                // ]);
 
                 return redirect()->route('appointments.index')->with('error', 'Appointment not found.');
+                break;
+            case 'reschedule':
+                $appointment->update([
+                    'date'   => $request->date,
+                    'time'   => $request->time,
+                    'status' => 'Pending' // Or use a custom status like 'Rescheduled' if desired
+                ]);
                 break;
             case 'cancel':
                 $appointment->update(['status' => 'Unattended']);
@@ -152,4 +161,86 @@ class ManageAppointmentController extends Controller
         $appointment = Appointment::create($validated);
         return redirect()->route(route: 'calendar')->with('success', 'Appointment booked successfully!');
     }
+
+    //Reschedule
+    public function getAvailableSlots(Request $request)
+    {
+        $selectedDate = $request->input('date');
+        if (!$selectedDate) {
+            return response()->json(['error' => 'Date not provided'], 400);
+        }
+
+        $availableappointments = AvailableAppointment::where('date', $selectedDate)
+            ->select('time_slot', 'max_slots')
+            ->get()
+            ->map(function ($appointment) use ($selectedDate) {
+                // Count how many appointments are booked for this slot
+                $bookedSlots = Appointment::where('date', $selectedDate)
+                    ->where('time', $appointment->time_slot)
+                    ->whereIn('status', ['Pending', 'Approved'])
+                    ->count();
+
+                // Deduct booked slots from max slots to get remaining slots
+                $appointment->remaining_slots = max(0, $appointment->max_slots - $bookedSlots);
+                return $appointment;
+            });
+
+        return response()->json($availableappointments);
+    }
+
+    public function reschedule(Request $request, $id)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'date' => 'required|date',
+            'time'         => 'required|string',
+        ]);
+
+        // Find the appointment to reschedule
+        $appointment = Appointment::findOrFail($id);
+
+        // Parse the new date and time
+        $newDate = Carbon::parse($request->input('date'))->format('Y-m-d');
+        $newTime = $request->input('time');
+
+        // Check if the selected slot exists
+        $availableSlot = AvailableAppointment::where('date', $newDate)
+            ->where('time_slot', $newTime)
+            ->first();
+
+        if (!$availableSlot) {
+            return redirect()->back()->with('error', 'The selected time slot is not available.');
+        }
+
+        // Count booked slots for the selected date and time
+        $bookedSlots = Appointment::where('date', $newDate)
+            ->where('time', $newTime)
+            ->whereIn('status', ['pending', 'approved'])
+            ->count();
+
+        // Check if the slot is fully booked
+        if ($bookedSlots >= $availableSlot->max_slots) {
+            return redirect()->back()->with('error', 'The selected time slot is fully booked.');
+        }
+
+        // Update only the date and time of the appointment
+        $appointment->update([
+            'date' => $newDate,
+            'time' => $newTime,
+            'status' => 'Pending', // Reset status to pending for approval
+        ]);
+
+        // Log the change in the audit trail
+        AuditTrail::create([
+            'user_id'    => Auth::user()->id,
+            'action'     => 'Rescheduled Appointment',
+            'model'      => 'Appointment',
+            'changes'    => json_encode(['new_date' => $newDate, 'new_time' => $newTime]),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->header('User-Agent'),
+        ]);
+
+        return redirect()->back()->with('success', 'Appointment rescheduled successfully.');
+    }
+
 }

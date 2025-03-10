@@ -16,6 +16,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Middleware\PreventBackHistory;
+use App\Http\Controllers\PatientRecordsExportController;
 use App\Mail\ForgotPassword;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Auth;
@@ -153,6 +154,20 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         // Delete a specific patient record
         Route::delete('/admin/patient-records/{id}', [AdminPatientRecordsController::class, 'destroy'])
             ->name('admin.patient_records.destroy');
+
+        //FOR RESCHEDULING
+        Route::get('/admin/appointments/slots', [ManageAppointmentController::class, 'getAvailableSlots'])
+        ->name('admin.appointments.slots');
+                    
+        Route::get('/get-available-slots', [ManageAppointmentController::class, 'getAvailableSlots']);
+
+        Route::put('/admin/appointments/reschedule/{id}', [ManageAppointmentController::class, 'reschedule'])
+        ->name('admin.appointments.reschedule');
+
+        //EXPORTING FILES
+        Route::get('/patient/export-pdf/{patientName}', [PatientRecordsExportController::class, 'exportPdf'])
+        ->name('patient.export.pdf');
+
     });
 });
 

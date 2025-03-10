@@ -524,19 +524,30 @@
                     action="{{ route('appointments.updateStatus') }}"
                     enctype="multipart/form-data"
                     class="flex flex-col space-y-4">
+
+                    <!-- Form for Modal Actions -->
                     @csrf
                     <input type="hidden" id="appointmentId" name="id" />
                     <input type="hidden" id="actionType" name="action" />
 
+                    <!-- Calendar Section for Reschedule (hidden by default) -->
+                    <div id="calendarSection" class="mb-4 hidden">
+                        <label for="reschedule-date" class="block text-md font-medium text-gray-900">Select New Date</label>
+                        <input type="date" id="reschedule-date" name="date" class="mt-1 block w-full border-gray-300 rounded-md" required onchange="handleDateSelection()" min="{{ date('Y-m-d') }}">
+                        
+                        <!-- Hidden Input for Selected Time -->
+                        <input type="hidden" name="time" id="reschedule-time">
+                        
+                        <!-- Time Slots Container -->
+                        <div id="time-slots" class="flex flex-wrap gap-2 mt-4">
+                            <!-- Time slots will be dynamically populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Message Input -->
                     <div>
                         <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message (Optional)</label>
-                        <textarea
-                            id="message"
-                            name="message"
-                            rows="4"
-                            placeholder="Enter any additional remarks or instructions for the patient..."
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm resize-none">
-                        </textarea>
+                        <textarea id="message" name="message" rows="4" placeholder="Enter any additional remarks or instructions for the patient..." class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm resize-none"></textarea>
                     </div>
 
                     <!-- Action Buttons -->
@@ -558,6 +569,7 @@
                         </button>
                     </div>
                 </form>
+
             </div>
         </div>
     </div>
@@ -620,7 +632,7 @@
                     currentStatus.textContent = appointment.status;
             }
             
-            // Set modal title, description, icon, and button based on action
+            // Get references to modal elements
             const modalTitle = document.getElementById('modalTitle');
             const modalDescription = document.getElementById('modalDescription');
             const confirmButton = document.getElementById('confirmButton');
@@ -629,6 +641,21 @@
             const modalHeader = document.getElementById('modalHeader');
             const modalIconContainer = document.getElementById('modalIconContainer');
             const modalSvg = document.getElementById('modalSvg');
+
+            // Get the calendar section and date input
+            const calendarSection = document.getElementById('calendarSection');
+            const rescheduleDateInput = document.getElementById('reschedule-date');
+
+            // Adjust the date input based on action type
+            if (action === 'reschedule') {
+                calendarSection.classList.remove('hidden');
+                rescheduleDateInput.disabled = false;
+                rescheduleDateInput.setAttribute('required', 'required');
+            } else {
+                calendarSection.classList.add('hidden');
+                rescheduleDateInput.disabled = true;
+                rescheduleDateInput.removeAttribute('required');
+            }
             
             switch(action) {
                 case 'approve':
@@ -640,6 +667,9 @@
                     modalHeader.className = 'px-6 py-4 bg-green-500 text-white relative';
                     modalIconContainer.className = 'bg-white bg-opacity-20 rounded-full p-2';
                     modalSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />';
+                    
+                    // Hide the calendar if not reschedule
+                    calendarSection.classList.add('hidden');
                     break;
                     
                 case 'attended':
@@ -651,6 +681,9 @@
                     modalHeader.className = 'px-6 py-4 bg-blue-500 text-white relative';
                     modalIconContainer.className = 'bg-white bg-opacity-20 rounded-full p-2';
                     modalSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />';
+                    
+                    // Hide the calendar if not reschedule
+                    calendarSection.classList.add('hidden');
                     break;
                     
                 case 'cancel':
@@ -662,6 +695,9 @@
                     modalHeader.className = 'px-6 py-4 bg-rose-500 text-white relative';
                     modalIconContainer.className = 'bg-white bg-opacity-20 rounded-full p-2';
                     modalSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />';
+                    
+                    // Hide the calendar if not reschedule
+                    calendarSection.classList.add('hidden');
                     break;
 
                 case 'reschedule':
@@ -669,10 +705,13 @@
                     modalDescription.textContent = 'This appointment is unattended. Please select a new date/time.';
                     confirmButton.className = 'bg-yellow-600 text-white px-5 py-2 rounded-lg hover:bg-yellow-700 transition shadow-sm font-medium flex items-center gap-2';
                     confirmButtonText.textContent = 'Reschedule';
-                    // Optionally, update the modal icon and header for rescheduling
+                    confirmButtonIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6" />';
                     modalHeader.className = 'px-6 py-4 bg-yellow-500 text-white relative';
                     modalIconContainer.className = 'bg-white bg-opacity-20 rounded-full p-2';
-                    modalSvg.innerHTML = '<!-- Add appropriate icon path for rescheduling here -->';
+                    modalSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6" />';
+                    
+                    // Show the calendar for reschedule
+                    calendarSection.classList.remove('hidden');
                     break;
                     
                 default:
@@ -684,15 +723,19 @@
                     modalHeader.className = 'px-6 py-4 bg-blue-500 text-white relative';
                     modalIconContainer.className = 'bg-white bg-opacity-20 rounded-full p-2';
                     modalSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />';
+                    
+                    // Hide the calendar if not reschedule
+                    calendarSection.classList.add('hidden');
             }
             
             // Clear any previous message
             document.getElementById('message').value = '';
             
-            // Show the modal 
+            // Show the modal
             document.getElementById('messageModal').classList.remove('hidden');
             document.body.classList.add('overflow-hidden');
         }
+
         
         function closeModal() {
             // fade-out animation
@@ -720,6 +763,54 @@
                 closeModal();
             }
         });
+
+        // Example function to fetch and display time slots in the calendar section
+        function handleDateSelection() {
+                const dateInput = document.getElementById('reschedule-date');
+                const timeSlotsContainer = document.getElementById('time-slots');
+                if (dateInput.value) {
+                    fetch(`{{ route('admin.appointments.slots') }}?date=${dateInput.value}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            timeSlotsContainer.innerHTML = '';
+                            if (data.length > 0) {
+                                data.forEach(slot => {
+                                    if (slot.remaining_slots > 0) {
+                                        const btn = document.createElement('button');
+                                        btn.type = 'button';
+                                        btn.className = 'appointment-button px-4 py-2 text-md shadow-lg font-medium text-gray-900 bg-gray-100 border border-gray-800 rounded-lg hover:bg-teal-600 hover:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none';
+                                        btn.dataset.time = slot.time_slot;
+                                        btn.textContent = `${slot.time_slot} (${slot.remaining_slots} slots left)`;
+                                        btn.onclick = () => selectRescheduleTime(btn);
+                                        timeSlotsContainer.appendChild(btn);
+                                    }
+                                });
+                            } else {
+                                const noSlots = document.createElement('div');
+                                noSlots.className = 'flex items-center space-x-2';
+                                noSlots.innerHTML = `
+                                    <i class="fa-solid fa-xmark text-red-500 text-2xl"></i>
+                                    <p class="text-lg font-bold text-teal-600">No available time slots for ${dateInput.value}</p>
+                                `;
+                                timeSlotsContainer.appendChild(noSlots);
+                            }
+                        })
+                        .catch(error => console.error('Error fetching time slots:', error));
+                } else {
+                    timeSlotsContainer.innerHTML = '';
+                }
+            }
+            
+            function selectRescheduleTime(button) {
+                const selectedTime = button.getAttribute('data-time');
+                document.getElementById('reschedule-time').value = selectedTime;
+                document.querySelectorAll('#time-slots .appointment-button').forEach(btn => {
+                    btn.classList.remove('bg-teal-600', 'text-white');
+                    btn.classList.add('bg-gray-100', 'text-gray-900');
+                });
+                button.classList.remove('bg-gray-100', 'text-gray-900');
+                button.classList.add('bg-teal-600', 'text-white');
+            }
     </script>
     
     <style>
@@ -763,4 +854,4 @@
     </style>
     @endpush
 </x-sidebar-layout>
-                    
+                        

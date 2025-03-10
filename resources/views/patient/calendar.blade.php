@@ -318,7 +318,7 @@
                                                     <!-- Date Picker -->
                                                     <div class="mb-4">
                                                         <label for="reschedule-date-{{ $appointment->id }}" class="block text-md font-medium text-gray-900">Select New Date</label>
-                                                        <input type="date" id="reschedule-date-{{ $appointment->id }}" name="selectedDate" class="mt-1 block w-full border-gray-300 rounded-md" required onchange="handleDateSelection({{ $appointment->id }})">
+                                                        <input type="date" id="reschedule-date-{{ $appointment->id }}" name="selectedDate" class="mt-1 block w-full border-gray-300 rounded-md" required onchange="handleDateSelection({{ $appointment->id }})" min="{{ date('Y-m-d') }}">
                                                     </div>
 
                                                     <!-- Hidden Input for Time -->
