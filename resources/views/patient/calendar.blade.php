@@ -225,9 +225,7 @@
                                     Search
                                 </label>
 
-                                <script>
-
-                                </script>
+                                <script></script>
                             </div>
                         </div>
                     </div>
@@ -261,77 +259,82 @@
                             </tr>
                         </thead>
                         <tbody id="appointmentsTableBody">
-                            @foreach ($allData as $slots)
-                                                        <tr data-date="{{ Carbon::parse($slots->date)->format('F j, Y') }}">
-                                                            <td class="p-4 border-b border-teal-100">
-                                                                <div class="flex items-center justify-center gap-3">
-                                                                    <img src="{{ Auth::user()->image_path ? asset('storage/' . Auth::user()->image_path) : asset('images/logo.png') }}"
-                                                                        alt="Avatar"
-                                                                        class="relative shadow-lg inline-block h-9 w-9 !rounded-full object-cover object-center" />
-                                                                    <div class="flex flex-col">
-                                                                        <p
-                                                                            class="block text-md antialiased font-normal leading-normal text-blue-gray-900">
-                                                                            {{ Carbon::parse($slots->date)->format('F j, Y') }}
-                                                                        </p>
 
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="p-4 border-b border-teal-100">
-                                                                <div class="flex flex-col">
-                                                                    <p
-                                                                        class="block text-md antialiased font-normal leading-normal text-blue-gray-900">
-                                                                        {{ $slots->time_slot }}
-                                                                    </p>
-                                                                </div>
-                                                            </td>
-                                                            <td class="p-4 border-b border-teal-100">
-                                                                <div class="w-max">
-                                                                    <div
-                                                                        class="relative grid items-center px-2 py-1 text-md font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
-                                                                        <span class="">
-                                                                            {{ $slots->remaining_slots ??
-                                    $slots->max_slots -
-                                    App\Models\Appointment::where('date', $slots->date)
-                                        ->where('time', $slots->time_slot)
-                                        ->whereIn('status', ['Pending', 'Approved']) // Include Approved status
-                                        ->count()
-                                                                                                    }}
+                            @if($allData->isEmpty())
+                                <tr>
+                                    <td colspan="4" class="p-4 text-center text-gray-700 flex-col">
+                                        <i class="fa-solid fa-calendar-xmark fa-2x text-teal-600 mb-2"></i>
+                                        <p> No available slots at the moment.</p>
+                                    </td>
+                                </tr>
+                            @else
+                                                    @foreach ($allData as $slots)
+                                                                            @php
+                                                                                $appointmentExists = App\Models\Appointment::where('date', $slots->date)
+                                                                                    ->where('time', $slots->time_slot)
+                                                                                    ->whereIn('status', ['Pending', 'Approved', 'Attended', 'Unattended'])
+                                                                                    ->exists();
 
-                                                                            Slots Remaining
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="p-4 border-b w-full flex justify-center border-teal-100">
-                                                                @php
-                                                                    $appointmentExists = App\Models\Appointment::where('date', $slots->date)
-                                                                        ->where('time', $slots->time_slot)
-                                                                        ->whereIn('status', ['Pending', 'Approved', 'Attended'])
-                                                                        ->exists();
-                                                                @endphp
+                                                                                $remainingSlots =
+                                                                                    $slots->remaining_slots ??
+                                                                                    $slots->max_slots -
+                                                                                    App\Models\Appointment::where('date', $slots->date)
+                                                                                        ->where('time', $slots->time_slot)
+                                                                                        ->whereIn('status', ['Pending', 'Approved'])
+                                                                                        ->count();
+                                                                            @endphp
+                                                                            <tr data-date="{{ Carbon::parse($slots->date)->format('F j, Y') }}">
+                                                                                <td class="p-4 border-b border-teal-100">
+                                                                                    <div class="flex items-center justify-center gap-3">
+                                                                                        <img src="{{ Auth::user()->image_path ? asset('storage/' . Auth::user()->image_path) : asset('images/logo.png') }}"
+                                                                                            alt="Avatar"
+                                                                                            class="relative shadow-lg inline-block h-9 w-9 !rounded-full object-cover object-center" />
+                                                                                        <div class="flex flex-col">
+                                                                                            <p
+                                                                                                class="block text-md antialiased font-normal leading-normal text-blue-gray-900">
+                                                                                                {{ Carbon::parse($slots->date)->format('F j, Y') }}
+                                                                                            </p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td class="p-4 border-b border-teal-100">
+                                                                                    <div class="flex flex-col">
+                                                                                        <p
+                                                                                            class="block text-md antialiased font-normal leading-normal text-blue-gray-900">
+                                                                                            {{ $slots->time_slot }}
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td class="p-4 border-b border-teal-100">
+                                                                                    <div class="w-max">
+                                                                                        <div
+                                                                                            class="relative grid items-center px-2 py-1 text-md font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
+                                                                                            <span>{{ $remainingSlots }} Slots Remaining</span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td class="p-4 border-b w-full flex justify-center border-teal-100">
+                                                                                    @if (!$appointmentExists)
+                                                                                        <a href="{{ route('patient.bookappointment', ['id' => $slots->id]) }}"
+                                                                                            class="relative flex p-2 bg-teal-500 flex-row space-x-2 items-center justify-center h-12 w-44 select-none rounded-lg text-center align-middle text-xs font-medium uppercase hover:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
+                                                                                            <i class="fa-solid fa-pen fa-lg text-white"></i>
+                                                                                            <span class="mt-1 text-lg font-semibold text-white">CREATE</span>
+                                                                                        </a>
+                                                                                    @else
+                                                                                        <a href="{{ route('history') }}"
+                                                                                            class="flex flex-col items-center text-center px-5 py-2 text-white bg-teal-600 rounded-lg hover:bg-teal-700 transition">
+                                                                                            <span class="text-lg font-semibold">Appointment Already Set</span>
+                                                                                            <div class="flex flex-row items-center justify-center mt-1">
+                                                                                                <p class="text-sm text-gray-200 mx-2">Click to view</p>
+                                                                                                <i class="fa-solid fa-arrow-right mt-0.5"></i>
+                                                                                            </div>
+                                                                                        </a>
+                                                                                    @endif
+                                                                                </td>
+                                                                            </tr>
+                                                    @endforeach
+                            @endif
 
-                                                                @if (!$appointmentExists)
-                                                                    <a href="{{ route('patient.bookappointment', ['id' => $slots->id]) }}"
-                                                                        class="relative flex p-2 bg-teal-500 flex-row space-x-2 items-center justify-center h-12 w-44 select-none rounded-lg text-center align-middle text-xs font-medium uppercase hover:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
-                                                                        <i class="fa-solid fa-pen fa-lg text-white"></i>
-                                                                        <span class="mt-1 text-lg font-semibold text-white">CREATE</span>
-                                                                    </a>
-                                                                @else
-                                                                    <a href="{{ route('history') }}">
-                                                                        <span
-                                                                            class="px-5 py-2 text-white bg-teal-600 rounded-lg flex flex-col items-center text-center hover:bg-teal-700 transition">
-                                                                            <span class="text-lg font-semibold">Appointment Already Set</span>
-                                                                            <div class="flex flex-row items-center justify-center mt-1">
-                                                                                <p class="text-sm text-gray-200 mx-2">Click to view</p>
-                                                                                <i class="fa-solid fa-arrow-right mt-0.5"></i>
-                                                                            </div>
-                                                                        </span>
-                                                                    </a>
-                                                                @endif
-                                                            </td>
-                                                        </tr>
-                            @endforeach
                         </tbody>
 
                     </table>
@@ -451,65 +454,70 @@
 
         function updateAppointmentsTable(appointments) {
             const tableBody = document.getElementById("appointmentsTableBody");
-            tableBody.innerHTML = "";
+            tableBody.innerHTML = ""; // Clear existing rows
 
+            // If no appointments are available, show a message
             if (!appointments || appointments.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="4" class="text-center p-4">No appointments available.</td></tr>`;
+                tableBody.innerHTML =
+                    `<tr><td colspan="4" class="text-center p-4 text-gray-500">No appointments available.</td></tr>`;
                 return;
             }
 
-            console.log(appointments);
+            console.log(appointments); // Debugging: Log the appointments array
 
+            // Loop through each appointment slot
             appointments.forEach(slot => {
-                const appointmentExists = slot.appointment_exists;
+                const appointmentExists = slot.appointment_exists; // Check if an appointment exists
                 const row = document.createElement("tr");
+
                 row.innerHTML = `
-            <td class="p-4 border-b border-teal-100">
-                <div class="flex items-center justify-center gap-3">
-                        <img src="{{ asset('images/logo.png') }}" alt="Logo"
-                        class="relative shadow-lg inline-block h-9 w-9 rounded-full object-cover object-center" />
-                    <div class="flex flex-col">
-                        <p class="block text-md antialiased font-normal leading-normal text-blue-gray-900">
-                            ${new Date(slot.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                        </p>
-                    </div>
-                </div>
-            </td>
-            <td class="p-4 border-b border-teal-100">
-                <div class="flex flex-col">
-                    <p class="block text-md antialiased font-normal leading-normal text-blue-gray-900">
-                        ${slot.time_slot}
-                    </p>
-                </div>
-            </td>
-            <td class="p-4 border-b border-teal-100">
-                <div class="w-max">
-                    <div class="relative grid items-center px-2 py-1 text-md font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
-                        <span>${slot.remaining_slots} Slots Remaining</span>
-                    </div>
-                </div>
-            </td>
-            <td class="p-4 border-b w-full flex justify-center border-teal-100">
-                ${!appointmentExists ?
-                        `<a href="{{ route('patient.bookappointment', ['id' => $slots->id]) }}"
-                        class="relative flex p-2 bg-teal-500 flex-row space-x-2 items-center justify-center h-12 w-44 select-none rounded-lg text-center align-middle text-xs font-medium uppercase hover:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
-                        <i class="fa-solid fa-pen fa-lg text-white"></i>
-                        <span class="mt-1 text-lg font-semibold text-white">CREATE</span>
-                    </a>`
+                    <td class="p-4 border-b border-teal-100">
+                        <div class="flex items-center justify-center gap-3">
+                            <img src="/images/logo.png" alt="Logo"
+                                class="relative shadow-lg inline-block h-9 w-9 rounded-full object-cover object-center" />
+                            <div class="flex flex-col">
+                                <p class="block text-md antialiased font-normal leading-normal text-blue-gray-900">
+                                    ${new Date(slot.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                                </p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-4 border-b border-teal-100">
+                        <div class="flex flex-col">
+                            <p class="block text-md antialiased font-normal leading-normal text-blue-gray-900">
+                                ${slot.time_slot}
+                            </p>
+                        </div>
+                    </td>
+                    <td class="p-4 border-b border-teal-100">
+                        <div class="w-max">
+                            <div class="relative grid items-center px-2 py-1 text-md font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
+                                <span>${slot.remaining_slots} Slots Remaining</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-4 border-b w-full flex justify-center border-teal-100">
+                        ${!appointmentExists ?
+                        `<a href="/patient/bookappointment/${slot.id}" 
+                                        class="relative flex p-2 bg-teal-500 flex-row space-x-2 items-center justify-center h-12 w-44 select-none rounded-lg text-center align-middle text-xs font-medium uppercase hover:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
+                                        <i class="fa-solid fa-pen fa-lg text-white"></i>
+                                        <span class="mt-1 text-lg font-semibold text-white">CREATE</span>
+                                    </a>`
                         :
                         `<a href="/patient/history">
-                    <span class="px-5 py-2 text-white bg-teal-600 rounded-lg flex flex-col items-center text-center hover:bg-teal-700 transition">
-                        <span class="text-lg font-semibold">Appointment Already Set</span>
-                        <div class="flex flex-row items-center justify-center mt-1">
-                            <p class="text-sm text-gray-200 mx-2">Click to view</p>
-                            <i class="fa-solid fa-arrow-right mt-0.5"></i>
-                        </div>
-                    </span>
-                    </a>`
+                                        <span class="px-5 py-2 text-white bg-teal-600 rounded-lg flex flex-col items-center text-center hover:bg-teal-700 transition">
+                                            <span class="text-lg font-semibold">Appointment Already Set</span>
+                                            <div class="flex flex-row items-center justify-center mt-1">
+                                                <p class="text-sm text-gray-200 mx-2">Click to view</p>
+                                                <i class="fa-solid fa-arrow-right mt-0.5"></i>
+                                            </div>
+                                        </span>
+                                    </a>`
                     }
-            </td>
-        `;
-                console.log(appointmentExists);
+                    </td>
+                `;
+
+                console.log(appointmentExists); // Debugging: Log if an appointment exists
                 tableBody.appendChild(row);
             });
         }
@@ -600,7 +608,7 @@
                     }
 
                     calendar.appendChild(listContainer);
-                } else {   // FOR DESKTOP VIEW
+                } else { // FOR DESKTOP VIEW
                     calendar.innerHTML = `
                         
                         <div class="hidden sm:block mb-4 text-center font-bold text-lg text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Sun</div>
@@ -707,9 +715,9 @@
                                 event.preventDefault();
                                 const isHidden = slotsInfoContainer.classList.contains('hidden');
                                 slotsInfoContainer.classList.toggle('hidden', !isHidden);
-                                toggleButton.innerHTML = isExpanded
-                                    ? `<span class="hidden lg:inline">Hide Slot</span> <i class='fas fa-chevron-up ml-2'></i>`
-                                    : `<span class="hidden lg:inline">Slots Availability</span> <i class='fas fa-chevron-down ml-2'></i>`;
+                                toggleButton.innerHTML = isExpanded ?
+                                    `<span class="hidden lg:inline">Hide Slot</span> <i class='fas fa-chevron-up ml-2'></i>` :
+                                    `<span class="hidden lg:inline">Slots Availability</span> <i class='fas fa-chevron-down ml-2'></i>`;
 
                             });
                         } else {
@@ -738,14 +746,14 @@
                                     borderColor = "border-blue-700 border-2";
                                     textColor = "text-blue-700";
                                     tooltipText = "Attended";
-                                    isClickable = false;
+                                    isClickable = true;
                                     break;
                                 case "Unattended":
                                     bgColor = "bg-gray-300";
                                     borderColor = "border-gray-700 border-2";
                                     textColor = "text-gray-600";
                                     tooltipText = "Unattended";
-                                    isClickable = false;
+                                    isClickable = true;
                                     break;
                                 case "Pending":
                                     bgColor = "bg-orange-300 hover:bg-orange-400";

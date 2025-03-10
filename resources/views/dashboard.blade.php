@@ -42,9 +42,9 @@
         </div>
         </div>
         <x-pagination :paginator="$allauditTrails->appends([
-        'auditModal' => 'true',
-        'search' => request('search'),
-    ])" />
+            'auditModal' => 'true',
+            'search' => request('search'),
+        ])" />
     </x-audit-modal>
     <script></script>
     <div class="py-12">
@@ -228,7 +228,7 @@
                         updateCountdown();
                     }
 
-                    document.addEventListener("DOMContentLoaded", function () {
+                    document.addEventListener("DOMContentLoaded", function() {
                         const countdownElement = document.getElementById("hs-toast-message-with-loading-indicator-label");
                         const targetDate = countdownElement.getAttribute("data-date");
                         const targetTime = countdownElement.getAttribute("data-time");
@@ -287,7 +287,7 @@
                         <div class="flex justify-between items-start">
                             <div>
                                 <p class="text-white/80 text-sm">Cancelled Appointments</p>
-                                <h3 class="text-4xl font-bold mt-2"> {{ $canceledAppointments }}
+                                <h3 class="text-4xl font-bold mt-2"> {{ $cancelledAppointments }}
                                 </h3>
                             </div>
                             <div class="bg-white/20 p-3 rounded-xl">
@@ -330,8 +330,8 @@
                     <div
                         class="relative mx-4 mt-4 flex flex-col gap-4 overflow-hidden rounded-none bg-transparent bg-clip-border text-gray-700 shadow-none md:flex-row md:items-center">
                         <div class="w-max rounded-lg bg-teal-500 shadow-lg p-5 text-white">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" aria-hidden="true" class="h-6 w-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-6 w-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3">
                                 </path>
@@ -364,8 +364,8 @@
                     <div
                         class="relative mx-4 mt-4 flex flex-col gap-4 overflow-hidden rounded-none bg-transparent bg-clip-border text-gray-700 shadow-none md:flex-row md:items-center">
                         <div class="w-max rounded-lg bg-teal-500 shadow-lg p-5 text-white">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" aria-hidden="true" class="h-6 w-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-6 w-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3">
                                 </path>
@@ -399,7 +399,8 @@
                 <div class="bg-white  overflow-hidden  col-span-2 ">
                     <h3
                         class="bg-gradient-to-r from-teal-500 to-teal-700 p-4 font-bold text-xl text-white flex justify-between items-center">
-                        <span><i class="fas fa-calendar-alt fa-beat-fade mx-2" style="--fa-animation-duration: 3s;"></i>
+                        <span><i class="fas fa-calendar-alt fa-beat-fade mx-2"
+                                style="--fa-animation-duration: 3s;"></i>
                             Appointments Today (9 AM - 6 PM)</span>
                         <button onclick="window.location.href='{{ route('calendar') }}'"
                             class="bg-white text-teal-500 text-md font-semibold px-3 py-1 rounded-lg flex items-center hover:bg-gray-100">
@@ -456,15 +457,18 @@
                     <div class="relative size-72 items-center justify-center">
                         <svg class="size-full rotate-180" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
                             <defs>
-                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%"
+                                    y2="100%">
                                     <stop offset="0%" stop-color="#4CAF50" /> <!-- Green -->
                                     <stop offset="100%" stop-color="#2196F3" /> <!-- Blue -->
                                 </linearGradient>
                             </defs>
 
                             <defs>
-                                <linearGradient id="tealGradient" x1="100%" y1="0%" x2="0%" y2="0%">
-                                    <stop offset="0%" stop-color="#bae6fd" /> <!-- Lighter Blue (Tailwind blue-200) -->
+                                <linearGradient id="tealGradient" x1="100%" y1="0%" x2="0%"
+                                    y2="0%">
+                                    <stop offset="0%" stop-color="#bae6fd" />
+                                    <!-- Lighter Blue (Tailwind blue-200) -->
                                     <stop offset="100%" stop-color="#5eead4" />
                                     <!-- Lighter Teal (Tailwind teal-300) -->
                                 </linearGradient>
@@ -475,13 +479,14 @@
 
 
                             <!-- Background Circle -->
-                            <circle cx="18" cy="18" r="16" fill="none" stroke="url(#tealGradient)" stroke-width="2"
-                                stroke-dasharray="50 100" stroke-linecap="round">
+                            <circle cx="18" cy="18" r="16" fill="none" stroke="url(#tealGradient)"
+                                stroke-width="2" stroke-dasharray="50 100" stroke-linecap="round">
                             </circle>
 
                             <!-- Gradient Progress Circle -->
-                            <circle cx="18" cy="18" r="16" fill="none" stroke="url(#gradient)" stroke-width="3"
-                                stroke-dasharray="{{ ($attendanceRate / 100) * 50 }}, 100" stroke-linecap="round">
+                            <circle cx="18" cy="18" r="16" fill="none" stroke="url(#gradient)"
+                                stroke-width="3" stroke-dasharray="{{ ($attendanceRate / 100) * 50 }}, 100"
+                                stroke-linecap="round">
                             </circle>
                         </svg>
                         <div class="absolute inset-0 flex flex-col items-center justify-center">
@@ -499,8 +504,7 @@
                                     $message = 'Excellent attendance! Keep up the great work!';
                                     $color = 'text-green-700 border-green-500 bg-green-50';
                                 } elseif ($attendanceRate >= 75) {
-                                    $message =
-                                        'Good attendance! A little more consistency will make it even better.';
+                                    $message = 'Good attendance! A little more consistency will make it even better.';
                                     $color = 'text-blue-700 border-blue-500 bg-blue-50';
                                 } elseif ($attendanceRate >= 50) {
                                     $message = 'Fair attendance. Try to improve your consistency.';
@@ -651,7 +655,7 @@
 
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             let urlParams = new URLSearchParams(window.location.search);
 
             if (urlParams.has("auditModal") || "{{ session('audit_modal_open') }}" === "true") {
@@ -659,11 +663,11 @@
                 openModal("auditModal");
             }
 
-            document.addEventListener("DOMContentLoaded", function () {
+            document.addEventListener("DOMContentLoaded", function() {
                 let searchForm = document.querySelector("form#searchform");
 
                 if (searchForm) {
-                    searchForm.addEventListener("submit", function (event) {
+                    searchForm.addEventListener("submit", function(event) {
                         let searchInput = document.querySelector("input[name='search']");
                         let auditModalInput = document.querySelector("input[name='auditModal']");
                         let formAction = new URL(searchForm.action, window.location.origin);
@@ -677,7 +681,8 @@
                             formAction.searchParams.set("auditModal", "true");
                             auditModalInput.value = "true";
 
-                            console.log("Final Form Action URL:", formAction.toString()); // Debugging
+                            console.log("Final Form Action URL:", formAction
+                                .toString()); // Debugging
                             searchForm.action = formAction.toString();
                         }
                     });
@@ -694,7 +699,7 @@
 
             let paginationLinks = document.querySelectorAll(".pagination a");
             paginationLinks.forEach(link => {
-                link.addEventListener("click", function (event) {
+                link.addEventListener("click", function(event) {
                     event.preventDefault();
                     let url = new URL(link.href);
                     let currentParams = new URL(window.location.href).searchParams;
@@ -714,12 +719,12 @@
 
         function closeAuditModal(modalId) {
             fetch("{{ route('close.audit.modal') }}", {
-                method: "POST",
-                headers: {
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                    "Content-Type": "application/json",
-                },
-            })
+                    method: "POST",
+                    headers: {
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                        "Content-Type": "application/json",
+                    },
+                })
                 .then(response => response.json())
                 .then(data => {
                     console.log("Audit Modal Closed:", data.message);
@@ -749,7 +754,7 @@
 
 
         // COUNT DOWN
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             let timeSlots = document.querySelectorAll(".time-slot");
 
             timeSlots.forEach(slot => {
@@ -831,7 +836,7 @@
             series: [{
                 name: "Monthly Appointments",
                 data: monthlyappointmentsData,
-            },],
+            }, ],
             chart: {
                 type: "line",
                 height: 240,
@@ -879,7 +884,7 @@
                         fontFamily: "Poppins",
                         fontWeight: 400,
                     },
-                    formatter: function (value) {
+                    formatter: function(value) {
                         return Math.round(value);
                     },
                 },
@@ -921,7 +926,7 @@
             series: [{
                 name: "Daily Appointments",
                 data: dailyappointmentsData,
-            },],
+            }, ],
             chart: {
                 type: "line",
                 height: 240,
@@ -957,7 +962,7 @@
                         fontFamily: "Poppins",
                         fontWeight: 400,
                     },
-                    formatter: function (value) {
+                    formatter: function(value) {
                         const date = new Date(value);
                         return date.toLocaleDateString('en-US', {
                             month: 'short',
@@ -976,7 +981,7 @@
                         fontFamily: "Poppins",
                         fontWeight: 400,
                     },
-                    formatter: function (value) {
+                    formatter: function(value) {
                         return Math.round(value);
                     },
                 },
