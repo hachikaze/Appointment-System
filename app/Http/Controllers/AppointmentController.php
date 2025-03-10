@@ -55,8 +55,8 @@ class AppointmentController extends Controller
         $endOfMonth = date('Y-m-t', strtotime($selectedDate));
 
         $existingAppointment = Appointment::where('email', $user->email)
-            ->whereBetween('date', [$startOfMonth, $endOfMonth])
-            ->whereIn('status', ['Approved'])
+            // ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->whereIn('status', ['Pending'])
             ->exists();
 
 
@@ -67,7 +67,7 @@ class AppointmentController extends Controller
 
 
         if ($existingAppointment) {
-            return back()->withErrors(['error' => 'You can only book one appointment per month.']);
+            return redirect()->route('calendar')->withErrors(['error' => 'You can only book one active pending.']);
         }
 
         if (!AvailableAppointment::where('date', $request->date)->where('time_slot', $time)->exists()) {

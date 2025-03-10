@@ -241,9 +241,7 @@
                                                 message="Are you sure you want to reschedule this appointment?"
                                                 route="{{ route('appointments.update', ['id' => $appointment->id]) }}"
                                                 method="PUT" buttonText="Reschedule" />
-
-
-                                                
+    
                                         </td>
 
 
