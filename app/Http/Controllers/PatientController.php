@@ -293,7 +293,8 @@ class PatientController extends Controller
                     ->whereColumn('appointments.time', 'available_appointments.time_slot')
                     ->where('appointments.status', 'Unattended');
             })
-            ->get(); // NEED WORK HERE
+            ->get();
+        // NEED WORK HERE
 
         // $allData = AvailableAppointment::where(function ($query) use ($now) {
         //     $query->whereDate('date', '>', $now) // Future dates
