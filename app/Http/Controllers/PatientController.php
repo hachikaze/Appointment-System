@@ -19,6 +19,19 @@ class PatientController extends Controller
     {
         $userEmail = Auth::user()->email;
         $user = Auth::user();
+        $now = Carbon::now('Asia/Singapore');
+
+        $monthlyAppointments = Appointment::where('email', auth()->user()->email)
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->groupBy('date')
+            ->pluck('count', 'date');
+
+
+        $dailyAppointments = Appointment::where('email', auth()->user()->email)
+            ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->groupBy('date')
+            ->pluck('count', 'date');
 
         $availableDates = AvailableAppointment::count();
         $currentAppointments = AvailableAppointment::whereDate('date', (Carbon::today()))->count();
@@ -28,20 +41,73 @@ class PatientController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        $availableAppointments = AvailableAppointment::whereDate('date', Carbon::today())
+        $today = Carbon::now()->timezone('Asia/Singapore')->toDateString();
+        $availableAppointments = AvailableAppointment::whereDate('date', $today)
             ->orderBy('date', 'desc')
             ->get();
+
+
+        $appointmentCategories = Appointment::where('email', Auth::user()->email)
+            ->get()
+            ->groupBy('appointments')
+            ->map(function ($group) {
+                return $group->count();
+            });
+
+        // ATTENDANCE RATE CALCULATION
+        $approvedCount = Appointment::where('email', $userEmail)
+            ->where('status', 'Approved')
+            ->count();
+
+        $attendedCount = Appointment::where('email', $userEmail)
+            ->where('status', 'Attended')
+            ->count();
+
+        $totalEligible = $approvedCount + $attendedCount;
+        $attendanceRate = $totalEligible > 0 ? ($attendedCount / $totalEligible) * 100 : 0;
+
+        $totalAppointments = Appointment::where('email', auth()->user()->email)->count();
+
+
+        $upcomingappointment = Appointment::where('status', 'Approved')
+            ->whereRaw("time LIKE '% - %'") // Ensure time format is correct
+            ->orderByRaw("time ASC") // Sort by time string 
+            ->first();
+
+
+        // Extract the start time
+        $timeRange = $upcomingappointment->time ?? ''; // Ensure it's at least an empty string
+        $times = explode(' - ', $timeRange);
+
+        $start_time = $times[0] ?? null;
+        $end_time = $times[1] ?? null;
 
         return view('dashboard', compact(
             'auditTrails',
             'user',
-            // 'notifications',
+            'dailyAppointments',
+            'monthlyAppointments',
             'availableAppointments',
             'availableDates',
+            'appointmentCategories',
             'currentAppointments',
-            'canceledAppointments'
+            'totalAppointments',
+            'attendanceRate',
+            'canceledAppointments',
+            'attendedCount',
+            'totalEligible',
+            'upcomingappointment',
+            'start_time',
+            'end_time'
         ));
     }
+
+    // public function getUpcomingAppointment()
+    // {
+    //     $now = Carbon::now('Asia/Singapore');
+
+    //     return view('patient.dashboard', compact('upcomingappointment'));
+    // }
 
 
     public function calendar(Request $request)
@@ -66,25 +132,24 @@ class PatientController extends Controller
                 // Count how many appointments are booked for this time slot
                 $bookedSlots = Appointment::where('date', $selectedDate)
                     ->where('time', $appointment->time_slot)
-                    ->where('status', 'pending')
+                    ->where('status', 'Pending')
                     ->count();
-
-
                 // Deduct booked slots from max slots
                 $appointment->remaining_slots = max(0, $appointment->max_slots - $bookedSlots);
                 return $appointment;
             })
             : collect();
 
+
         $availableslots = $availableappointments->sum('remaining_slots');
         return view('patient.calendar', compact('appointments', 'availableappointments', 'selectedDate', 'availableslots'));
     }
 
-    public function messages()
-    {
-        
-        return view('patient.messages');
-    }
+    // public function messages()
+    // {
+
+    //     return view('patient.messages');
+    // }
 
 
 

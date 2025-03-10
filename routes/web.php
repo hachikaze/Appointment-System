@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ManageAppointmentController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Middleware\PreventBackHistory;
 use App\Http\Controllers\PatientRecordsExportController;
+use App\Http\Middleware\PreventUpdateOnSentMessages;
 use App\Mail\ForgotPassword;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +27,6 @@ use Illuminate\Support\Facades\Route;
 
 // Test route
 Route::get('/test', function () {
-
 });
 
 // VIEW CUSTOMER GCASH PAYMENTS
@@ -43,6 +44,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/doctor', [HomeController::class, 'doctor'])->name('doctor');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+Route::get('/service', [HomeController::class, 'service'])->name('service');
 
 Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(function () {
     // FOR PATIENT USERS
@@ -50,23 +52,19 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::get('/patient/dashboard', [PatientController::class, 'index'])->name('patient.dashboard');
         Route::get('/patient/calendar', [PatientController::class, 'calendar'])->name('calendar');
         Route::get('/patient/messaging', [PatientController::class, 'messages'])->name('messages');
-
         Route::get('/patient/notifications', [PatientController::class, 'notifications'])->name('notifications');
         Route::get('/patient/history', [PatientController::class, 'history'])->name('history');
         Route::get('/view-history/{appointmentId}', [PatientController::class, 'viewHistory'])->name('viewhistory');
-
         Route::put('/patient/appointments/{id}', [PatientController::class, 'cancel'])->name('appointments.cancel');
         Route::get('/patient/profile', [LoginController::class, 'profile'])->name('profile');
         Route::put('patient/users/{id}', [LoginController::class, 'update'])->name('profile.update');
         
         //FOR RESCHEDULING
         Route::get('/patient/appointments/available-slots', [PatientController::class, 'getAvailableSlots'])
-        ->name('appointments.available-slots');
-
+            ->name('appointments.available-slots');
         Route::get('/get-available-slots', [PatientController::class, 'getAvailableSlots']);
-
         Route::put('/patient/appointments/reschedule/{id}', [PatientController::class, 'reschedule'])
-        ->name('appointments.reschedule');
+            ->name('appointments.reschedule');
     });
 
     // FOR APPOINTMENT
@@ -113,6 +111,8 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         // appointment routes
         Route::get('/admin/appointments/{id}/edit', [AdminAppointmentController::class, 'edit'])->name('admin.appointments.edit');
         Route::put('/admin/appointments/{id}', [AdminAppointmentController::class, 'update'])->name('admin.appointments.update');
+        Route::get('/admin/appointments/available-slots', [AdminAppointmentController::class, 'getAvailableSlots'])->name('admin.appointments.available-slots');
+
 
         // General appointments route
         Route::get('/admin/appointments', [AdminAppointmentController::class, 'index'])->name('admin.appointments.index');
@@ -127,26 +127,46 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::post('/admin/inventory/{id}/adjust', [InventoryController::class, 'adjustQuantity'])->name('admin.inventory.adjust');
         Route::post('/admin/inventory/order-critical', [InventoryController::class, 'orderCriticalItem'])->name('admin.inventory.order-critical');
         Route::put('/admin/inventory/categories/{category}', [InventoryController::class, 'updateCategory'])->name('admin.inventory.categories.update');
+        // Jez
+        Route::post('/admin/inventory/record-usage', [InventoryController::class, 'recordUsage'])->name('admin.inventory.record-usage');
 
-        // Inventory routes
-        Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
-        Route::post('/inventory/use', [InventoryController::class, 'recordUsage'])->name('inventory.use');
-        Route::get('/activities/load-more', [InventoryController::class, 'loadMoreActivities'])->name('activities.load-more');
-        
-                        
+
         // Category Management Routes - UPDATED
         Route::post('/admin/inventory/categories', [InventoryController::class, 'storeCategory'])->name('admin.inventory.categories.store');
         Route::delete('/admin/inventory/categories/{category}', [InventoryController::class, 'destroyCategory'])->name('admin.inventory.categories.destroy');
         Route::put('/admin/inventory/categories/{category}', [InventoryController::class, 'updateCategory'])->name('admin.inventory.categories.update');
 
+
+        // JEZ
+        Route::get('/admin/graphs/inventory', [\App\Http\Controllers\Admin\GraphController::class, 'inventoryGraphs'])->name('admin.graphs.inventory');
+        Route::get('/admin/graphs/inventory/pdf', [\App\Http\Controllers\Admin\GraphController::class, 'generatePDF'])->name('admin.graphs.inventory.pdf');
+        Route::get('/admin/graphs/inventory/quantity/pdf', [\App\Http\Controllers\Admin\GraphController::class, 'generateQuantityPDF'])->name('admin.graphs.inventory.quantity.pdf');
+        Route::get('/admin/graphs/inventory/category/pdf', [\App\Http\Controllers\Admin\GraphController::class, 'generateCategoryPDF'])->name('admin.graphs.inventory.category.pdf');
+
+        // User Registration Analytics
+        Route::get('/admin/graphs/users', [\App\Http\Controllers\Admin\GraphController::class, 'userGraphs'])->name('admin.graphs.users');
+        Route::get('/admin/graphs/users/pdf', [\App\Http\Controllers\Admin\GraphController::class, 'userGraphsPdf'])->name('admin.graphs.users.pdf');
+
+        //Sentiment
+        Route::get('/admin/sentiment', [\App\Http\Controllers\SentimentController::class, 'index']) ->name('admin.sentiment');
+
+        // Appointment Analytics
+        Route::get('/admin/graphs/appointments', [\App\Http\Controllers\Admin\GraphController::class, 'appointmentGraphs'])->name('admin.graphs.appointments');
+        Route::get('/admin/graphs/appointments/pdf', [\App\Http\Controllers\Admin\GraphController::class, 'appointmentGraphsPdf'])->name('admin.graphs.appointments.pdf');
+
+        // Appointment Reports
+        Route::prefix('admin/reports')->name('admin.reports.')->middleware(['auth'])->group(function () {
+        Route::get('/status-during-period', [App\Http\Controllers\Admin\AppointmentReportController::class, 'statusDuringPeriod'])->name('status_during_period');
+        Route::get('/status-during-period/pdf', [App\Http\Controllers\Admin\AppointmentReportController::class, 'exportPdf'])->name('status_during_period.pdf');});
+        
         // Patient Records
         Route::get('/admin/patient-records', [AdminPatientRecordsController::class, 'records'])
             ->name('admin.patient_records');
-
+        
         // Update a specific patient record (triggered from your edit modal)
         Route::put('/admin/patient-records/{id}', [AdminPatientRecordsController::class, 'update'])
             ->name('admin.patient_records.update');
-
+        
         // Delete a specific patient record
         Route::delete('/admin/patient-records/{id}', [AdminPatientRecordsController::class, 'destroy'])
             ->name('admin.patient_records.destroy');
@@ -192,7 +212,7 @@ Route::get('/email/verify', function () {
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $request->fulfill();
-
+    
     switch ($request->user()->user_type) {
         case 'admin':
         case 'staff':
@@ -213,3 +233,4 @@ Route::post('/email/verification-notification', function (Request $request) {
 Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
 Route::post('/appointments/store', [AppointmentController::class, 'store'])->name('appointments.store');
 Route::get('/admin/appointments', [AdminAppointmentController::class, 'index'])->name('admin.appointments.index');
+

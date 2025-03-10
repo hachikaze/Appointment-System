@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\PatientRecords;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class AdminPatientRecordsController extends Controller
 {
     /**
-     * Display a listing of patient records.
+     * Display a listing of patient records (grouped by email).
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\View\View
@@ -46,7 +47,32 @@ class AdminPatientRecordsController extends Controller
             'allRecords'       => $allRecords,  
         ]);
     }
-
+    
+    /**
+     * Display patient history with all appointments.
+     *
+     * @param  string  $email
+     * @return \Illuminate\View\View
+     */
+    public function patientHistory($email)
+    {
+        // Get the patient details from first appointment
+        $patient = PatientRecords::where('email', $email)->first();
+        
+        if (!$patient) {
+            return redirect()->route('admin.patient_records')
+                ->with('error', 'Patient not found');
+        }
+        
+        // Get all appointments for this patient
+        $appointments = PatientRecords::where('email', $email)
+                        ->orderBy('date', 'desc')
+                        ->orderBy('time', 'desc')
+                        ->get();
+        
+        return view('admin.patient-history', compact('patient', 'appointments'));
+    }
+    
     /**
      * Update the specified patient record.
      *
@@ -66,15 +92,14 @@ class AdminPatientRecordsController extends Controller
             'appointments' => 'required|string|max:255',
             'status'       => 'required|string|in:Pending,Approved,Attended,Unattended,Cancelled',
         ]);
-
+        
         $patient = PatientRecords::findOrFail($id);
-
         $patient->update($validated);
-
+        
         return redirect()->route('admin.patient_records')
-                         ->with('success', 'Patient record updated successfully.');
+            ->with('success', 'Patient record updated successfully.');
     }
-
+    
     /**
      * Remove the specified patient record.
      *
@@ -86,8 +111,38 @@ class AdminPatientRecordsController extends Controller
     {
         $patient = PatientRecords::findOrFail($id);
         $patient->delete();
-
+        
         return redirect()->route('admin.patient_records')
             ->with('success', 'Patient record deleted successfully.');
+    }
+    
+    /**
+     * Delete all records for a patient with the given email.
+     *
+     * @param  string  $email
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroyAllByEmail($email)
+    {
+        $deleted = PatientRecords::where('email', $email)->delete();
+        
+        return redirect()->route('admin.patient_records')
+            ->with('success', "All records for patient with email {$email} deleted successfully.");
+    }
+    
+    /**
+     * View a specific appointment record.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function viewAppointment($id)
+    {
+        $appointment = PatientRecords::findOrFail($id);
+        
+        return response()->json([
+            'success' => true,
+            'data' => $appointment
+        ]);
     }
 }

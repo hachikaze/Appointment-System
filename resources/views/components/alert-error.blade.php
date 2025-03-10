@@ -5,4 +5,4 @@
             <p class="text-sm">{{ $slot }}</p>
         </div>
     </div>
-</div>
+</div>                                                                                                                           
