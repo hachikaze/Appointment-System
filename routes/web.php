@@ -151,7 +151,7 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::delete('/admin/patient-records/{id}', [AdminPatientRecordsController::class, 'destroy'])
             ->name('admin.patient_records.destroy');
 
-        //FOR RESCHEDULING
+        //FOR RESCHEDULING APPOINTMENTD
         Route::get('/admin/appointments/slots', [ManageAppointmentController::class, 'getAvailableSlots'])
         ->name('admin.appointments.slots');
                     

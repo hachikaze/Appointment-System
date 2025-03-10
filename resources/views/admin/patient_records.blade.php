@@ -213,6 +213,7 @@
     @push('scripts')
     <!-- Include SheetJS Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    
     <script>
         // Convert grouped patients data into a JavaScript object.
         const patientRecordsData = @json($allRecords);

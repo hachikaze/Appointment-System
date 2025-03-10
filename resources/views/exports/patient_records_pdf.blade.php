@@ -44,6 +44,7 @@
         }
     </style>
 </head>
+
 <body>
     <h1>PATIENT RECORD</h1>
     <div class="header-line"></div>

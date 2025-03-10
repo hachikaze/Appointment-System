@@ -16,6 +16,7 @@ class PatientRecordsExportController extends Controller
      * @param  string  $patientName
      * @return \Illuminate\Http\Response
      */
+    
     public function exportPdf($patientName)
     {
         // URL-decode the patient name in case it was encoded

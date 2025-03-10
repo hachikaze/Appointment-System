@@ -81,6 +81,7 @@ class AdminPatientRecordsController extends Controller
      * @param  int  $id  Patient record ID
      * @return \Illuminate\Http\RedirectResponse
      */
+    
     public function destroy($id)
     {
         $patient = PatientRecords::findOrFail($id);
