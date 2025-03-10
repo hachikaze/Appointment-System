@@ -990,7 +990,8 @@
                 </button>
                 </div>
                 
-                <form id="useForm" action="route('admin.inventory.use', ['id' => $item->id])" method="POST" class="p-4 sm:p-6 md:p-8 overflow-y-auto max-h-[calc(100vh-10rem)]">
+                <!-- <form id="useForm" action="route('admin.inventory.use', ['id' => $item->id])" method="POST" class="p-4 sm:p-6 md:p-8 overflow-y-auto max-h-[calc(100vh-10rem)]"> -->
+                <form id="useForm" action="{{ route('admin.inventory.record-usage') }}" method="POST" class="p-4 sm:p-6 md:p-8 overflow-y-auto max-h-[calc(100vh-10rem)]">
                 @csrf
                 <input type="hidden" id="use_inventory_id" name="inventory_id">
                 

@@ -50,9 +50,12 @@ class UserController extends Controller
             // Concatenate full name
             $fullName = trim("{$request->firstname} {$request->middleinitial} {$request->lastname}");
 
-            // Create user
+            // In your store method
             $user = User::create([
-                'name' => $fullName,
+                'name' => trim("{$request->firstname} {$request->middleinitial} {$request->lastname}"),
+                'firstname' => $request->firstname,
+                'middleinitial' => $request->middleinitial,
+                'lastname' => $request->lastname,
                 'email' => $request->email,
                 'gender' => $request->gender,
                 'password' => Hash::make($request->password),

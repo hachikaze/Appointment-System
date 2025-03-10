@@ -1,1610 +1,1171 @@
 <x-sidebar-layout>
-<x-slot:heading>
-Manage Available Appointments
-</x-slot:heading>
-<!--  Header Section -->
+<!-- Header Section -->
 <div class="mb-8 rounded-lg shadow-md overflow-hidden">
-    <div class="bg-gradient-to-r from-teal-600 to-teal-700 p-6">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <div class="flex items-center">
-                <div class="bg-white bg-opacity-20 p-3 rounded-lg mr-4">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                </div>
-                <div>
-                    <h1 class="text-2xl sm:text-3xl font-bold text-white mb-1">Manage Available Appointments</h1>
-                    <p class="text-teal-100">Create and manage appointment slots for patients to book</p>
-                </div>
-            </div>
-            <div class="mt-4 sm:mt-0">
-                <span class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-white text-teal-700 shadow-sm">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    Slots Management
-                </span>
-            </div>
+  <div class="bg-gradient-to-r from-teal-600 to-teal-700 p-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex items-center">
+        <div class="bg-white bg-opacity-20 p-3 rounded-lg mr-4">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
         </div>
-    </div>
-    <div class="bg-teal-50 px-6 py-3 border-t border-teal-200">
-        <div class="flex items-center text-sm text-teal-700">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <span>Create appointment slots based on staff availability and service duration</span>
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-bold text-white mb-1">Appointment Management</h1>
+          <p class="text-teal-100">Create and manage available appointment slots</p>
         </div>
+      </div>
+      <div class="mt-4 sm:mt-0 flex space-x-3">
+        <span class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-teal-600 bg-opacity-20 text-white shadow-sm">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Appointment Scheduler
+        </span>
+      </div>
     </div>
+  </div>
+  <div class="bg-teal-50 px-6 py-3 border-t border-teal-900">
+    <div class="flex items-center text-sm text-teal-700">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <span>Create available time slots for patient appointments. Manage existing slots from this dashboard.</span>
+    </div>
+  </div>
 </div>
 
-<!-- Status Cards -->
-<div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-5 mb-6">
-    <!-- Today's Available Slots -->
-    <div class="bg-gradient-to-br from-teal-50 to-white p-4 sm:p-5 rounded-lg shadow-sm border border-teal-200 border-l-4 border-l-teal-500 transition-all hover:shadow-md group">
-        <div class="flex justify-between items-start">
-            <div>
-                <p class="text-teal-700 text-xs sm:text-sm font-medium uppercase tracking-wider">Today's Available Slots</p>
-                <p class="text-xl sm:text-2xl font-bold text-teal-700 mt-1 group-hover:text-teal-800 transition-colors">
-                    @php
-                    $todayDate = now()->format('Y-m-d');
-                    $todayAvailableSlots = $availableAppointments
-                    ->where('date', $todayDate)
-                    ->sum(function($appointment) use ($slotCounts, $todayDate) {
-                        $taken = $slotCounts[$todayDate][$appointment->time_slot] ?? 0;
-                        return $appointment->max_slots - $taken;
-                    });
-                    @endphp
-                    {{ $todayAvailableSlots }}
-                </p>
-            </div>
-            <div class="bg-teal-100 p-1.5 sm:p-2 rounded-full text-teal-600 group-hover:bg-teal-200 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-            </div>
-        </div>
-        <div class="mt-2 pt-2 border-t border-teal-100">
-            <p class="text-xs text-teal-600">Remaining slots available for today's appointments</p>
-        </div>
-    </div>
-    <!-- Today's Booked Slots -->
-    <div class="bg-gradient-to-br from-teal-50 to-white p-4 sm:p-5 rounded-lg shadow-sm border border-teal-200 border-l-4 border-l-teal-500 transition-all hover:shadow-md group">
-        <div class="flex justify-between items-start">
-            <div>
-                <p class="text-teal-700 text-xs sm:text-sm font-medium uppercase tracking-wider">Today's Booked Slots</p>
-                <p class="text-xl sm:text-2xl font-bold text-teal-700 mt-1 group-hover:text-teal-800 transition-colors">
-                    @php
-                    $todayDate = now()->format('Y-m-d');
-                    $todayBookedSlots = 0;
-                    foreach($availableAppointments as $appointment) {
-                        if($appointment->date == $todayDate) {
-                            $todayBookedSlots += $slotCounts[$todayDate][$appointment->time_slot] ?? 0;
-                        }
-                    }
-                    @endphp
-                    {{ $todayBookedSlots }}
-                </p>
-            </div>
-            <div class="bg-teal-100 p-1.5 sm:p-2 rounded-full text-teal-600 group-hover:bg-teal-200 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-            </div>
-        </div>
-        <div class="mt-2 pt-2 border-t border-teal-100">
-            <p class="text-xs text-teal-600">Total appointments booked for today</p>
-        </div>
-    </div>
-    <!-- Today's Utilization Rate -->
-    <div class="bg-gradient-to-br from-teal-50 to-white p-4 sm:p-5 rounded-lg shadow-sm border border-teal-200 border-l-4 border-l-teal-500 transition-all hover:shadow-md group">
-        <div class="flex justify-between items-start">
-            <div>
-                <p class="text-teal-700 text-xs sm:text-sm font-medium uppercase tracking-wider">Today's Utilization</p>
-                <p class="text-xl sm:text-2xl font-bold text-teal-700 mt-1 group-hover:text-teal-800 transition-colors">
-                    @php
-                    $todayDate = now()->format('Y-m-d');
-                    $todayTotalSlots = $availableAppointments
-                    ->where('date', $todayDate)
-                    ->sum('max_slots');
-                    $todayUtilization = $todayTotalSlots > 0
-                    ? round(($todayBookedSlots / $todayTotalSlots) * 100)
-                    : 0;
-                    @endphp
-                    {{ $todayUtilization }}%
-                </p>
-            </div>
-            <div class="bg-teal-100 p-1.5 sm:p-2 rounded-full text-teal-600 group-hover:bg-teal-200 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-            </div>
-        </div>
-        <div class="mt-2 pt-2 border-t border-teal-100">
-            <div class="w-full bg-teal-100 rounded-full h-2.5">
-                <div class="h-2.5 rounded-full
-                {{ $todayUtilization >= 90 ? 'bg-teal-800' : ($todayUtilization >= 70 ? 'bg-teal-600' : 'bg-teal-500') }}"
-                style="width: {{ $todayUtilization }}%">
-                </div>
-            </div>
-            <p class="text-xs text-teal-600 mt-1">Percentage of today's slots that are booked</p>
-        </div>
-    </div>
-    <!-- This Week's Slots -->
-    <div class="bg-gradient-to-br from-teal-50 to-white p-4 sm:p-5 rounded-lg shadow-sm border border-teal-200 border-l-4 border-l-teal-500 transition-all hover:shadow-md group">
-        <div class="flex justify-between items-start">
-            <div>
-                <p class="text-teal-700 text-xs sm:text-sm font-medium uppercase tracking-wider">This Week's Slots</p>
-                <p class="text-xl sm:text-2xl font-bold text-teal-700 mt-1 group-hover:text-teal-800 transition-colors">
-                    @php
-                    $startOfWeek = now()->startOfWeek()->format('Y-m-d');
-                    $endOfWeek = now()->endOfWeek()->format('Y-m-d');
-                    $weeklySlots = $availableAppointments
-                    ->where('date', '>=', $startOfWeek)
-                    ->where('date', '<=', $endOfWeek)
-                    ->sum('max_slots');
-                    $weeklyBooked = 0;
-                    foreach($availableAppointments as $appointment) {
-                        if($appointment->date >= $startOfWeek && $appointment->date <= $endOfWeek) {
-                            $weeklyBooked += $slotCounts[$appointment->date][$appointment->time_slot] ?? 0;
-                        }
-                    }
-                    $weeklyAvailable = $weeklySlots - $weeklyBooked;
-                    @endphp
-                    {{ $weeklyAvailable }} / {{ $weeklySlots }}
-                </p>
-            </div>
-            <div class="bg-teal-100 p-1.5 sm:p-2 rounded-full text-teal-600 group-hover:bg-teal-200 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-            </div>
-        </div>
-        <div class="mt-2 pt-2 border-t border-teal-100">
-            <div class="w-full bg-teal-100 rounded-full h-2.5">
-                @php
-                $weeklyUtilization = $weeklySlots > 0 ? ($weeklyBooked / $weeklySlots) * 100 : 0;
-                @endphp
-                <div class="h-2.5 rounded-full bg-teal-500" style="width: {{ $weeklyUtilization }}%"></div>
-            </div>
-            <p class="text-xs text-teal-600 mt-1">Available slots for the current week</p>
-        </div>
-    </div>
-    <!-- Total Active Slots -->
-    <div class="bg-gradient-to-br from-teal-50 to-white p-4 sm:p-5 rounded-lg shadow-sm border border-teal-200 border-l-4 border-l-teal-500 transition-all hover:shadow-md group">
-        <div class="flex justify-between items-start">
-            <div>
-                <p class="text-teal-700 text-xs sm:text-sm font-medium uppercase tracking-wider">Total Active Slots</p>
-                <p class="text-xl sm:text-2xl font-bold text-teal-700 mt-1 group-hover:text-teal-800 transition-colors">
-                @php
-                    $totalActiveSlots = $availableAppointments
-                    ->where('date', '>=', now()->format('Y-m-d'))
-                    ->count();
-                    $totalTimeSlots = $availableAppointments
-                    ->where('date', '>=', now()->format('Y-m-d'))
-                    ->sum('max_slots');
-                    @endphp
-                    {{ $totalActiveSlots }}
-                </p>
-            </div>
-            <div class="bg-teal-100 p-1.5 sm:p-2 rounded-full text-teal-600 group-hover:bg-teal-200 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-            </div>
-        </div>
-        <div class="mt-2 pt-2 border-t border-teal-100">
-            <p class="text-xs text-teal-600">Total active appointment time slots ({{ $totalTimeSlots }} total capacity)</p>
-        </div>
-    </div>
-</div>
-
-@if (session('success'))
-<div class="bg-teal-500 text-white p-4 rounded-lg mb-6 flex items-center shadow-md">
-    <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+<!-- Alert Messages -->
+@if(session('success'))
+<div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-md shadow-sm animate-fadeIn" role="alert">
+  <div class="flex">
+    <div class="flex-shrink-0">
+      <svg class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-    {{ session('success') }}
+      </svg>
+    </div>
+    <div class="ml-3">
+      <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
+    </div>
+  </div>
 </div>
 @endif
 
-<!-- Enhanced Calendar View Section with Professional Teal Theme -->
-<div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-    <div class="bg-gradient-to-r from-teal-600 to-teal-700 px-6 py-4 border-b border-teal-800">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-            <h2 class="text-xl font-semibold text-white flex items-center">
-                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                </svg>
-                Appointment Calendar
-            </h2>
-            <div class="mt-2 sm:mt-0 flex items-center gap-2">
-                <button id="prevMonth" class="bg-teal-500 text-white p-2 rounded-lg hover:bg-teal-600 transition-colors shadow-sm">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
-                </button>
-                <span id="currentMonthYear" class="text-white font-medium px-3 py-1 bg-teal-800 bg-opacity-30 rounded-lg min-w-[140px] text-center"></span>
-                <button id="nextMonth" class="bg-teal-500 text-white p-2 rounded-lg hover:bg-teal-600 transition-colors shadow-sm">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                </button>
-                <button id="todayBtn" class="bg-white text-teal-700 px-3 py-1 rounded-lg hover:bg-teal-50 transition-colors shadow-sm ml-2 text-sm font-medium">
-                    Today
-                </button>
-            </div>
-        </div>
+@if(session('error'))
+<div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-md shadow-sm animate-fadeIn" role="alert">
+  <div class="flex">
+    <div class="flex-shrink-0">
+      <svg class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
     </div>
-    
-    <div class="p-4 bg-teal-50">
-        <!-- Calendar Legend with Enhanced Teal Theme -->
-        <div class="flex flex-wrap gap-3 mb-4 justify-center sm:justify-end">
-            <div class="flex items-center">
-                <div class="w-4 h-4 bg-teal-500 rounded-sm mr-1"></div>
-                <span class="text-xs text-teal-800">Available</span>
-            </div>
-            <div class="flex items-center">
-                <div class="w-4 h-4 bg-teal-300 rounded-sm mr-1"></div>
-                <span class="text-xs text-teal-800">Partially Available</span>
-            </div>
-            <div class="flex items-center">
-                <div class="w-4 h-4 bg-teal-600 rounded-sm mr-1"></div>
-                <span class="text-xs text-teal-800">Limited Slots</span>
-            </div>
-            <div class="flex items-center">
-                <div class="w-4 h-4 bg-teal-800 rounded-sm mr-1"></div>
-                <span class="text-xs text-teal-800">Fully Booked</span>
-            </div>
-            <div class="flex items-center">
-                <div class="w-4 h-4 bg-teal-100 rounded-sm mr-1"></div>
-                <span class="text-xs text-teal-800">No Slots</span>
-            </div>
-        </div>
-        
-        <!-- Enhanced Calendar Grid with Professional Teal Theme -->
-        <div class="overflow-x-auto">
-            <!-- Calendar for larger screens (grid) -->
-            <div class="min-w-full bg-white rounded-lg shadow-sm border border-teal-200 lg:block hidden">
-                <div class="grid grid-cols-7 gap-1 bg-teal-600 text-white">
-                    <div class="text-center font-medium text-sm py-2">Sun</div>
-                    <div class="text-center font-medium text-sm py-2">Mon</div>
-                    <div class="text-center font-medium text-sm py-2">Tue</div>
-                    <div class="text-center font-medium text-sm py-2">Wed</div>
-                    <div class="text-center font-medium text-sm py-2">Thu</div>
-                    <div class="text-center font-medium text-sm py-2">Fri</div>
-                    <div class="text-center font-medium text-sm py-2">Sat</div>
-                </div>
-                <div id="calendarGrid" class="grid grid-cols-7 gap-1 p-1 bg-teal-100"></div>
-            </div>
-            
-            <!-- Calendar for smaller screens (vertical list) -->
-            <div class="lg:hidden block">
-                <div id="calendarVertical" class="flex flex-col gap-2 bg-teal-100 p-2 rounded-lg border border-teal-200"></div>
-            </div>
-        </div>
+    <div class="ml-3">
+      <p class="text-sm font-medium text-red-800">{{ session('error') }}</p>
     </div>
+  </div>
+</div>
+@endif
+
+<!-- Stats Cards -->
+<div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+  <!-- Available Slots Card -->
+  <div class="bg-gradient-to-br from-teal-50 to-white p-5 rounded-lg shadow-sm border border-gray-200 border-l-4 border-l-teal-500 transition-all hover:shadow-md group">
+    <div class="flex justify-between items-start">
+      <div>
+        <p class="text-gray-600 text-sm font-medium uppercase tracking-wider">Available Slots</p>
+        <p class="text-2xl font-bold text-teal-700 mt-1 group-hover:text-teal-800 transition-colors">
+          {{ isset($availableAppointments) ? $availableAppointments->sum('available_slots') : 0 }}
+        </p>
+      </div>
+      <div class="bg-teal-100 p-2 rounded-full text-teal-600 group-hover:bg-teal-200 transition-colors">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      </div>
+    </div>
+    <div class="mt-3 pt-3 border-t border-gray-100">
+      <p class="text-xs text-gray-500 flex items-center">
+        <svg class="h-4 w-4 mr-1 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
+        Total available appointment slots
+      </p>
+    </div>
+  </div>
+  
+  <!-- Total Time Slots Card -->
+  <div class="bg-gradient-to-br from-teal-50 to-white p-5 rounded-lg shadow-sm border border-gray-200 border-l-4 border-l-teal-500 transition-all hover:shadow-md group">
+    <div class="flex justify-between items-start">
+      <div>
+        <p class="text-gray-600 text-sm font-medium uppercase tracking-wider">Total Time Slots</p>
+        <p class="text-2xl font-bold text-teal-700 mt-1 group-hover:text-teal-800 transition-colors">
+          {{ isset($availableAppointments) ? $availableAppointments->count() : 0 }}
+        </p>
+      </div>
+      <div class="bg-teal-100 p-2 rounded-full text-teal-600 group-hover:bg-teal-200 transition-colors">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+    </div>
+    <div class="mt-3 pt-3 border-t border-gray-100">
+      <p class="text-xs text-gray-500 flex items-center">
+        <svg class="h-4 w-4 mr-1 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        Total configured time slots
+      </p>
+    </div>
+  </div>
+  
+  <!-- Fully Booked Card -->
+  <div class="bg-gradient-to-br from-teal-50 to-white p-5 rounded-lg shadow-sm border border-gray-200 border-l-4 border-l-teal-500 transition-all hover:shadow-md group">
+    <div class="flex justify-between items-start">
+      <div>
+        <p class="text-gray-600 text-sm font-medium uppercase tracking-wider">Fully Booked</p>
+        <p class="text-2xl font-bold text-teal-700 mt-1 group-hover:text-teal-800 transition-colors">
+          {{ isset($availableAppointments) ? $availableAppointments->filter(function($item) { return $item->available_slots <= 0; })->count() : 0 }}
+        </p>
+      </div>
+      <div class="bg-teal-100 p-2 rounded-full text-teal-600 group-hover:bg-teal-200 transition-colors">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+    </div>
+    <div class="mt-3 pt-3 border-t border-gray-100">
+      <p class="text-xs text-gray-500 flex items-center">
+        <svg class="h-4 w-4 mr-1 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        Time slots with no availability
+      </p>
+    </div>
+  </div>
 </div>
 
-<!-- Appointments Table Card with Enhanced Filters -->
-<div class="bg-white rounded-lg shadow-md overflow-hidden">
-    <div class="bg-gradient-to-r from-teal-600 to-teal-700 px-6 py-4 border-b border-teal-800">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-            <h2 class="text-xl font-semibold text-white">Current Available Appointments</h2>
-            <div class="mt-2 sm:mt-0 flex flex-wrap items-center gap-3">
-                <input type="text" id="appointmentSearch" placeholder="Search appointments..."
-                    class="w-full sm:w-64 p-2 pl-3 text-sm border border-teal-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-teal-50">
-                <button
-                    type="button"
-                    onclick="openAddModal()"
-                    class="w-full sm:w-auto bg-white text-teal-700 px-4 py-2 rounded-lg hover:bg-teal-50 transition-colors shadow-sm flex items-center justify-center gap-2"
-                >
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    Add New Slot
-                </button>
-            </div>
-        </div>
+<!-- Calendar View -->
+<div class="mb-6 bg-white rounded-lg shadow-md border border-teal-100 overflow-hidden">
+  <div class="bg-gradient-to-r from-teal-600 to-teal-700 px-6 py-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <h2 class="text-xl font-semibold text-white flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+        Calendar View
+      </h2>
+      <button id="openAddModalBtn" class="mt-3 sm:mt-0 inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-white text-teal-700 shadow-sm hover:bg-teal-50 transition-colors transform hover:scale-105 duration-200">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Add Slot
+      </button>
     </div>
-    <!-- Enhanced Filter Bar with Teal Theme -->
-    <div class="bg-teal-50 px-6 py-3 border-b border-teal-200 flex flex-wrap gap-3 items-center justify-between">
-        <div class="flex flex-wrap gap-2">
-            <button id="todayFilterBtn" onclick="filterByPeriod('today')" class="px-3 py-1.5 text-sm bg-teal-100 border border-teal-300 rounded-md hover:bg-teal-200 text-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-1 transition-colors duration-150 shadow-sm">
-                Today
-            </button>
-            <button id="weekFilterBtn" onclick="filterByPeriod('week')" class="px-3 py-1.5 text-sm bg-white border border-teal-300 rounded-md hover:bg-teal-100 text-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-1 transition-colors duration-150 shadow-sm">
-                This Week
-            </button>
-            <button id="monthFilterBtn" onclick="filterByPeriod('month')" class="px-3 py-1.5 text-sm bg-white border border-teal-300 rounded-md hover:bg-teal-100 text-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-1 transition-colors duration-150 shadow-sm">
-                This Month
-            </button>
-            <button id="allFilterBtn" onclick="resetFilter()" class="px-3 py-1.5 text-sm bg-white border border-teal-300 rounded-md hover:bg-teal-100 text-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-1 transition-colors duration-150 shadow-sm">
-                All
-            </button>
+  </div>
+  
+  <!-- Calendar Legend -->
+  <div class="p-4 bg-teal-50 border-b border-teal-100">
+    <div class="flex flex-wrap gap-3 justify-center">
+      <div class="flex items-center">
+        <div class="w-4 h-4 bg-teal-500 rounded-sm mr-2"></div>
+        <span class="text-xs text-gray-700">Today</span>
+      </div>
+      <div class="flex items-center">
+        <div class="w-4 h-4 bg-teal-400 rounded-sm mr-2"></div>
+        <span class="text-xs text-gray-700">Available Slots</span>
+      </div>
+      <div class="flex items-center">
+        <div class="w-4 h-4 bg-yellow-200 rounded-sm mr-2"></div>
+        <span class="text-xs text-gray-700">Limited Slots</span>
         </div>
-        <!-- Date Filter -->
-        <div class="flex items-center gap-2">
-            <label for="dateFilter" class="text-sm text-teal-700">Filter by date:</label>
-            <input type="date" id="dateFilter" onchange="filterBySpecificDate(this.value)"
-                class="text-sm border border-teal-300 rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-white text-teal-700">
-            <button onclick="clearDateFilter()" class="text-teal-600 hover:text-teal-800 p-1">
+      <div class="flex items-center">
+        <div class="w-4 h-4 bg-red-200 rounded-sm mr-2"></div>
+        <span class="text-xs text-gray-700">Fully Booked</span>
+      </div>
+      <div class="flex items-center">
+        <div class="w-4 h-4 bg-gray-200 rounded-sm mr-2"></div>
+        <span class="text-xs text-gray-700">Past Date</span>
+      </div>
+      <div class="flex items-center">
+        <div class="w-4 h-4 bg-teal-100 border border-teal-200 rounded-sm mr-2"></div>
+        <span class="text-xs text-gray-700">No Slots</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Calendar Navigation and Grid -->
+  <div class="p-4">
+    <div class="bg-white rounded-lg border border-teal-200 shadow-sm overflow-hidden">
+      <!-- Calendar Header with Navigation -->
+      <div class="flex justify-between items-center bg-teal-600 text-white p-3">
+        <button id="prevMonth" class="p-1 rounded-full hover:bg-teal-500 transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <h3 id="currentMonthDisplay" class="text-lg font-medium">{{ \Carbon\Carbon::now('Asia/Manila')->format('F Y') }}</h3>
+        <button id="nextMonth" class="p-1 rounded-full hover:bg-teal-500 transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Calendar Days of Week Header -->
+      <div class="hidden md:grid grid-cols-7 gap-1 p-2 bg-teal-50">
+        <div class="text-center text-xs font-medium text-teal-700">Sun</div>
+        <div class="text-center text-xs font-medium text-teal-700">Mon</div>
+        <div class="text-center text-xs font-medium text-teal-700">Tue</div>
+        <div class="text-center text-xs font-medium text-teal-700">Wed</div>
+        <div class="text-center text-xs font-medium text-teal-700">Thu</div>
+        <div class="text-center text-xs font-medium text-teal-700">Fri</div>
+        <div class="text-center text-xs font-medium text-teal-700">Sat</div>
+      </div>
+      
+      <!-- Calendar Grid for Desktop -->
+      <div id="calendarGrid" class="hidden md:grid grid-cols-7 gap-1 p-2">
+        <!-- Calendar days will be dynamically inserted here -->
+      </div>
+      
+      <!-- Calendar List for Mobile/Tablet -->
+      <div id="calendarList" class="md:hidden">
+        <!-- Calendar days will be dynamically inserted here as a list -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="grid grid-cols-1 lg:grid-cols-1 gap-6">
+  <!-- Available Appointments Table -->
+  <div class="lg:col-span-1">
+    <div class="bg-white rounded-lg shadow-md border border-teal-100 overflow-hidden">
+      <div class="bg-gradient-to-r from-teal-600 to-teal-700 px-6 py-4">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+          <h2 class="text-xl font-semibold text-white flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+            </svg>
+            Available Appointment Slots
+          </h2>
+          <div class="mt-3 sm:mt-0 flex items-center">
+            <div class="relative inline-block text-left mr-3">
+              <select id="timePeriodFilter" class="bg-white border border-teal-200 text-teal-700 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-40 p-2.5 appearance-none">
+                <option value="today" selected>This Day</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+                <option value="all">All Time</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-teal-700">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
-            </button>
-        </div>
-        <div class="flex items-center gap-2">
-            <label for="perPage" class="text-sm text-teal-700">Show:</label>
-            <select id="perPage" onchange="changePerPage(this.value)" class="text-sm border border-teal-300 rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-white text-teal-700">
-                <option value="10" {{ request('perPage') == 10 ? 'selected' : '' }}>10</option>
-                <option value="20" {{ request('perPage') == 20 ? 'selected' : '' }}>20</option>
-                <option value="50" {{ request('perPage') == 50 ? 'selected' : '' }}>50</option>
-                <option value="100" {{ request('perPage') == 100 ? 'selected' : '' }}>100</option>
-                <option value="all" {{ request('perPage') == 'all' ? 'selected' : '' }}>All</option>
-            </select>
-        </div>
-    </div>
-    <div class="p-6">
-        @if($availableAppointments->count() > 0)
-        <div class="overflow-x-auto rounded-lg border border-teal-200">
-            <table id="appointmentsTable" class="min-w-full divide-y divide-teal-200">
-                <thead>
-                    <tr class="bg-teal-100">
-                    <th class="px-6 py-3 text-left text-xs font-medium text-teal-700 uppercase tracking-wider cursor-pointer border-r border-teal-200" onclick="sortTable(0)">
-                            Date
-                            <span class="sort-icon ml-1">↕</span>
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-teal-700 uppercase tracking-wider cursor-pointer border-r border-teal-200" onclick="sortTable(1)">
-                            Time Slot
-                            <span class="sort-icon ml-1">↕</span>
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-teal-700 uppercase tracking-wider cursor-pointer border-r border-teal-200" onclick="sortTable(2)">
-                            Max Slots
-                            <span class="sort-icon ml-1">↕</span>
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-teal-700 uppercase tracking-wider cursor-pointer border-r border-teal-200" onclick="sortTable(3)">
-                            Slots Taken
-                            <span class="sort-icon ml-1">↕</span>
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-teal-700 uppercase tracking-wider cursor-pointer border-r border-teal-200" onclick="sortTable(4)">
-                            Created At
-                            <span class="sort-icon ml-1">↕</span>
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-teal-700 uppercase tracking-wider">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-teal-100">
-                    @foreach($availableAppointments as $appointment)
-                    <tr class="hover:bg-teal-50 transition-colors duration-150" data-date="{{ $appointment->date }}" data-time="{{ $appointment->time_slot }}">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-teal-800 border-r border-teal-100">
-                            {{ \Carbon\Carbon::parse($appointment->date)->format('M d, Y') }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-teal-800 border-r border-teal-100">
-                            {{ $appointment->time_slot }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-teal-800 border-r border-teal-100">
-                            {{ $appointment->max_slots }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm border-r border-teal-100">
-                            @php
-                            $slotsTaken = $slotCounts[$appointment->date][$appointment->time_slot] ?? 0;
-                            $availablePercentage = ($appointment->max_slots > 0) ? ($slotsTaken / $appointment->max_slots) * 100 : 0;
-                            if ($availablePercentage >= 90) {
-                                $textClass = 'text-teal-800 font-medium';
-                                $bgClass = 'bg-teal-800';
-                            } elseif ($availablePercentage >= 70) {
-                                $textClass = 'text-teal-700 font-medium';
-                                $bgClass = 'bg-teal-600';
-                            } elseif ($availablePercentage > 0) {
-                                $textClass = 'text-teal-700';
-                                $bgClass = 'bg-teal-500';
-                            } else {
-                                $textClass = 'text-teal-600';
-                                $bgClass = 'bg-teal-300';
-                            }
-                            @endphp
-                            <div class="flex items-center">
-                                <span class="{{ $textClass }}">{{ $slotsTaken }} / {{ $appointment->max_slots }}</span>
-                                <div class="ml-2 w-16 bg-teal-100 rounded-full h-2.5">
-                                    <div class="h-2.5 rounded-full {{ $bgClass }}"
-                                        style="width: {{ min($availablePercentage, 100) }}%"></div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-teal-800 border-r border-teal-100">
-                            {{ $appointment->created_at->format('M d, Y H:i') }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2 flex">
-                            <button type="button"
-                                onclick="openEditModal({{ $appointment->id }}, '{{ $appointment->date }}', '{{ $appointment->time_slot }}', {{ $appointment->max_slots }})"
-                                class="text-teal-600 hover:text-teal-900 bg-teal-100 hover:bg-teal-200 px-3 py-1 rounded-md transition-colors duration-150 border border-teal-300 shadow-sm">
-                                Edit
-                            </button>
-                            <button type="button"
-                                onclick="openDeleteModal({{ $appointment->id }})"
-                                class="text-teal-800 hover:text-teal-900 bg-teal-50 hover:bg-teal-100 px-3 py-1 rounded-md transition-colors duration-150 border border-teal-200 shadow-sm">
-                                Delete
-                            </button>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-        <!-- Enhanced Pagination with Teal Theme -->
-        <div class="mt-6 flex flex-col sm:flex-row justify-between items-center">
-            <div class="text-sm text-teal-700 mb-4 sm:mb-0">
-                @if(method_exists($availableAppointments, 'firstItem'))
-                Showing
-                <span class="font-medium">{{ $availableAppointments->firstItem() ?? 0 }}</span>
-                to
-                <span class="font-medium">{{ $availableAppointments->lastItem() ?? 0 }}</span>
-                of
-                <span class="font-medium">{{ $availableAppointments->total() ?? count($availableAppointments) }}</span>
-                results
-                @else
-                Showing all {{ count($availableAppointments) }} results
-                @endif
+              </div>
             </div>
-            @if(method_exists($availableAppointments, 'links'))
-            <div class="pagination-container">
-                {{ $availableAppointments->links() }}
+          </div>
+        </div>
+      </div>
+      
+      <!-- Date Filter -->
+      <div class="p-4 bg-teal-50 border-b border-teal-100">
+        <form method="GET" action="{{ route('admin.appointments.create') }}" class="flex flex-wrap gap-2">
+          <div class="relative flex-grow max-w-xs">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <svg class="w-5 h-5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
             </div>
-            @endif
+            <input type="date" name="filter_date" id="filterDate" class="pl-10 p-2.5 border border-teal-200 rounded-lg focus:ring-teal-500 focus:border-teal-500 w-full"
+              value="{{ request('filter_date', '') }}">
+          </div>
+          <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg text-sm px-4 py-2.5 transition-colors flex items-center">
+            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+            </svg>
+            Filter
+          </button>
+          <a href="{{ route('admin.appointments.create') }}" class="bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg text-sm px-4 py-2.5 transition-colors flex items-center">
+            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            Reset
+          </a>
+        </form>
+      </div>
+      
+      <!-- Table Content -->
+      <div id="appointmentTableContent">
+        @if(isset($availableAppointments) && count($availableAppointments) > 0)
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-teal-100">
+            <thead class="bg-teal-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-teal-700 uppercase tracking-wider">Date</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-teal-700 uppercase tracking-wider">Time Slot</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-teal-700 uppercase tracking-wider">Max Slots</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-teal-700 uppercase tracking-wider">Available</th>
+                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-teal-700 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-teal-50" id="appointmentTableBody">
+              @foreach($availableAppointments as $appointment)
+              <tr class="{{ $appointment->is_completed ? 'bg-gray-50' : 'hover:bg-teal-50' }} transition-colors appointment-row" 
+                  data-date="{{ \Carbon\Carbon::parse($appointment->date)->format('Y-m-d') }}">
+                <!-- Date column -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0 h-10 w-10 bg-teal-100 text-teal-700 rounded-full flex items-center justify-center">
+                      <span class="font-bold">{{ \Carbon\Carbon::parse($appointment->date)->format('d') }}</span>
+                    </div>
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-teal-900">
+                        {{ \Carbon\Carbon::parse($appointment->date)->format('M d, Y') }}
+                      </div>
+                      <div class="text-xs text-teal-500">
+                        {{ \Carbon\Carbon::parse($appointment->date)->format('l') }}
+                        @if($appointment->is_past_date)
+                        <span class="ml-1 text-red-500">(Past)</span>
+                        @endif
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <!-- Time slot column -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-teal-900">
+                    @php
+                    $timeSlot = $appointment->time_slot;
+                    $times = explode(' - ', $timeSlot);
+                    if (count($times) == 2) {
+                      $startTime = explode(':', $times[0])[0];
+                      $endTime = explode(':', $times[1])[0];
+                      $startHour = (int)$startTime;
+                      $endHour = (int)$endTime;
+                      $startFormat = $startHour < 12 ? 'AM' : 'PM';
+                      $endFormat = $endHour < 12 ? 'AM' : 'PM';
+                      $startHour12 = $startHour > 12 ? $startHour - 12 : ($startHour == 0 ? 12 : $startHour);
+                      $endHour12 = $endHour > 12 ? $endHour - 12 : ($endHour == 0 ? 12 : $endHour);
+                      $timeSlot12h = sprintf('%d:00 %s - %d:00 %s', $startHour12, $startFormat, $endHour12, $endFormat);
+                      echo $timeSlot12h;
+                    } else {
+                      echo $timeSlot;
+                    }
+                    @endphp
+                  </div>
+                  <div class="text-xs text-teal-500">
+                    @if($appointment->is_past_time && !$appointment->is_past_date)
+                    <span class="text-red-500">(Past)</span>
+                    @endif
+                  </div>
+                </td>
+                <!-- Max slots column -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-teal-900 font-medium">{{ $appointment->max_slots }}</div>
+                  <div class="text-xs text-teal-500">Maximum capacity</div>
+                </td>
+                <!-- Available slots column -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                  @if($appointment->is_completed)
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                    Completed
+                  </span>
+                  @elseif($appointment->available_slots <= 0)
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                    Fully Booked
+                  </span>
+                  @else
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-teal-100 text-teal-800">
+                    {{ $appointment->available_slots }} Available
+                  </span>
+                  @endif
+                  <div class="mt-1 w-full bg-gray-200 rounded-full h-1.5">
+                    <div class="h-1.5 rounded-full {{ $appointment->available_slots <= 0 ? 'bg-red-200' : ($appointment->available_slots < $appointment->max_slots / 2 ? 'bg-yellow-200' : 'bg-teal-400') }}"
+                      style="width: {{ (($appointment->max_slots - $appointment->available_slots) / $appointment->max_slots) * 100 }}%"></div>
+                  </div>
+                </td>
+                <!-- Actions column -->
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <div class="flex items-center justify-end space-x-2">
+                    @if($appointment->is_completed)
+                    <!-- Completed status -->
+                    <span class="text-gray-500 text-xs">Completed</span>
+                    @if(!$appointment->has_active_bookings)
+                    <!-- Delete button for completed slots with no bookings -->
+                    <form method="POST" action="{{ route('admin.appointments.delete', $appointment->id) }}"
+                      onsubmit="return confirm('Are you sure you want to delete this completed slot?');">
+                      @csrf
+                      @method('DELETE')
+                      <button type="submit" class="text-red-600 hover:text-red-900 bg-red-50 p-1.5 rounded-md border border-red-200 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                      </button>
+                    </form>
+                    @endif
+                    @else
+                    <!-- Actions for future slots -->
+                    @if($appointment->has_active_bookings)
+                    <!-- Disabled edit button with tooltip -->
+                    <span class="relative group">
+                      <button type="button" class="text-gray-400 cursor-not-allowed bg-gray-50 p-1.5 rounded-md border border-gray-200" disabled>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                      </button>
+                      <span class="absolute bottom-full right-0 mb-2 w-48 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-normal z-10">
+                        Cannot edit: Has active or completed bookings
+                      </span>
+                    </span>
+                    @else
+                    <!-- Active edit button -->
+                    <button type="button" class="text-teal-600 hover:text-teal-900 bg-teal-50 p-1.5 rounded-md border border-teal-200 transition-colors"
+                      onclick="openEditModal({{ $appointment->id }}, '{{ $appointment->date }}', '{{ $appointment->time_slot }}', {{ $appointment->max_slots }})">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                      </svg>
+                    </button>
+                    @endif
+                    @if($appointment->has_active_bookings)
+                    <!-- Disabled delete button with tooltip -->
+                    <span class="relative group">
+                      <button type="button" class="text-gray-400 cursor-not-allowed bg-gray-50 p-1.5 rounded-md border border-gray-200" disabled>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                      </button>
+                      <span class="absolute bottom-full right-0 mb-2 w-48 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-normal z-10">
+                        Cannot delete: Has active or completed bookings
+                      </span>
+                    </span>
+                    @else
+                    <!-- Active delete button -->
+                    <form method="POST" action="{{ route('admin.appointments.delete', $appointment->id) }}"
+                      onsubmit="return confirm('Are you sure you want to delete this slot?');">
+                      @csrf
+                      @method('DELETE')
+                      <button type="submit" class="text-red-600 hover:text-red-900 bg-red-50 p-1.5 rounded-md border border-red-200 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                      </button>
+                    </form>
+                    @endif
+                    @endif
+                  </div>
+                </td>
+              </tr>
+              @endforeach
+            </tbody>
+          </table>
         </div>
         @else
-        <div class="text-center py-8 bg-teal-50 rounded-lg border border-teal-200">
-            <svg class="mx-auto h-12 w-12 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-            </svg>
-            <h3 class="mt-2 text-sm font-medium text-teal-800">No appointments available</h3>
-            <p class="mt-1 text-sm text-teal-600">Get started by creating a new appointment slot.</p>
-            <div class="mt-6">
-                <button
-                    type="button"
-                    onclick="openAddModal()"
-                    class="inline-flex items-center px-4 py-2 border border-teal-700 shadow-sm text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
-                >
-                    <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    Add New Appointment Slot
-                </button>
-            </div>
+        <div class="p-8 text-center">
+          <svg class="mx-auto h-12 w-12 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-teal-900">No appointment slots found</h3>
+          <p class="mt-1 text-sm text-teal-600">Get started by creating a new appointment slot.</p>
         </div>
         @endif
+      </div>
+      
+      <!-- No Results Template (Hidden by default) -->
+      <div id="noResultsTemplate" class="hidden p-8 text-center">
+        <svg class="mx-auto h-12 w-12 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-teal-900">No appointments found for this date</h3>
+        <p class="mt-1 text-sm text-teal-600">Try selecting a different date or create a new appointment slot.</p>
+      </div>
     </div>
+  </div>
 </div>
 
-<!-- Add New Appointment Modal -->
-<div id="addModal" class="fixed inset-0 bg-teal-900 bg-opacity-50 hidden flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
-        <div class="bg-gradient-to-r from-teal-600 to-teal-700 px-6 py-4 border-b border-teal-800 flex justify-between items-center">
-            <h3 class="text-lg font-semibold text-white">Add New Appointment Slot</h3>
-            <button onclick="closeAddModal()" class="text-white hover:text-teal-100 focus:outline-none">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
-        <form method="POST" action="{{ route('admin.appointments.store') }}" class="p-6">
-            @csrf
-            <div class="space-y-5">
-                <div>
-                    <label class="block text-sm font-medium text-teal-700 mb-2" for="date">Date</label>
-                    <input type="date" id="date" name="date"
-                        class="w-full p-3 border border-teal-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                        value="{{ now()->format('Y-m-d') }}"
-                        min="{{ now()->format('Y-m-d') }}"
-                        onchange="updateAvailableTimeSlots()">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-teal-700 mb-2" for="time_slot">Time Slot</label>
-                    <select id="time_slot" name="time_slot"
-                        class="w-full p-3 border border-teal-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                        required>
-                        <option value="">Select a time slot</option>
-                        @foreach (range(8, 17) as $hour)
-                        <option value="{{ sprintf('%02d:00 - %02d:00', $hour, $hour + 1) }}">
-                            {{ sprintf('%02d:00 - %02d:00', $hour, $hour + 1) }}
-                        </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-teal-700 mb-2" for="max_slots">Max Slots</label>
-                    <input type="number" id="max_slots" name="max_slots"
-                        class="w-full p-3 border border-teal-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                        min="1" value="1">
-                </div>
-            </div>
-            <div class="mt-6 flex justify-end space-x-3">
-                <button type="button" onclick="closeAddModal()"
-                    class="px-4 py-2 bg-teal-100 text-teal-700 rounded-md hover:bg-teal-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-colors duration-150">
-                    Cancel
-                </button>
-                <button type="submit"
-                    class="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-colors duration-150">
-                    Add Appointment Slot
-                </button>
-            </div>
-        </form>
+<!-- Add Appointment Modal -->
+<div id="addAppointmentModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 transform transition-all animate-modal-fade-in">
+    <div class="bg-gradient-to-r from-teal-600 to-teal-700 px-6 py-4 rounded-t-lg">
+      <div class="flex justify-between items-center">
+        <h3 class="text-xl font-semibold text-white flex items-center">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+          Add Available Appointment
+        </h3>
+        <button type="button" class="text-white hover:text-teal-100" onclick="closeAddModal()">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
     </div>
+    <form method="POST" action="{{ route('admin.appointments.store') }}" class="p-6">
+      @csrf
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-medium mb-2">Date</label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <svg class="w-5 h-5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+          </div>
+          <input type="date" name="date" id="addDate" class="w-full pl-10 p-2.5 border border-teal-200 rounded-lg focus:ring-teal-500 focus:border-teal-500"
+            value="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d') }}"
+            min="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d') }}">
+        </div>
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-medium mb-2">Time Slot</label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <svg class="w-5 h-5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <select name="time_slot" id="addTimeSlot" class="w-full pl-10 p-2.5 border border-teal-200 rounded-lg focus:ring-teal-500 focus:border-teal-500 appearance-none" required>
+            <option value="">Select a time slot</option>
+            @foreach (range(8, 17) as $hour)
+              @php
+                $startHour = $hour;
+                $endHour = $hour + 1;
+                $startFormat = $startHour < 12 ? 'AM' : 'PM';
+                $endFormat = $endHour < 12 ? 'AM' : 'PM';
+                $startHour12 = $startHour > 12 ? $startHour - 12 : ($startHour == 0 ? 12 : $startHour);
+                $endHour12 = $endHour > 12 ? $endHour - 12 : ($endHour == 0 ? 12 : $endHour);
+                $timeSlot24h = sprintf('%02d:00 - %02d:00', $startHour, $endHour);
+                $timeSlot12h = sprintf('%d:00 %s - %d:00 %s', $startHour12, $startFormat, $endHour12, $endFormat);
+              @endphp
+              <option value="{{ $timeSlot24h }}">{{ $timeSlot12h }}</option>
+            @endforeach
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-teal-500">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
+        <p class="text-xs text-teal-600 mt-1 flex items-center">
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Time slots already selected for this date will be disabled
+        </p>
+      </div>
+      <div class="mb-5">
+        <label class="block text-gray-700 text-sm font-medium mb-2">Max Slots</label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <svg class="w-5 h-5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+          </div>
+          <select name="max_slots" class="w-full pl-10 p-2.5 border border-teal-200 rounded-lg focus:ring-teal-500 focus:border-teal-500 appearance-none" required>
+            <option value="1">1 Patient</option>
+            <option value="2" selected>2 Patients</option>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-teal-500">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center justify-end space-x-4 pt-4 border-t border-teal-100">
+        <button type="button" class="text-gray-700 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-teal-200 rounded-lg border border-teal-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 flex items-center" onclick="closeAddModal()">
+          <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          Cancel
+        </button>
+        <button type="submit" class="text-white bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:outline-none focus:ring-teal-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center flex items-center transform hover:scale-105 transition-transform duration-200">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+          Add Appointment Slot
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <!-- Edit Modal -->
-<div id="editModal" class="fixed inset-0 bg-teal-900 bg-opacity-50 hidden flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
-        <div class="bg-gradient-to-r from-teal-600 to-teal-700 px-6 py-4 border-b border-teal-800 flex justify-between items-center">
-            <h3 class="text-lg font-semibold text-white">Edit Appointment Slot</h3>
-            <button onclick="closeEditModal()" class="text-white hover:text-teal-100 focus:outline-none">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
-        <form id="editForm" method="POST" action="" class="p-6">
-            @csrf
-            @method('PUT')
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-teal-700 mb-2" for="edit_date">Date</label>
-                    <input type="date" id="edit_date" name="date"
-                        class="w-full p-3 border border-teal-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                        onchange="updateEditTimeSlots()">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-teal-700 mb-2" for="edit_time_slot">Time Slot</label>
-                    <select id="edit_time_slot" name="time_slot"
-                        class="w-full p-3 border border-teal-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                        required>
-                        <option value="">Select a time slot</option>
-                        @foreach (range(8, 17) as $hour)
-                        <option value="{{ sprintf('%02d:00 - %02d:00', $hour, $hour + 1) }}">
-                            {{ sprintf('%02d:00 - %02d:00', $hour, $hour + 1) }}
-                        </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-teal-700 mb-2" for="edit_max_slots">Max Slots</label>
-                    <input type="number" id="edit_max_slots" name="max_slots"
-                        class="w-full p-3 border border-teal-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                        min="1">
-                </div>
-            </div>
-            <div class="mt-6 flex justify-end space-x-3">
-                <button type="button" onclick="closeEditModal()"
-                    class="px-4 py-2 bg-teal-100 text-teal-700 rounded-md hover:bg-teal-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-colors duration-150">
-                    Cancel
-                </button>
-                <button type="submit"
-                    class="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-colors duration-150">
-                    Update
-                </button>
-            </div>
-        </form>
+<div id="editModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 transform transition-all animate-modal-fade-in">
+    <div class="bg-gradient-to-r from-teal-600 to-teal-700 px-6 py-4 rounded-t-lg">
+      <div class="flex justify-between items-center">
+        <h3 class="text-xl font-semibold text-white flex items-center">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+          </svg>
+          Edit Appointment Slot
+        </h3>
+        <button type="button" class="text-white hover:text-teal-100" onclick="closeEditModal()">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
     </div>
+    <form id="editForm" method="POST" action="" class="p-6">
+      @csrf
+      @method('PUT')
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-medium mb-2">Date</label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+          <svg class="w-5 h-5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+          </div>
+          <input type="date" name="date" id="editDate" class="w-full pl-10 p-2.5 border border-teal-200 rounded-lg focus:ring-teal-500 focus:border-teal-500"
+            min="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d') }}">
+        </div>
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-medium mb-2">Time Slot</label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <svg class="w-5 h-5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <select name="time_slot" id="editTimeSlot" class="w-full pl-10 p-2.5 border border-teal-200 rounded-lg focus:ring-teal-500 focus:border-teal-500 appearance-none" required>
+            <option value="">Select a time slot</option>
+            @foreach (range(8, 17) as $hour)
+              @php
+                $startHour = $hour;
+                $endHour = $hour + 1;
+                $startFormat = $startHour < 12 ? 'AM' : 'PM';
+                $endFormat = $endHour < 12 ? 'AM' : 'PM';
+                $startHour12 = $startHour > 12 ? $startHour - 12 : ($startHour == 0 ? 12 : $startHour);
+                $endHour12 = $endHour > 12 ? $endHour - 12 : ($endHour == 0 ? 12 : $endHour);
+                $timeSlot24h = sprintf('%02d:00 - %02d:00', $startHour, $endHour);
+                $timeSlot12h = sprintf('%d:00 %s - %d:00 %s', $startHour12, $startFormat, $endHour12, $endFormat);
+              @endphp
+              <option value="{{ $timeSlot24h }}">{{ $timeSlot12h }}</option>
+            @endforeach
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-teal-500">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="mb-5">
+        <label class="block text-gray-700 text-sm font-medium mb-2">Max Slots</label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <svg class="w-5 h-5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+          </div>
+          <select name="max_slots" id="editMaxSlots" class="w-full pl-10 p-2.5 border border-teal-200 rounded-lg focus:ring-teal-500 focus:border-teal-500 appearance-none" required>
+            <option value="1">1 Patient</option>
+            <option value="2">2 Patients</option>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-teal-500">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center justify-end space-x-4 pt-4 border-t border-teal-100">
+        <button type="button" class="text-gray-700 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-teal-200 rounded-lg border border-teal-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 flex items-center" onclick="closeEditModal()">
+          <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          Cancel
+        </button>
+        <button type="submit" class="text-white bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:outline-none focus:ring-teal-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center flex items-center transform hover:scale-105 transition-transform duration-200">
+          <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          Update Slot
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
 
-<!-- Delete Modal -->
-<div id="deleteModal" class="fixed inset-0 bg-teal-900 bg-opacity-50 hidden flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
-        <div class="bg-gradient-to-r from-teal-700 to-teal-800 px-6 py-4 border-b border-teal-900 flex justify-between items-center">
-            <h3 class="text-lg font-semibold text-white">Delete Appointment Slot</h3>
-            <button onclick="closeDeleteModal()" class="text-white hover:text-teal-100 focus:outline-none">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
-        <div class="p-6">
-            <div class="flex items-center mb-4">
-                <div class="flex-shrink-0 bg-teal-100 rounded-full p-2 mr-3">
-                    <svg class="h-6 w-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="text-lg font-medium text-teal-900">Delete Confirmation</h3>
-                    <p class="text-sm text-teal-600 mt-1">Are you sure you want to delete this appointment slot? This action cannot be undone.</p>
-                </div>
-            </div>
-            <form id="deleteForm" method="POST" action="">
-                @csrf
-                @method('DELETE')
-                <div class="mt-6 flex justify-end space-x-3">
-                    <button type="button" onclick="closeDeleteModal()"
-                        class="px-4 py-2 bg-teal-100 text-teal-700 rounded-md hover:bg-teal-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-colors duration-150">
-                        Cancel
-                    </button>
-                    <button type="submit"
-                        class="px-4 py-2 bg-teal-700 text-white rounded-md hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-colors duration-150">
-                        Delete
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+<style>
+select option:disabled {
+  color: #999;
+  background-color: #f3f4f6;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-modal-fade-in {
+  animation: modalFadeIn 0.2s ease-out forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+.calendar-day {
+  transition: all 0.2s ease-in-out;
+  height: 100px; /* Increased height */
+}
+.calendar-day:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 10;
+}
+</style>
 
 <script>
-@php
-$appointmentsJson = $availableAppointments->map(function($appointment) use ($slotCounts) {
-    $slotsTaken = $slotCounts[$appointment->date][$appointment->time_slot] ?? 0;
-    return [
-        'id' => $appointment->id,
-        'date' => $appointment->date,
-        'time_slot' => $appointment->time_slot,
-        'max_slots' => $appointment->max_slots,
-        'slots_taken' => $slotsTaken,
-        'created_at' => $appointment->created_at->format('Y-m-d H:i:s')
-    ];
-})->toJson();
-@endphp
+// Initialize appointment data from server
+const existingAppointments = [
+@foreach($availableAppointments as $appointment)
+{
+    id: {{ $appointment->id }},
+    date: "{{ $appointment->date }}",
+    timeSlot: "{{ $appointment->time_slot }}",
+    isCompleted: {{ $appointment->is_completed ? 'true' : 'false' }},
+    maxSlots: {{ $appointment->max_slots }},
+    availableSlots: {{ $appointment->available_slots }}
+},
+@endforeach
+];
 
-// Store all appointment data for client-side validation
-const existingAppointments = {!! $appointmentsJson !!};
-// Current appointment ID being edited (to exclude from validation)
-let currentEditId = null;
-
-// Calendar variables
-let currentDate = new Date();
-let currentMonth = currentDate.getMonth();
-let currentYear = currentDate.getFullYear();
+// Track calendar state
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
 let selectedDate = null;
 
-// Function to update available time slots based on selected date
-function updateAvailableTimeSlots() {
-    const selectedDate = document.getElementById('date').value;
-    const timeSlotSelect = document.getElementById('time_slot');
-    const options = timeSlotSelect.options;
-    
-    // Reset all options
-    for (let i = 0; i < options.length; i++) {
-        options[i].disabled = false;
-        options[i].classList.remove('text-teal-300', 'bg-teal-50');
-    }
-    
-    // Disable time slots that are already taken for the selected date
-    existingAppointments.forEach(appointment => {
-        if (appointment.date === selectedDate) {
-            for (let i = 0; i < options.length; i++) {
-                if (options[i].value === appointment.time_slot) {
-                    options[i].disabled = true;
-                    options[i].classList.add('text-teal-300', 'bg-teal-50');
-                }
-            }
-        }
-    });
-    
-    // If the currently selected option is now disabled, reset the selection
-    if (timeSlotSelect.selectedIndex > 0 && options[timeSlotSelect.selectedIndex].disabled) {
-        timeSlotSelect.selectedIndex = 0;
-    }
-}
-
-// Function to update available time slots in the edit modal
-function updateEditTimeSlots() {
-    const selectedDate = document.getElementById('edit_date').value;
-    const timeSlotSelect = document.getElementById('edit_time_slot');
-    const options = timeSlotSelect.options;
-    const originalTimeSlot = document.getElementById('edit_time_slot').getAttribute('data-original');
-    
-    // Reset all options
-    for (let i = 0; i < options.length; i++) {
-        options[i].disabled = false;
-        options[i].classList.remove('text-teal-300', 'bg-teal-50');
-    }
-    
-    // Disable time slots that are already taken for the selected date (except the current one being edited)
-    existingAppointments.forEach(appointment => {
-        if (appointment.date === selectedDate && appointment.id !== currentEditId) {
-            for (let i = 0; i < options.length; i++) {
-                if (options[i].value === appointment.time_slot) {
-                    options[i].disabled = true;
-                    options[i].classList.add('text-teal-300', 'bg-teal-50');
-                }
-            }
-        }
-    });
-    
-    // If the currently selected option is now disabled, reset the selection
-    if (timeSlotSelect.selectedIndex > 0 && options[timeSlotSelect.selectedIndex].disabled) {
-        // If we have the original time slot and it's for this date, select it
-        if (originalTimeSlot && selectedDate === document.getElementById('edit_date').getAttribute('data-original-date')) {
-            for (let i = 0; i < options.length; i++) {
-                if (options[i].value === originalTimeSlot) {
-                    timeSlotSelect.selectedIndex = i;
-                    break;
-                }
-            }
-        } else {
-            timeSlotSelect.selectedIndex = 0;
-        }
-    }
-}
-
-// Helper function to format date as YYYY-MM-DD
-function formatDate(year, month, day) {
-    return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-}
-
-// Function to filter appointments by specific date from date picker
-function filterBySpecificDate(date) {
-    const rows = document.querySelectorAll('#appointmentsTable tbody tr');
-    let hasVisibleRows = false;
-    
-    // Update selected date in calendar
-    selectedDate = date;
-    renderCalendar();
-    
-    rows.forEach(row => {
-        if (row.getAttribute('data-date') === date) {
-            row.style.display = '';
-            hasVisibleRows = true;
-        } else {
-            row.style.display = 'none';
-        }
-    });
-    
-    // Format the date for display
-    const displayDate = new Date(date).toLocaleDateString();
-    
-    // Show "no results" message if needed
-    const noResults = document.getElementById('noFilterResults');
-    if (!hasVisibleRows) {
-        if (!noResults) {
-            const table = document.getElementById('appointmentsTable');
-            const message = document.createElement('div');
-            message.id = 'noFilterResults';
-            message.className = 'text-center py-4 text-teal-600';
-            message.innerHTML = `No appointments found for ${displayDate}. <a href="#" class="text-teal-500 hover:underline" onclick="resetFilter(event)">Show all</a>`;
-            table.parentNode.insertBefore(message, table.nextSibling);
-        } else {
-            // Update the existing message with the new date
-            noResults.innerHTML = `No appointments found for ${displayDate}. <a href="#" class="text-teal-500 hover:underline" onclick="resetFilter(event)">Show all</a>`;
-        }
-    } else if (noResults) {
-        noResults.remove();
-    }
-    
-    // Reset filter button styling
-    updateFilterButtonStyles('none');
-}
-
-// Function to clear date filter
-function clearDateFilter() {
-    document.getElementById('dateFilter').value = '';
-    selectedDate = null;
-    renderCalendar();
-    resetFilter();
-}
-
-// Function to filter by time period (today, week, month)
-function filterByPeriod(period) {
-    const rows = document.querySelectorAll('#appointmentsTable tbody tr');
-    let hasVisibleRows = false;
-    
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - today.getDay()); // Start of week (Sunday)
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    
-    rows.forEach(row => {
-        const rowDate = new Date(row.getAttribute('data-date'));
-        rowDate.setHours(0, 0, 0, 0);
-        let showRow = false;
-        
-        if (period === 'today') {
-            showRow = rowDate.getTime() === today.getTime();
-        } else if (period === 'week') {
-            const endOfWeek = new Date(startOfWeek);
-            endOfWeek.setDate(startOfWeek.getDate() + 6);
-            showRow = rowDate >= startOfWeek && rowDate <= endOfWeek;
-        } else if (period === 'month') {
-            const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-            showRow = rowDate >= startOfMonth && rowDate <= endOfMonth;
-        }
-        
-        if (showRow) {
-            row.style.display = '';
-            hasVisibleRows = true;
-        } else {
-            row.style.display = 'none';
-        }
-    });
-    
-    // Show "no results" message if needed
-    const noResults = document.getElementById('noFilterResults');
-    if (!hasVisibleRows) {
-        if (!noResults) {
-            const table = document.getElementById('appointmentsTable');
-            const message = document.createElement('div');
-            message.id = 'noFilterResults';
-            message.className = 'text-center py-4 text-teal-600';
-            message.innerHTML = `No appointments found for this time period. <a href="#" class="text-teal-500 hover:underline" onclick="resetFilter(event)">Show all</a>`;
-            table.parentNode.insertBefore(message, table.nextSibling);
-        }
-    } else if (noResults) {
-        noResults.remove();
-    }
-    
-    // Clear date filter input
-    document.getElementById('dateFilter').value = '';
-    
-    // Update active filter button styling
-    updateFilterButtonStyles(period);
-    
-    // If filtering by today, set selected date to today
-    if (period === 'today') {
-        selectedDate = formatDate(today.getFullYear(), today.getMonth(), today.getDate());
-    } else {
-        selectedDate = null;
-    }
-    renderCalendar();
-}
-
-// Function to update filter button styles
-function updateFilterButtonStyles(activeFilter) {
-    // Reset all buttons
-    document.getElementById('todayFilterBtn').classList.remove('bg-teal-100');
-    document.getElementById('weekFilterBtn').classList.remove('bg-teal-100');
-    document.getElementById('monthFilterBtn').classList.remove('bg-teal-100');
-    document.getElementById('allFilterBtn').classList.remove('bg-teal-100');
-    document.getElementById('todayFilterBtn').classList.add('bg-white');
-    document.getElementById('weekFilterBtn').classList.add('bg-white');
-    document.getElementById('monthFilterBtn').classList.add('bg-white');
-    document.getElementById('allFilterBtn').classList.add('bg-white');
-    
-    // Highlight active button
-    if (activeFilter === 'today') {
-        document.getElementById('todayFilterBtn').classList.remove('bg-white');
-        document.getElementById('todayFilterBtn').classList.add('bg-teal-100');
-    } else if (activeFilter === 'week') {
-        document.getElementById('weekFilterBtn').classList.remove('bg-white');
-        document.getElementById('weekFilterBtn').classList.add('bg-teal-100');
-    } else if (activeFilter === 'month') {
-        document.getElementById('monthFilterBtn').classList.remove('bg-white');
-        document.getElementById('monthFilterBtn').classList.add('bg-teal-100');
-    } else if (activeFilter === 'all') {
-        document.getElementById('allFilterBtn').classList.remove('bg-white');
-        document.getElementById('allFilterBtn').classList.add('bg-teal-100');
-    }
-}
-
-// Function to reset filter and show all appointments
-function resetFilter(event) {
-    if (event) event.preventDefault();
-    
-    // Sort appointments by date (newest first)
-    sortTable(0, 'desc', true);
-    
-    // Show all rows
-    const rows = document.querySelectorAll('#appointmentsTable tbody tr');
-    rows.forEach(row => {
-        row.style.display = '';
-    });
-    
-    // Remove any "no results" message
-    const noResults = document.getElementById('noFilterResults');
-    if (noResults) noResults.remove();
-    
-    // Update filter button styling
-    updateFilterButtonStyles('all');
-    
-    // Clear date filter input
-    document.getElementById('dateFilter').value = '';
-    
-    // Clear selected date
-    selectedDate = null;
-    renderCalendar();
-}
-
-// Function to search appointments
-function searchAppointments() {
-    const searchInput = document.getElementById('appointmentSearch');
-    const filter = searchInput.value.toLowerCase();
-    const rows = document.querySelectorAll('#appointmentsTable tbody tr');
-    let hasVisibleRows = false;
-    
-    rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        if (text.includes(filter)) {
-            row.style.display = '';
-            hasVisibleRows = true;
-        } else {
-            row.style.display = 'none';
-        }
-    });
-    
-    // Show "no results" message if needed
-    const noResults = document.getElementById('noFilterResults');
-    if (!hasVisibleRows) {
-        if (!noResults) {
-            const table = document.getElementById('appointmentsTable');
-            const message = document.createElement('div');
-            message.id = 'noFilterResults';
-            message.className = 'text-center py-4 text-teal-600';
-            message.innerHTML = `No appointments found matching "${filter}". <a href="#" class="text-teal-500 hover:underline" onclick="resetFilter(event)">Show all</a>`;
-            table.parentNode.insertBefore(message, table.nextSibling);
-        } else {
-            noResults.innerHTML = `No appointments found matching "${filter}". <a href="#" class="text-teal-500 hover:underline" onclick="resetFilter(event)">Show all</a>`;
-        }
-    } else if (noResults) {
-        noResults.remove();
-    }
-    
-    // Reset filter button styling
-    updateFilterButtonStyles('none');
-}
-
-// Function to change items per page
-function changePerPage(value) {
-    // Get current URL and parameters
-    const url = new URL(window.location.href);
-    
-    // Set the perPage parameter
-    if (value === 'all') {
-        url.searchParams.delete('perPage');
-    } else {
-        url.searchParams.set('perPage', value);
-    }
-    
-    // Reset to page 1 when changing items per page
-    url.searchParams.delete('page');
-    
-    // Navigate to the new URL
-    window.location.href = url.toString();
-}
-
-// Function to sort table
-function sortTable(columnIndex, direction = null, skipToggle = false) {
-    const table = document.getElementById('appointmentsTable');
-    const tbody = table.querySelector('tbody');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
-    
-    // Get current sort direction
-    const th = table.querySelectorAll('th')[columnIndex];
-    let currentDirection = direction;
-    if (!skipToggle) {
-        currentDirection = th.getAttribute('data-sort') === 'asc' ? 'desc' : 'asc';
-    }
-    
-    // Update sort direction attribute and icons
-    table.querySelectorAll('th').forEach(header => {
-        header.removeAttribute('data-sort');
-        const icon = header.querySelector('.sort-icon');
-        if (icon) icon.textContent = '↕';
-    });
-    th.setAttribute('data-sort', currentDirection);
-    const sortIcon = th.querySelector('.sort-icon');
-    if (sortIcon) {
-        sortIcon.textContent = currentDirection === 'asc' ? '↑' : '↓';
-    }
-    
-    // Sort rows
-    rows.sort((a, b) => {
-        let aValue, bValue;
-        if (columnIndex === 3) {
-            // Slots Taken sorting - extract the first number from "X / Y"
-            aValue = parseInt(a.querySelectorAll('td')[columnIndex].textContent.trim().split('/')[0]);
-            bValue = parseInt(b.querySelectorAll('td')[columnIndex].textContent.trim().split('/')[0]);
-        } else {
-            aValue = a.querySelectorAll('td')[columnIndex].textContent.trim();
-            bValue = b.querySelectorAll('td')[columnIndex].textContent.trim();
-        }
-        
-        if (columnIndex === 0) {
-            // Date sorting
-            const aDate = new Date(aValue);
-            const bDate = new Date(bValue);
-            return currentDirection === 'asc' ? aDate - bDate : bDate - aDate;
-        } else if (columnIndex === 2 || columnIndex === 3) {
-            // Number sorting
-            return currentDirection === 'asc' ?
-                parseInt(aValue) - parseInt(bValue) :
-                parseInt(bValue) - parseInt(aValue);
-        } else if (columnIndex === 4) {
-            // Created At sorting (datetime)
-            const aDate = new Date(aValue);
-            const bDate = new Date(bValue);
-            return currentDirection === 'asc' ? aDate - bDate : bDate - aDate;
-        } else {
-            // Text sorting
-            return currentDirection === 'asc' ?
-                aValue.localeCompare(bValue) :
-                bValue.localeCompare(aValue);
-        }
-    });
-    
-    // Reorder rows
-    rows.forEach(row => {
-        tbody.appendChild(row);
-    });
-}
-
-// Enhanced Calendar Functions with Teal Theme
-function renderCalendar() {
-    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    document.getElementById('currentMonthYear').textContent = `${monthNames[currentMonth]} ${currentYear}`;
-    
-    // Render grid calendar for larger screens
-    renderGridCalendar();
-    
-    // Render vertical calendar for smaller screens
-    renderVerticalCalendar();
-}
-
-// Function to render grid calendar for larger screens
-function renderGridCalendar() {
+// Generate calendar UI for current month
+function generateCalendar() {
     const calendarGrid = document.getElementById('calendarGrid');
+    const calendarList = document.getElementById('calendarList');
+    const monthDisplay = document.getElementById('currentMonthDisplay');
+    
+    // Clear previous calendar views
     calendarGrid.innerHTML = '';
+    calendarList.innerHTML = '';
     
-    // Get first day of month and last day of month
+    // Update month/year display
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    monthDisplay.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+    
+    // Calculate calendar parameters
     const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-    const lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
     
-    // Previous month's days to fill the first row
-    const prevMonthLastDate = new Date(currentYear, currentMonth, 0).getDate();
+    // Get today's date for highlighting
+    const today = new Date();
+    const todayDate = today.getDate();
+    const todayMonth = today.getMonth();
+    const todayYear = today.getFullYear();
+    
+    // Add empty cells for days before first day of month
     for (let i = 0; i < firstDay; i++) {
-        const day = prevMonthLastDate - firstDay + i + 1;
-        const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-        const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
-        const dateStr = formatDate(prevYear, prevMonth, day);
-        
-        const cell = document.createElement('div');
-        cell.className = 'p-1 sm:p-2 border border-teal-200 bg-teal-50 text-teal-400 min-h-[70px] sm:min-h-[90px]';
-        cell.innerHTML = `
-            <div class="text-xs sm:text-sm">${day}</div>
-        `;
-        calendarGrid.appendChild(cell);
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'h-24 border border-teal-200 bg-teal-50 opacity-50';
+        calendarGrid.appendChild(emptyCell);
     }
     
-    // Current month's days with enhanced teal theme
-    const today = new Date();
-    for (let i = 1; i <= lastDate; i++) {
-        const dateStr = formatDate(currentYear, currentMonth, i);
-        const isToday = i === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
-        const isSelected = dateStr === selectedDate;
+    // Create cells for each day of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(currentYear, currentMonth, day);
+        const dateString = date.toISOString().split('T')[0];
+        const isPast = date < new Date(todayYear, todayMonth, todayDate);
         
-        // Get appointment data for this date
-        const appointmentsForDate = existingAppointments.filter(a => a.date === dateStr);
-        let totalSlots = 0;
-        let totalTaken = 0;
+        // Count appointments for this day
+        const dayAppointments = existingAppointments.filter(a => a.date.substring(0, 10) === dateString);
+        const totalSlots = dayAppointments.reduce((sum, a) => sum + a.maxSlots, 0);
+        const availableSlots = dayAppointments.reduce((sum, a) => sum + a.availableSlots, 0);
+        const hasAppointments = dayAppointments.length > 0;
         
-        appointmentsForDate.forEach(appointment => {
-            totalSlots += appointment.max_slots;
-            totalTaken += appointment.slots_taken;
-        });
+        // Determine cell styling based on date status
+        let bgColor = 'bg-teal-100';
+        let textColor = 'text-teal-800';
+        let borderColor = 'border-teal-400';
         
-        // Determine cell color based on availability
-        let cellClass = 'bg-teal-100'; // Default: no slots
-        let statusText = 'No slots';
-        let textClass = 'text-teal-700';
-        
-        if (totalSlots > 0) {
-            const utilization = (totalTaken / totalSlots) * 100;
-            if (utilization >= 100) {
-                cellClass = 'bg-teal-800';
-                textClass = 'text-white';
-                statusText = 'Fully booked';
-            } else if (utilization >= 70) {
-                cellClass = 'bg-teal-600';
-                textClass = 'text-white';
-                statusText = 'Limited slots';
-            } else if (utilization > 0) {
-                cellClass = 'bg-teal-300';
-                textClass = 'text-teal-800';
-                statusText = 'Partially booked';
+        if (day === todayDate && currentMonth === todayMonth && currentYear === todayYear) {
+            bgColor = 'bg-teal-500';
+            textColor = 'text-white';
+            borderColor = 'border-teal-400';
+        } else if (isPast) {
+            bgColor = 'bg-gray-100';
+            textColor = 'text-teal-800';
+        } else if (hasAppointments) {
+            if (availableSlots === 0) {
+                bgColor = 'bg-red-200';
+                textColor = 'text-red-800';
+                borderColor = 'border-red-300';
+            } else if (availableSlots < totalSlots / 2) {
+                bgColor = 'bg-yellow-200';
+                textColor = 'text-yellow-800';
+                borderColor = 'border-yellow-300';
             } else {
-                cellClass = 'bg-teal-500';
-                textClass = 'text-white';
-                statusText = 'Available';
+                bgColor = 'bg-teal-400';
+                textColor = 'text-teal-900';
             }
         }
         
-        // Create cell with appropriate styling
-        const cell = document.createElement('div');
+        // Create desktop calendar cell
+        const dayCell = document.createElement('div');
+        dayCell.className = `calendar-day h-24 ${bgColor} ${borderColor} border-2 rounded-lg flex flex-col justify-between p-2 cursor-pointer ${hasAppointments ? 'hover:shadow-md' : ''}`;
+        dayCell.setAttribute('data-date', dateString);
         
-        // Apply border styling based on if it's today, selected, or regular day
-        let borderClass = 'border border-teal-200';
-        if (isToday && isSelected) {
-            borderClass = 'border-2 border-teal-600 ring-2 ring-teal-300';
-        } else if (isToday) {
-            borderClass = 'border-2 border-teal-600';
-        } else if (isSelected) {
-            borderClass = 'border-2 border-teal-500 ring-1 ring-teal-300';
+        const dayHeader = document.createElement('div');
+        dayHeader.className = 'flex justify-between items-start';
+        
+        const dayNumber = document.createElement('div');
+        dayNumber.className = `text-right font-medium ${textColor} text-lg`;
+        dayNumber.textContent = day;
+        
+        // Add "Today" label if applicable
+        if (day === todayDate && currentMonth === todayMonth && currentYear === todayYear) {
+            const todayLabel = document.createElement('span');
+            todayLabel.className = 'text-xs font-bold bg-white bg-opacity-70 text-teal-700 px-1.5 py-0.5 rounded-full';
+            todayLabel.textContent = 'Today';
+            dayHeader.appendChild(todayLabel);
         }
         
-        cell.className = `p-1 sm:p-2 ${borderClass} ${cellClass} min-h-[70px] sm:min-h-[90px] cursor-pointer hover:opacity-90 transition-opacity`;
-        cell.setAttribute('data-date', dateStr);
+        dayHeader.appendChild(dayNumber);
+        dayCell.appendChild(dayHeader);
         
-        // Add appointment info to the cell with taken slot details
-        let appointmentInfo = '';
-        let takenSlotInfo = '';
-        
-        if (totalSlots > 0) {
-            appointmentInfo = `
-                <div class="text-xs mt-1 ${textClass}">
-                    <span class="font-medium">${totalSlots - totalTaken}</span>/${totalSlots} slots
-                </div>
-            `;
-            
-            if (totalTaken > 0) {
-                takenSlotInfo = `
-                    <div class="text-xs mt-1 ${textClass} font-medium">
-                        ${totalTaken} slot${totalTaken > 1 ? 's' : ''} taken
-                    </div>
-                `;
-            }
+        // Add "Selected" label if this date is selected
+        if (dateString === selectedDate) {
+            const selectedLabel = document.createElement('div');
+            selectedLabel.className = 'text-xs font-bold bg-teal-800 text-white px-2 py-1 rounded-full self-center mt-1';
+            selectedLabel.textContent = 'Selected';
+            dayCell.appendChild(selectedLabel);
         }
         
-        // Add "TODAY" label for today's date
-        const todayLabel = isToday ? `<div class="text-xs px-1.5 py-0.5 rounded bg-white bg-opacity-30 ${textClass} font-bold">TODAY</div>` : '';
+        // Add slot availability info
+        const slotInfo = document.createElement('div');
+        if (hasAppointments) {
+            slotInfo.className = 'text-xs font-medium text-teal-800 bg-white bg-opacity-70 rounded px-1.5 py-1 mt-auto';
+            slotInfo.textContent = `${availableSlots}/${totalSlots} slots available`;
+        }
+        dayCell.appendChild(slotInfo);
+        calendarGrid.appendChild(dayCell);
         
-        // Add "SELECTED" label if this date is selected and not today
-        const selectedLabel = isSelected && !isToday ? `<div class="text-xs px-1.5 py-0.5 rounded bg-white bg-opacity-50 ${textClass} font-bold mt-1">SELECTED</div>` : '';
+        // Create mobile calendar row
+        const dayRow = document.createElement('div');
+        dayRow.className = `calendar-day flex items-center justify-between p-3 ${bgColor} ${borderColor} border-b ${hasAppointments ? 'hover:bg-teal-50' : ''} cursor-pointer`;
+        dayRow.setAttribute('data-date', dateString);
         
-        cell.innerHTML = `
-            <div class="flex justify-between items-start">
-                <div class="text-xs sm:text-sm font-medium ${textClass}">${i}</div>
-                ${todayLabel}
-                ${totalSlots > 0 ? `<div class="text-xs px-1.5 py-0.5 rounded bg-white bg-opacity-30 ${textClass} font-medium">${appointmentsForDate.length}</div>` : ''}
-            </div>
-            ${appointmentInfo}
-            ${takenSlotInfo}
-            <div class="text-xs mt-1 ${textClass} font-medium">${statusText}</div>
-            ${selectedLabel}
-        `;
+        const dayInfo = document.createElement('div');
+        dayInfo.className = 'flex items-center';
         
-        // Add click event to filter table by this date
-        cell.addEventListener('click', function() {
-            // Set the date filter input value
-            document.getElementById('dateFilter').value = dateStr;
-            
-            // Update the global selectedDate variable
-            selectedDate = dateStr;
-            
-            // Filter the table by this date
-            filterBySpecificDate(dateStr);
+        const dayCircle = document.createElement('div');
+        dayCircle.className = `w-10 h-10 rounded-full flex items-center justify-center mr-3 ${day === todayDate && currentMonth === todayMonth && currentYear === todayYear ? 'bg-teal-600 text-white' : 'bg-teal-100 text-teal-800'}`;
+        dayCircle.textContent = day;
+        
+        const dayText = document.createElement('div');
+        dayText.className = `${textColor}`;
+        const dayName = new Date(currentYear, currentMonth, day).toLocaleDateString('en-US', { weekday: 'short' });
+        dayText.textContent = `${dayName}, ${monthNames[currentMonth].substring(0, 3)} ${day}`;
+        
+        // Add "Today" label for mobile view
+        if (day === todayDate && currentMonth === todayMonth && currentYear === todayYear) {
+            const todayMobileLabel = document.createElement('span');
+            todayMobileLabel.className = 'ml-2 text-xs font-bold bg-teal-600 text-white px-1.5 py-0.5 rounded-full';
+            todayMobileLabel.textContent = 'Today';
+            dayText.appendChild(todayMobileLabel);
+        }
+        
+        // Add "Selected" label for mobile view
+        if (dateString === selectedDate) {
+            const selectedMobileLabel = document.createElement('span');
+            selectedMobileLabel.className = 'ml-2 text-xs font-bold bg-teal-800 text-white px-2 py-0.5 rounded-full';
+            selectedMobileLabel.textContent = 'Selected';
+            dayText.appendChild(selectedMobileLabel);
+        }
+        
+        dayInfo.appendChild(dayCircle);
+        dayInfo.appendChild(dayText);
+        
+        // Add slot availability badge
+        const slotBadge = document.createElement('div');
+        if (hasAppointments) {
+            slotBadge.className = 'text-xs font-medium bg-teal-100 text-teal-800 rounded-full px-2 py-1';
+            slotBadge.textContent = `${availableSlots}/${totalSlots} slots`;
+        } else {
+            slotBadge.className = 'text-xs font-medium bg-teal-50 text-teal-600 rounded-full px-2 py-1';
+            slotBadge.textContent = 'No slots';
+        }
+        
+        dayRow.appendChild(dayInfo);
+        dayRow.appendChild(slotBadge);
+        calendarList.appendChild(dayRow);
+        
+        // Add click event to filter table by date
+        dayCell.addEventListener('click', () => {
+            selectedDate = dateString;
+            filterTableByDate(dateString);
+            generateCalendar(); // Regenerate to show selected state
         });
         
-        calendarGrid.appendChild(cell);
-    }
-    
-    // Next month's days to fill the last row
-    const lastDay = new Date(currentYear, currentMonth, lastDate).getDay();
-    if (lastDay < 6) {
-        for (let i = 0; i < 6 - lastDay; i++) {
-            const day = i + 1;
-            const nextMonth = currentMonth === 11 ? 0 : currentMonth + 1;
-            const nextYear = currentMonth === 11 ? currentYear + 1 : currentYear;
-            const dateStr = formatDate(nextYear, nextMonth, day);
-            
-            const cell = document.createElement('div');
-            cell.className = 'p-1 sm:p-2 border border-teal-200 bg-teal-50 text-teal-400 min-h-[70px] sm:min-h-[90px]';
-            cell.innerHTML = `
-                <div class="text-xs sm:text-sm">${day}</div>
-            `;
-            calendarGrid.appendChild(cell);
-        }
+        dayRow.addEventListener('click', () => {
+            selectedDate = dateString;
+            filterTableByDate(dateString);
+            generateCalendar(); // Regenerate to show selected state
+        });
     }
 }
 
-// Function to render vertical calendar for smaller screens
-function renderVerticalCalendar() {
-    const calendarVertical = document.getElementById('calendarVertical');
-    calendarVertical.innerHTML = '';
-    
-    // Get current month days
-    const lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
-    const today = new Date();
-    
-    // Create week headers
-    const weekHeader = document.createElement('div');
-    weekHeader.className = 'grid grid-cols-7 bg-teal-600 text-white rounded-t-md overflow-hidden';
-    weekHeader.innerHTML = `
-        <div class="text-center text-xs py-1 font-medium">S</div>
-        <div class="text-center text-xs py-1 font-medium">M</div>
-        <div class="text-center text-xs py-1 font-medium">T</div>
-        <div class="text-center text-xs py-1 font-medium">W</div>
-        <div class="text-center text-xs py-1 font-medium">T</div>
-        <div class="text-center text-xs py-1 font-medium">F</div>
-        <div class="text-center text-xs py-1 font-medium">S</div>
-    `;
-    calendarVertical.appendChild(weekHeader);
-    
-    // Create days for the current month in vertical layout
-    for (let i = 1; i <= lastDate; i++) {
-        const dateStr = formatDate(currentYear, currentMonth, i);
-        const isToday = i === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
-        const isSelected = dateStr === selectedDate;
-        
-        // Get appointment data for this date
-        const appointmentsForDate = existingAppointments.filter(a => a.date === dateStr);
-        let totalSlots = 0;
-        let totalTaken = 0;
-        
-        appointmentsForDate.forEach(appointment => {
-            totalSlots += appointment.max_slots;
-            totalTaken += appointment.slots_taken;
-        });
-        
-        // Determine cell color based on availability
-        let cellClass = 'bg-teal-100'; // Default: no slots
-        let statusText = 'No slots';
-        let textClass = 'text-teal-700';
-        let progressBarClass = '';
-        
-        if (totalSlots > 0) {
-            const utilization = (totalTaken / totalSlots) * 100;
-            if (utilization >= 100) {
-                cellClass = 'bg-teal-800';
-                textClass = 'text-white';
-                statusText = 'Fully booked';
-                progressBarClass = 'bg-white';
-            } else if (utilization >= 70) {
-                cellClass = 'bg-teal-600';
-                textClass = 'text-white';
-                statusText = 'Limited slots';
-                progressBarClass = 'bg-white';
-            } else if (utilization > 0) {
-                cellClass = 'bg-teal-300';
-                textClass = 'text-teal-800';
-                statusText = 'Partially booked';
-                progressBarClass = 'bg-teal-600';
-            } else {
-                cellClass = 'bg-teal-500';
-                textClass = 'text-white';
-                statusText = 'Available';
-                progressBarClass = 'bg-white';
-            }
-        }
-        
-        // Apply border styling based on if it's today, selected, or regular day
-        let borderClass = 'border border-teal-200';
-        if (isToday && isSelected) {
-            borderClass = 'border-2 border-teal-600 ring-2 ring-teal-300';
-        } else if (isToday) {
-            borderClass = 'border-2 border-teal-600';
-        } else if (isSelected) {
-            borderClass = 'border-2 border-teal-500 ring-1 ring-teal-300';
-        }
-        
-        // Create the day of week indicator
-        const dayOfWeek = new Date(currentYear, currentMonth, i).getDay();
-        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        
-        // Create vertical day item
-        const dayItem = document.createElement('div');
-        dayItem.className = `${borderClass} ${cellClass} rounded-md mb-2 overflow-hidden cursor-pointer hover:opacity-90 transition-opacity`;
-        dayItem.setAttribute('data-date', dateStr);
-        
-        // Add "TODAY" label for today's date
-        const todayLabel = isToday ? `<span class="ml-2 text-xs px-1.5 py-0.5 rounded bg-white bg-opacity-30 ${textClass} font-bold">TODAY</span>` : '';
-        
-        // Add "SELECTED" label if this date is selected and not today
-        const selectedLabel = isSelected && !isToday ? `<span class="ml-2 text-xs px-1.5 py-0.5 rounded bg-white bg-opacity-50 ${textClass} font-bold">SELECTED</span>` : '';
-        
-        // Calculate utilization percentage for progress bar
-        const utilizationPercentage = totalSlots > 0 ? (totalTaken / totalSlots) * 100 : 0;
-        
-        dayItem.innerHTML = `
-            <div class="flex items-center justify-between p-2 border-b border-teal-200 bg-teal-700 bg-opacity-10">
-                <div class="flex items-center">
-                    <span class="font-bold ${textClass}">${i}</span>
-                    ${todayLabel}
-                    ${selectedLabel}
-                </div>
-                <span class="text-xs ${textClass}">${dayNames[dayOfWeek]}</span>
-            </div>
-            <div class="p-2">
-                <div class="flex justify-between items-center mb-1">
-                    <span class="text-xs font-medium ${textClass}">${statusText}</span>
-                    ${totalSlots > 0 ? `<span class="text-xs ${textClass}">${totalSlots - totalTaken}/${totalSlots} slots</span>` : ''}
-                </div>
-                ${totalSlots > 0 ? `
-                <div class="w-full bg-teal-200 bg-opacity-30 rounded-full h-1.5 mb-1">
-                    <div class="h-1.5 rounded-full ${progressBarClass}" style="width: ${utilizationPercentage}%"></div>
-                </div>
-                ` : ''}
-                ${appointmentsForDate.length > 0 ? `
-                <div class="text-xs ${textClass} mt-1">
-                    ${appointmentsForDate.length} time slot${appointmentsForDate.length > 1 ? 's' : ''}
-                </div>
-                ` : ''}
-            </div>
-        `;
-        
-        // Add click event to filter table by this date
-        dayItem.addEventListener('click', function() {
-            // Set the date filter input value
-            document.getElementById('dateFilter').value = dateStr;
-            
-            // Update the global selectedDate variable
-            selectedDate = dateStr;
-            
-            // Filter the table by this date
-            filterBySpecificDate(dateStr);
-        });
-        
-        calendarVertical.appendChild(dayItem);
-    }
-}
-
-// Calendar navigation functions
-function prevMonth() {
+// Calendar navigation handlers
+document.getElementById('prevMonth').addEventListener('click', () => {
     currentMonth--;
     if (currentMonth < 0) {
         currentMonth = 11;
         currentYear--;
     }
-    renderCalendar();
-}
+    generateCalendar();
+});
 
-function nextMonth() {
+document.getElementById('nextMonth').addEventListener('click', () => {
     currentMonth++;
     if (currentMonth > 11) {
         currentMonth = 0;
         currentYear++;
     }
-    renderCalendar();
+    generateCalendar();
+});
+
+// Update available time slots in add appointment form
+function updateTimeSlots() {
+    const dateInput = document.getElementById('addDate');
+    const timeSelect = document.getElementById('addTimeSlot');
+    const selectedDate = dateInput.value;
+    
+    // Reset all options
+    for (let i = 0; i < timeSelect.options.length; i++) {
+        timeSelect.options[i].disabled = false;
+    }
+    
+    // Disable already booked time slots
+    for (const appointment of existingAppointments) {
+        if (appointment.date.substring(0, 10) === selectedDate) {
+            for (let i = 0; i < timeSelect.options.length; i++) {
+                if (timeSelect.options[i].value === appointment.timeSlot) {
+                    timeSelect.options[i].disabled = true;
+                }
+            }
+        }
+    }
+    
+    // Disable past time slots for today
+    if (selectedDate === "{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d') }}") {
+        const currentHour = {{ (int)\Carbon\Carbon::now('Asia/Manila')->format('H') }};
+        const currentMinute = {{ (int)\Carbon\Carbon::now('Asia/Manila')->format('i') }};
+        
+        for (let i = 0; i < timeSelect.options.length; i++) {
+            if (timeSelect.options[i].value !== "") {
+                const timeSlot = timeSelect.options[i].value;
+                const startTime = timeSlot.split(' - ')[0];
+                const startHour = parseInt(startTime.split(':')[0]);
+                
+                if (startHour < currentHour || (startHour === currentHour && currentMinute >= 30)) {
+                    timeSelect.options[i].disabled = true;
+                }
+            }
+        }
+    }
 }
 
-function goToToday() {
-    const today = new Date();
-    currentMonth = today.getMonth();
-    currentYear = today.getFullYear();
+// Update available time slots in edit appointment form
+function updateEditTimeSlots() {
+    const dateInput = document.getElementById('editDate');
+    const timeSelect = document.getElementById('editTimeSlot');
+    const selectedDate = dateInput.value;
+    const currentId = document.getElementById('editForm').action.split('/').pop();
     
-    // Set selected date to today
-    selectedDate = formatDate(currentYear, currentMonth, today.getDate());
-    renderCalendar();
+    // Reset all options
+    for (let i = 0; i < timeSelect.options.length; i++) {
+        timeSelect.options[i].disabled = false;
+    }
     
-    // Also filter the table to show today's appointments
-    filterByPeriod('today');
+    // Disable already booked time slots (except current appointment)
+    for (const appointment of existingAppointments) {
+        if (appointment.date.substring(0, 10) === selectedDate && appointment.id != currentId) {
+            for (let i = 0; i < timeSelect.options.length; i++) {
+                if (timeSelect.options[i].value === appointment.timeSlot) {
+                    timeSelect.options[i].disabled = true;
+                }
+            }
+        }
+    }
+    
+    // Disable past time slots for today
+    if (selectedDate === "{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d') }}") {
+        const currentHour = {{ (int)\Carbon\Carbon::now('Asia/Manila')->format('H') }};
+        const currentMinute = {{ (int)\Carbon\Carbon::now('Asia/Manila')->format('i') }};
+        
+        for (let i = 0; i < timeSelect.options.length; i++) {
+            if (timeSelect.options[i].value !== "") {
+                const timeSlot = timeSelect.options[i].value;
+                const startTime = timeSlot.split(' - ')[0];
+                const startHour = parseInt(startTime.split(':')[0]);
+                
+                if (startHour < currentHour || (startHour === currentHour && currentMinute >= 30)) {
+                    timeSelect.options[i].disabled = true;
+                }
+            }
+        }
+    }
 }
 
-// Add Modal Functions
+// Filter appointments by time period (today, week, month, all)
+function filterAppointmentsByTimePeriod(period) {
+    const rows = document.querySelectorAll('.appointment-row');
+    const today = "{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d') }}";
+    const startOfWeek = "{{ \Carbon\Carbon::now('Asia/Manila')->startOfWeek()->format('Y-m-d') }}";
+    const endOfWeek = "{{ \Carbon\Carbon::now('Asia/Manila')->endOfWeek()->format('Y-m-d') }}";
+    const startOfMonth = "{{ \Carbon\Carbon::now('Asia/Manila')->startOfMonth()->format('Y-m-d') }}";
+    const endOfMonth = "{{ \Carbon\Carbon::now('Asia/Manila')->endOfMonth()->format('Y-m-d') }}";
+    
+    let visibleCount = 0;
+    
+    rows.forEach(row => {
+        const rowDate = row.getAttribute('data-date');
+        let isVisible = false;
+        
+        if (period === 'today') {
+            isVisible = rowDate === today;
+        } else if (period === 'week') {
+            isVisible = rowDate >= startOfWeek && rowDate <= endOfWeek;
+        } else if (period === 'month') {
+            isVisible = rowDate >= startOfMonth && rowDate <= endOfMonth;
+        } else {
+            // 'all' - show everything
+            isVisible = true;
+        }
+        
+        row.classList.toggle('hidden', !isVisible);
+        if (isVisible) {
+            visibleCount++;
+        }
+    });
+    
+    // Toggle empty state message
+    const tableContent = document.getElementById('appointmentTableContent');
+    const noResultsTemplate = document.getElementById('noResultsTemplate');
+    
+    if (visibleCount === 0) {
+        tableContent.classList.add('hidden');
+        noResultsTemplate.classList.remove('hidden');
+    } else {
+        tableContent.classList.remove('hidden');
+        noResultsTemplate.classList.add('hidden');
+    }
+}
+
+// Filter appointment table by selected calendar date
+function filterTableByDate(date) {
+    const rows = document.querySelectorAll('.appointment-row');
+    const filterDate = document.getElementById('filterDate');
+    let visibleCount = 0;
+    
+    // Update the filter date input
+    filterDate.value = date;
+    
+    // Show/hide rows based on date
+    rows.forEach(row => {
+        const rowDate = row.getAttribute('data-date');
+        const isVisible = rowDate === date;
+        row.classList.toggle('hidden', !isVisible);
+        if (isVisible) {
+            visibleCount++;
+        }
+    });
+    
+    // Toggle empty state message
+    const tableContent = document.getElementById('appointmentTableContent');
+    const noResultsTemplate = document.getElementById('noResultsTemplate');
+    
+    if (visibleCount === 0) {
+        tableContent.classList.add('hidden');
+        noResultsTemplate.classList.remove('hidden');
+    } else {
+        tableContent.classList.remove('hidden');
+        noResultsTemplate.classList.add('hidden');
+    }
+    
+    // Scroll to the table
+    document.querySelector('.overflow-x-auto').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Initialize page on load
+document.addEventListener('DOMContentLoaded', function() {
+    // Generate calendar
+    generateCalendar();
+    
+    // Set up date change handler for add form
+    const addDateInput = document.getElementById('addDate');
+    addDateInput.addEventListener('change', updateTimeSlots);
+    
+    // Initialize time slots
+    updateTimeSlots();
+    
+    // Set up time period filter
+    const timePeriodFilter = document.getElementById('timePeriodFilter');
+    timePeriodFilter.addEventListener('change', function() {
+        filterAppointmentsByTimePeriod(this.value);
+    });
+    
+    // Set default filter to "today"
+    filterAppointmentsByTimePeriod('today');
+    
+    // Set up add modal button
+    document.getElementById('openAddModalBtn').addEventListener('click', openAddModal);
+    
+    // Set up date change handler for edit form
+    const editDateInput = document.getElementById('editDate');
+    editDateInput.addEventListener('change', updateEditTimeSlots);
+});
+
+// Modal management functions
 function openAddModal() {
-    // Reset form values
-    document.getElementById('date').value = "{{ now()->format('Y-m-d') }}";
-    document.getElementById('time_slot').selectedIndex = 0;
-    document.getElementById('max_slots').value = 1;
+    document.getElementById('addAppointmentModal').classList.remove('hidden');
+    document.getElementById('addAppointmentModal').classList.add('flex');
+    document.body.classList.add('overflow-hidden');
     
-    // Update available time slots
-    updateAvailableTimeSlots();
-    
-    // Show modal
-    document.getElementById('addModal').classList.remove('hidden');
-    document.getElementById('addModal').classList.add('flex');
-    
-    // Prevent background scrolling
-    document.body.style.overflow = 'hidden';
+    // Update time slots when opening the modal
+    updateTimeSlots();
 }
 
 function closeAddModal() {
-    // Hide modal
-    document.getElementById('addModal').classList.add('hidden');
-    document.getElementById('addModal').classList.remove('flex');
-    
-    // Re-enable background scrolling
-    document.body.style.overflow = 'auto';
+    document.getElementById('addAppointmentModal').classList.add('hidden');
+    document.getElementById('addAppointmentModal').classList.remove('flex');
+    document.body.classList.remove('overflow-hidden');
 }
 
-// Edit Modal Functions
 function openEditModal(id, date, timeSlot, maxSlots) {
-    // Set current edit ID
-    currentEditId = id;
+    const modal = document.getElementById('editModal');
+    const form = document.getElementById('editForm');
     
     // Set form action
-    document.getElementById('editForm').action = `/admin/appointments/${id}`;
+    form.action = "{{ route('admin.appointments.update', '') }}/" + id;
     
     // Set form values
-    document.getElementById('edit_date').value = date;
-    document.getElementById('edit_date').setAttribute('data-original-date', date);
-    const timeSlotSelect = document.getElementById('edit_time_slot');
-    timeSlotSelect.setAttribute('data-original', timeSlot);
+    document.getElementById('editDate').value = date.substring(0, 10);
+    document.getElementById('editTimeSlot').value = timeSlot;
+    document.getElementById('editMaxSlots').value = maxSlots;
     
-    // Find and select the matching time slot option
-    for (let i = 0; i < timeSlotSelect.options.length; i++) {
-        if (timeSlotSelect.options[i].value === timeSlot) {
-            timeSlotSelect.selectedIndex = i;
-            break;
-        }
-    }
-    document.getElementById('edit_max_slots').value = maxSlots;
-    
-    // Update available time slots
+    // Update time slots
     updateEditTimeSlots();
     
     // Show modal
-    document.getElementById('editModal').classList.remove('hidden');
-    document.getElementById('editModal').classList.add('flex');
-    
-    // Prevent background scrolling
-    document.body.style.overflow = 'hidden';
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.classList.add('overflow-hidden');
 }
 
 function closeEditModal() {
-    // Hide modal
     document.getElementById('editModal').classList.add('hidden');
     document.getElementById('editModal').classList.remove('flex');
-    
-    // Reset current edit ID
-    currentEditId = null;
-    
-    // Re-enable background scrolling
-    document.body.style.overflow = 'auto';
+    document.body.classList.remove('overflow-hidden');
 }
-
-// Delete Modal Functions with validation for slots taken
-function openDeleteModal(id) {
-    // Check if this appointment has any slots taken
-    const appointment = existingAppointments.find(a => a.id === id);
-    
-    if (appointment && appointment.slots_taken > 0) {
-        // Show error message instead of opening delete modal
-        const errorMessage = document.createElement('div');
-        errorMessage.className = 'fixed inset-0 flex items-center justify-center z-50';
-        errorMessage.innerHTML = `
-            <div class="fixed inset-0 bg-black opacity-50"></div>
-            <div class="bg-white rounded-lg p-6 max-w-md mx-auto relative z-10">
-                <div class="text-red-600 text-xl font-bold mb-4">Cannot Delete Appointment</div>
-                <p class="mb-4">This appointment has ${appointment.slots_taken} slot(s) already booked. You cannot delete appointments with active bookings.</p>
-                <div class="flex justify-end">
-                    <button onclick="this.parentNode.parentNode.parentNode.remove()" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">Close</button>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(errorMessage);
-        return;
-    }
-    
-    // If no slots taken, proceed with normal delete flow
-    document.getElementById('deleteForm').action = `/admin/appointments/${id}`;
-    
-    // Show modal
-    document.getElementById('deleteModal').classList.remove('hidden');
-    document.getElementById('deleteModal').classList.add('flex');
-    
-    // Prevent background scrolling
-    document.body.style.overflow = 'hidden';
-}
-
-function closeDeleteModal() {
-    // Hide modal
-    document.getElementById('deleteModal').classList.add('hidden');
-    document.getElementById('deleteModal').classList.remove('flex');
-    
-    // Re-enable background scrolling
-    document.body.style.overflow = 'auto';
-}
-
-// Function to update delete buttons based on booking status
-function updateDeleteButtons() {
-    const deleteButtons = document.querySelectorAll('[data-delete-id]');
-    
-    deleteButtons.forEach(button => {
-        const appointmentId = parseInt(button.getAttribute('data-delete-id'));
-        const appointment = existingAppointments.find(a => a.id === appointmentId);
-        
-        if (appointment && appointment.slots_taken > 0) {
-            button.classList.add('opacity-50', 'cursor-not-allowed');
-            button.setAttribute('title', 'Cannot delete: This appointment has active bookings');
-            
-            // Replace onclick with a warning message
-            button.setAttribute('onclick', 'showDeleteWarning(event)');
-        }
-    });
-}
-
-// Function to show a warning when clicking disabled delete buttons
-function showDeleteWarning(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    
-    const button = event.currentTarget;
-    const appointmentId = parseInt(button.getAttribute('data-delete-id'));
-    const appointment = existingAppointments.find(a => a.id === appointmentId);
-    
-    alert(`Cannot delete: This appointment has ${appointment.slots_taken} active booking(s).`);
-}
-
-// Initialize the page
-document.addEventListener('DOMContentLoaded', function() {
-    // Set up search functionality
-    const searchInput = document.getElementById('appointmentSearch');
-    searchInput.addEventListener('input', searchAppointments);
-    
-    // Set up calendar navigation
-    document.getElementById('prevMonth').addEventListener('click', prevMonth);
-    document.getElementById('nextMonth').addEventListener('click', nextMonth);
-    document.getElementById('todayBtn').addEventListener('click', goToToday);
-    
-    // Render the enhanced teal-themed calendar
-    renderCalendar();
-    
-    // Sort table by date (newest first) by default
-    sortTable(0, 'desc', true);
-    
-    // Set up filter button styling and filter to today by default
-    updateFilterButtonStyles('today');
-    filterByPeriod('today');
-    
-    // Check URL parameters for date filter
-    const urlParams = new URLSearchParams(window.location.search);
-    const dateParam = urlParams.get('date');
-    if (dateParam) {
-        document.getElementById('dateFilter').value = dateParam;
-        filterBySpecificDate(dateParam);
-    }
-    
-    // Update delete buttons based on booking status
-    updateDeleteButtons();
-});
 </script>
-<style>
-.pagination-container nav {
-    @apply flex justify-center mt-4;
-}
-
-.pagination-container nav div:first-child,
-.pagination-container nav div:last-child {
-    @apply hidden;
-}
-
-.pagination-container nav span,
-.pagination-container nav a {
-    @apply px-3 py-1 mx-1 text-sm rounded-md border;
-}
-
-.pagination-container nav span.text-gray-500 {
-    @apply text-teal-300 border-teal-200 bg-teal-50;
-}
-
-.pagination-container nav span:not(.text-gray-500) {
-    @apply bg-teal-600 text-white border-teal-600 font-medium;
-}
-
-.pagination-container nav a {
-    @apply text-teal-600 border-teal-200 bg-white hover:bg-teal-50 transition-colors;
-}
-
-#calendarGrid > div:hover,
-#calendarVertical > div:not(:first-child):hover {
-    @apply shadow-md;
-    transform: translateY(-1px);
-    transition: all 0.2s ease;
-}
-
-#calendarGrid > div.border-teal-600,
-#calendarVertical > div.border-teal-600 {
-    animation: pulse-border 2s infinite;
-}
-
-@keyframes pulse-border {
-    0% {
-        box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.4);
-    }
-    70% {
-        box-shadow: 0 0 0 6px rgba(13, 148, 136, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(13, 148, 136, 0);
-    }
-}
-
-@media (max-width: 640px) {
-    #appointmentsTable th, #appointmentsTable td {
-        @apply px-2 py-2 text-xs;
-    }
-    
-    #appointmentsTable th:nth-child(5),
-    #appointmentsTable td:nth-child(5) {
-        @apply hidden;
-    }
-}
-</style>
 </x-sidebar-layout>
