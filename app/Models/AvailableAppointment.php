@@ -13,6 +13,19 @@ class AvailableAppointment extends Model
 
     protected $fillable = ['date', 'time_slot', 'max_slots'];
 
+    protected $appends = ['start_time', 'end_time'];
+    
+
+    public function getStartTimeAttribute()
+    {
+        return \Carbon\Carbon::createFromFormat('h:i A', explode(' - ', $this->time_slot)[0])->format('H:i:s');
+    }
+
+    public function getEndTimeAttribute()
+    {
+        return \Carbon\Carbon::createFromFormat('h:i A', explode(' - ', $this->time_slot)[1])->format('H:i:s');
+    }
+
     public function bookedAppointments()
     {
         return $this->hasMany(Appointment::class, 'date', 'date')->where('time', $this->time_slot);

@@ -93,7 +93,7 @@ class AdminAppointmentController extends Controller
             'time_slot' => $request->time_slot,
             'max_slots' => $request->max_slots,
         ]);
-        
+
         return redirect()->route('admin.appointments.create')
             ->with('success', 'Available appointment added successfully.');
     }
@@ -146,7 +146,7 @@ class AdminAppointmentController extends Controller
             'time_slot' => $request->time_slot,
             'max_slots' => $request->max_slots,
         ]);
-        
+
         return redirect()->route('admin.appointments.create')
             ->with('success', 'Appointment slot updated successfully.');
     }
@@ -230,8 +230,10 @@ class AdminAppointmentController extends Controller
     public function calendar()
     {
         $appointments = Appointment::all();
-        
-        $appointmentsJson = $appointments->map(function($appointment) {
+
+        // Format appointments for the calendar JavaScript
+        $appointmentsJson = $appointments->map(function ($appointment) {
+            // Parse the date to get components
             $date = Carbon::parse($appointment->date);
             return [
                 'id' => $appointment->id,
@@ -248,7 +250,7 @@ class AdminAppointmentController extends Controller
                 'year' => $date->year
             ];
         });
-        
+
         return view('admin.calendar', [
             'appointments' => $appointments,
             'appointmentsJson' => $appointmentsJson->toJson()
@@ -260,12 +262,14 @@ class AdminAppointmentController extends Controller
     {
         $month = $request->input('month', Carbon::now()->month);
         $year = $request->input('year', Carbon::now()->year);
-        
+
+        // Query appointments for the specified month/year
         $appointments = Appointment::whereMonth('date', $month)
             ->whereYear('date', $year)
             ->get();
-        
-        $formattedAppointments = $appointments->map(function($appointment) {
+
+        // Format appointments for the calendar
+        $formattedAppointments = $appointments->map(function ($appointment) {
             $date = Carbon::parse($appointment->date);
             return [
                 'id' => $appointment->id,
@@ -282,11 +286,27 @@ class AdminAppointmentController extends Controller
                 'year' => $date->year
             ];
         });
-        
+
         return response()->json($formattedAppointments);
     }
 
-    // Edit user form
+    /**
+     * Get available appointment slots (for patient booking)
+     */
+    public function getAvailableSlots(Request $request)
+    {
+        $date = $request->input('date');
+
+        $availableSlots = AvailableAppointment::where('date', $date)
+            ->orderBy('time_slot', 'asc')
+            ->get();
+
+        return response()->json($availableSlots);
+    }
+
+    /**
+     * Edit user information
+     */
     public function editUser($id)
     {
         $user = User::findOrFail($id);
@@ -303,19 +323,21 @@ class AdminAppointmentController extends Controller
             'middleinitial' => 'nullable|string|max:1',
             'lastname' => 'required|string|max:255',
             'gender' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,'.$id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
             'user_type' => 'required|string',
         ]);
-        
+
+        // Concatenate full name
         $fullName = trim("{$request->firstname} {$request->middleinitial} {$request->lastname}");
-        
+
         $user->update([
             'name' => $fullName,
             'email' => $request->email,
             'gender' => $request->gender,
             'user_type' => $request->user_type
         ]);
-        
+
+        // Update password if provided
         if ($request->filled('password')) {
             $request->validate([
                 'password' => 'required|string|min:8',
@@ -324,7 +346,7 @@ class AdminAppointmentController extends Controller
                 'password' => Hash::make($request->password)
             ]);
         }
-        
+
         return redirect()->route('admin.users')->with('success', 'User updated successfully.');
     }
 
@@ -332,11 +354,12 @@ class AdminAppointmentController extends Controller
     public function deleteUser($id)
     {
         $user = User::findOrFail($id);
-        
+
+        // Prevent deleting yourself
         if ($user->id === Auth::id()) {
             return back()->with('error', 'You cannot delete your own account.');
         }
-        
+
         $user->delete();
         return back()->with('success', 'User deleted successfully.');
     }
@@ -357,31 +380,34 @@ class AdminAppointmentController extends Controller
             'firstname' => 'required|string|max:255',
             'middleinitial' => 'nullable|string|max:1',
             'lastname' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
         ]);
-        
+
+        // Concatenate full name
         $fullName = trim("{$request->firstname} {$request->middleinitial} {$request->lastname}");
-        
+
         $user->update([
             'name' => $fullName,
             'email' => $request->email,
         ]);
-        
+
+        // Update password if provided
         if ($request->filled('current_password') && $request->filled('new_password')) {
             $request->validate([
                 'current_password' => 'required',
                 'new_password' => 'required|string|min:8|confirmed',
             ]);
-            
+
+            // Verify current password
             if (!Hash::check($request->current_password, $user->password)) {
                 return back()->withErrors(['current_password' => 'The current password is incorrect.']);
             }
-            
+
             $user->update([
                 'password' => Hash::make($request->new_password)
             ]);
         }
-        
+
         return back()->with('success', 'Profile updated successfully.');
     }
 }

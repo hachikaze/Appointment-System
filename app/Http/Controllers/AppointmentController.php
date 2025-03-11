@@ -3,9 +3,11 @@ namespace App\Http\Controllers;
 use App\Models\AuditTrail;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
+use App\Models\Message;
 use App\Models\AvailableAppointment;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class AppointmentController extends Controller
 {
@@ -27,7 +29,7 @@ class AppointmentController extends Controller
     {
         $appointment = Appointment::find($id);
         if ($appointment) {
-            $appointment->updated_at = now();
+            $appointment->updated_at = null;
             $appointment->save();
             return back()->with('success', 'Appointment marked as read.');
         }
@@ -38,16 +40,15 @@ class AppointmentController extends Controller
     {
         $user = Auth::user();
         $request->validate([
-            'phone' => 'required|digits:11',
+            'phone' => ['required', 'regex:/^09\d{9}$/'],
             'date' => 'required|date',
             'time' => 'required|string',
-            'appointment_reason' => 'required|string',
+            'appointments' => 'required|array|min:1|max:3',
+            'appointments.*' => 'string',
         ]);
-        
         $selectedDate = $request->date;
         $time = $request->input('time', '00:00');
-        
-        // Prevent booking for past dates
+
         if ($selectedDate < date('Y-m-d')) {
             return back()->withErrors(['error' => 'You cannot book an appointment for a past date.']);
         }
@@ -56,12 +57,19 @@ class AppointmentController extends Controller
         $endOfMonth = date('Y-m-t', strtotime($selectedDate));
         
         $existingAppointment = Appointment::where('email', $user->email)
-            ->whereBetween('date', [$startOfMonth, $endOfMonth])
-            ->whereIn('status', ['Approved', 'Pending'])
+            // ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->whereIn('status', ['Pending'])
             ->exists();
-            
+
+
+        $existingCancelledAppointment = Appointment::where('email', $user->email)
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->whereIn('status', ['Cancelled'])
+            ->first();
+
+
         if ($existingAppointment) {
-            return back()->withErrors(['error' => 'You can only book one appointment per month.']);
+            return redirect()->route('calendar')->withErrors(['error' => 'You can only book one active pending.']);
         }
         
         // Check if the time slot exists
@@ -72,31 +80,40 @@ class AppointmentController extends Controller
         if (!$availableSlot) {
             return back()->withErrors(['error' => 'No available slots for the selected time.']);
         }
-        
-        // Check if the time slot has reached its maximum capacity (2 slots)
-        $bookedAppointmentsCount = Appointment::where('date', $request->date)
-            ->where('time', $time)
-            ->whereIn('status', ['Approved', 'Pending'])
-            ->count();
-            
-        if ($bookedAppointmentsCount >= 2) {
-            return back()->withErrors(['error' => 'This time slot is already fully booked. Please select another time.']);
+
+        if ($existingCancelledAppointment) {
+            $existingCancelledAppointment->update([
+                'status' => 'Pending',
+                'date' => $request->date,
+                'time' => $time,
+                'appointments' => implode(', ', $request->input('appointments', [])),
+            ]);
+
+            return redirect()->route('calendar')->with('success', 'Your appointment has been rebooked.');
         }
-        
-        // If we get here, the slot is available and hasn't reached max capacity
-        Appointment::create([
+
+        $appointment = Appointment::create([
             'patient_name' => $user->firstname . " " . $user->middleinitial . " " . $user->lastname,
+            'user_id' => $user->id,
             'email' => $user->email,
             'doctor' => 'Ana Fatima Barroso',
             'status' => 'Pending',
             'phone' => $request->phone,
             'date' => $request->date,
             'time' => $time,
-            'appointments' => $request->input('appointment_reason'),
-            'updated_at' => null,
-            'user_id' => $user->id,
+            'appointments' => implode(', ', $request->input('appointments', [])),
         ]);
-        
+
+        if ($appointment) {
+            Message::create([
+                'appointment_id' => $appointment->id,
+                'message' => '',
+                'user_id' => $request->user()->id,
+            ]);
+        } else {
+            return back()->withErrors(['error' => 'Failed to create appointment.']);
+        }
+
         AuditTrail::create([
             'user_id' => $request->user()->id,
             'action' => 'Create Appointment',
@@ -105,24 +122,21 @@ class AppointmentController extends Controller
             'ip_address' => request()->ip(),
             'user_agent' => request()->header('User-Agent'),
         ]);
-        
-        return back()->with('success', 'Appointment successfully booked.');
+
+        return redirect()->route('calendar')->with('success', 'Appointment successfully booked.');
     }
 
     public function graph()
     {
         $today = Carbon::today()->toDateString();
         $monthly = Carbon::now()->format('Y-m');
-        
-        // Count today's appointments and remaining slots
+
         $appointmentsToday = Appointment::whereDate('date', $today)->count();
-        $remainingSlotsToday = max(0, 10 - $appointmentsToday);
-        
-        // Count monthly appointments and remaining slots
+        $remainingSlotsToday = max(0, 10 - $appointmentsToday); // Adjust max slots as needed
+
         $monthlyAppointments = Appointment::where('date', 'like', "$monthly%")->count();
-        $remainingSlotsMonthly = max(0, 100 - $monthlyAppointments);
-        
-        // Get appointments over time
+        $remainingSlotsMonthly = max(0, 100 - $monthlyAppointments); // Adjust max slots as needed
+
         $appointmentsOverTime = Appointment::selectRaw("strftime('%m', date) as month, COUNT(*) as total")
             ->groupBy('month')
             ->orderBy('month')

@@ -1,12 +1,9 @@
 <x-patientnav-layout>
-
     <div class="py-12">
-
         <div class="max-w-8xl mx-auto lg:px-8 grid lg:gap-8 gap-4 lg:grid-cols-1 md:grid-cols-1 sm:grid-cols-1">
             <div
                 class="bg-teal-500 overflow-hidden mx-12 sm:rounded-t-lg border-b-4 rounded-b-lg border-teal-600 shadow-lg xl:col-span-1 md:col-span-2 sm:col-span-2 col-span-2 relative">
                 <div class="flex flex-col sm:flex-row items-center justify-center py-4 relative">
-                    <!-- Back Button -->
                     <div class="sm:absolute sm:left-4 mb-2 sm:mb-0">
                         <form action="{{ route('patient.dashboard') }}" method="GET">
                             @csrf
@@ -16,33 +13,28 @@
                             </button>
                         </form>
                     </div>
-                    <!-- Centered Title -->
                     <div class="text-center font-bold text-3xl text-white sm:flex-1">
                         <i class="fa-solid fa-history px-2"></i>MESSAGING SYSTEM
                     </div>
 
                 </div>
                 <div class="bg-white max-h-full   p-4 text-xl">
-
                     @if (session('success'))
                         <div class="bg-green-500 text-white rounded-lg shadow-lg text-md p-3 w-full mb-4">
                             {{ session('success') }}
                         </div>
                     @endif
-
                     @error('message')
                         <div class="bg-red-400 text-white rounded-lg shadow-lg text-md p-3 w-full mb-4"><i
                                 class="fa-solid fa-info-circle px-2"></i>{{ $message }}</div>
                     @enderror
 
                     <div class="flex flex-col md:flex-row gap-4">
-                        <!-- Messages Section -->
                         <div class="bg-gray-100 border-r-4 border-teal-600 rounded-lg  lg:w-1/3 md:w-full ">
                             <div
-                                class="bg-teal-500 p-2 rounded-t-lg border-2 border-teal-500 font-bold text-md text-white">
+                                class="bg-teal-500 p-2 shadow-lg rounded-t-lg border-2 border-teal-500 font-bold text-md text-white">
                                 <h1 class="mx-4">INBOX</h1>
                             </div>
-
                             <div class=" p-4">
                                 <div class="my-4 relative">
                                     <input id="message-search" type="text text-md" placeholder="Search messages..."
@@ -55,7 +47,6 @@
                                         class="w-full rounded-lg text-left bg-red-400 p-2 text-white shadow-lg">
                                         <i class="fa-solid fa-plus px-2"></i>Compose Message
                                     </a>
-
                                 </div>
 
                                 <div class="flex flex-col sm:flex-row gap-2 mt-4">
@@ -65,18 +56,15 @@
                                         onclick="window.location.href='{{ route('messages', ['status' => 'sent']) }}'">
                                         <i class="fa-solid fa-paper-plane"></i> Sent
                                     </button>
-
                                     <button id="received-btn"
                                         class="w-auto sm:w-full px-6 py-2 bg-gray-600 text-white font-semibold rounded-lg shadow-md 
                                     hover:bg-gray-500 transition-all duration-300 ease-in-out text-center flex items-center justify-center gap-2"
                                         onclick="window.location.href='{{ route('messages', ['status' => 'received']) }}'">
                                         <i class="fa-solid fa-inbox"></i> Received
                                     </button>
-
                                 </div>
 
 
-                                <!-- Messages Container -->
                                 <div
                                     class="mt-4 space-y-2 h-full max-h-[800px] overflow-y-auto p-5 pr-0 pl-0  flex flex-col min-h-0">
                                     @foreach ($messages as $message)
@@ -134,13 +122,6 @@
                                 document.querySelectorAll(".message-item").forEach(item => {
                                     item.addEventListener("click", function() {
                                         const messageId = this.getAttribute("data-message-id");
-                                        console.log(messageId);
-
-                                        // if (window.location.href.includes("status=sent")) {
-                                        //     console.warn("Cannot update message status on sent messages.");
-                                        //     return;
-                                        // }
-
                                         fetch(`/update-seen-status/${messageId}`, {
                                                 method: "POST",
                                                 headers: {
@@ -171,9 +152,93 @@
                             });
                         </script>
 
-                        <!-- Message Details Section -->
+                        <div id="placeholder-message"
+                            class="w-full p-10 flex flex-col items-center justify-center text-gray-600 text-center bg-gray-100 rounded-lg shadow-lg max-h-screen">
+                            <i class="fa-solid fa-envelope-open-text text-6xl text-teal-400 mb-4"></i>
+                            <h2 class="text-2xl font-semibold">No Message Selected</h2>
+                            <p class="text-md mt-2">Click a message on the left to view its content.</p>
+                        </div>
+
+                        <div id="message-content"
+                            class="hidden md:w-2/2 w-full shadow-lg bg-gray-100 rounded-lg max-h-screen text-white text-center ">
+                            <div class="rounded-t-lg  bg-gradient-to-r from-emerald-500 to-teal-300 p-5 text-white">
+                                <div class="flex flex-wrap gap-4 sm:flex-nowrap justify-between items-center">
+                                    <h1 class="font-semibold text-2xl" id="message-subject">
+                                        <i class="fa-solid fa-envelope px-1"></i> Subject: [Example Text]
+                                    </h1>
+                                    <div class="rounded-lg shadow-lg bg-white p-2 w-full sm:w-auto">
+                                        <p class="text-sm font-semibold text-teal-600 w-full" id="message-time"> M/D/Y
+                                        </p>
+                                    </div>
+                                </div>
+                                {{-- <div
+                                    class="mt-2 flex flex-wrap gap-4 sm:flex-nowrap sm:space-x-6 justify-start items-center">
+                                    <div
+                                        class="rounded-lg p-2 bg-teal-100 text-teal-700 font-semibold shadow-lg w-full sm:w-auto">
+                                        <p class="text-md" id="message-sender">
+                                            <span class="font-semibold"><i
+                                                    class="fa-solid fa-user mx-2"></i>From:</span> John Doe
+                                        </p>
+                                    </div>
+                                    <div
+                                        class="rounded-lg p-2 bg-teal-100 text-teal-700 font-semibold shadow-lg w-full sm:w-auto">
+                                        <p class="text-md" id="message-receiver">
+                                            <span class="font-semibold"><i class="fa-solid fa-user mx-2"></i>To:</span>
+                                            Jane Smith
+                                        </p>
+                                    </div>
+                                </div> --}}
+                            </div>
+                            <div
+                                class="h-[400px] overflow-y-auto items-center space-y-2 p-4 text-md bg-teal-50 m-4 text-start rounded-lg border shadow-sm shadow-lg pt-2 text-black">
+                                <p id="message-container">
+                                    Click <span
+                                        class="text-sm p-2 font-bold shadow-lg text-teal-500 rounded-lg bg-white border-2 border-l-4 border-teal-500 mx-2">CARDS</span>
+                                    on the left to view messages
+                                    <br><br>
+                                    Then, click <span
+                                        class="text-sm p-2 font-bold shadow-lg text-white rounded-lg bg-teal-600 mx-2">Reply
+                                        <i class="fa-solid fa-reply"></i></span> below to compose a reply message.
+                                </p>
+                            </div>
+                            <div class="mt-10">
+                                <div
+                                    class="bg-slate-500 p-2 flex items-center justify-between text-white border-l-6 border-blue-600 bg-gradient-to-r from-emerald-600 to-teal-400">
+                                    <div class="mx-4 text-2xl font-semibold">
+                                        <h1>REPLIES</h1>
+                                    </div>
+                                    <a href="#replymodal" id="replymodalbtn"
+                                        class="hidden btn p-2 shadow-lg font-semibold text-sm bg-teal-600 rounded-lg hover:bg-teal-200 hover:text-black transition-all duration-300 ease-in-out m-2">
+                                        Reply <i class="fa-solid fa-reply"></i>
+                                    </a>
+                                </div>
+                                <div id="replies-container"
+                                    class="p-4 bg-teal-50 max-h-80 overflow-y-auto rounded-lg shadow mt-4">
+                                    <div id="replies-list" class="space-y-4">
+                                        <div
+                                            class="bg-white flex flex-row space-x-4 items-center shadow-md border-l-4 border-teal-500 p-4 rounded-lg">
+                                            <img src="/images/default-avatar.png" alt="Avatar"
+                                                class="w-14 h-14 rounded-full shadow-xl border-2 border-teal-500">
+                                            <div>
+                                                <h2 class="text-start text-md text-teal-600">Hello, This is a reply
+                                                    message.</h2>
+                                                <p class="text-sm text-start text-black truncate"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                            function showMessageContent() {
+                                document.getElementById('placeholder-message').classList.add('hidden');
+                                document.getElementById('message-content').classList.remove('hidden');
+                            }
+                        </script>
+
                         <div
-                            class="md:w-2/2 w-full shadow-lg bg-gray-100 rounded-lg max-h-screen text-white text-center ">
+                            class="hidden md:w-2/2 w-full shadow-lg bg-gray-100 rounded-lg max-h-screen text-white text-center ">
                             <div class="rounded-t-lg  bg-gradient-to-r from-emerald-500 to-teal-300 p-5 text-white">
                                 <div class="flex flex-wrap gap-4 sm:flex-nowrap justify-between items-center">
                                     <!-- Subject -->
@@ -181,7 +246,6 @@
                                         <i class="fa-solid fa-envelope px-1"></i> Subject: [Example Text]
                                     </h1>
 
-                                    <!-- Message Time -->
                                     <div class="rounded-lg shadow-lg bg-white p-2 w-full sm:w-auto">
                                         <p class="text-sm font-semibold text-teal-600 w-full" id="message-time">
                                             M/D/Y
@@ -202,7 +266,8 @@
                                     <div
                                         class="rounded-lg p-2 bg-teal-100 text-teal-700 font-semibold shadow-lg w-full sm:w-auto">
                                         <p class="text-md" id="message-receiver">
-                                            <span class="font-semibold"><i class="fa-solid fa-user mx-2"></i>To:</span>
+                                            <span class="font-semibold"><i
+                                                    class="fa-solid fa-user mx-2"></i>To:</span>
                                             Jane Smith
                                         </p>
                                     </div>
@@ -319,18 +384,18 @@
                     } else {
                         console.error("Reply modal not found");
                     }
-
+                    showMessageContent();
                     //MESSAGE CONTENT
                     messageContent.textContent = `${message}`;
                     messageSender.innerHTML =
                         `<i class="fa-solid fa-user text-teal-600 mr-2"></i> From: ${sender}`;
                     messageReceiver.innerHTML =
                         `<i class="fa-solid fa-user text-teal-600 mr-2"></i> To: ${receiver}`;
+
                     messageSubject.innerHTML =
                         `<i class="fa-solid fa-envelope text-white mr-2"></i> Subject: ${subject}`;
                     messageTime.textContent = `${time}`;
 
-                    //REPLIES
                     fetch(`/patient/messages/${messageId}/replies`)
                         .then(response => response.json())
                         .then(data => {
@@ -347,7 +412,7 @@
                                                 class="w-14 h-14 rounded-full shadow-xl border-2 border-teal-500">
                                             <div>
                                                 <h2 class="text-start text-md text-teal-600">
-                                                    <strong>Reply From:</strong> ${reply.from_user_name}
+                                                    <strong>Reply From:</strong> ${reply.from_user_email}
                                                 </h2>
                                                 <p class="text-sm text-start text-black truncate">${reply.message}</p>
                                             </div>

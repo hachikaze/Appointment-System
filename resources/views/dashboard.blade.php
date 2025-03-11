@@ -1,4 +1,52 @@
 <x-patientnav-layout>
+    <x-audit-modal modalid="auditModal" title="Audit Log">
+        <div class="overflow-x-auto shadow-lg rounded-lg border-teal-500 border-2">
+            <div class="flex justify-between items-center p-4 bg-white border-b border-gray-300">
+                <h2 class="text-xl font-semibold text-teal-700">Audit Log</h2>
+                <form method="GET" action="{{ url()->current() }}" class="searchform flex space-x-2" id="searchform">
+                    <input type="hidden" name="auditModal" value="{{ request('auditModal', 'true') }}">
+                    <input type="text" name="search" placeholder="Search..." value="{{ request('search') }}"
+                        class="px-4 py-2 border-2 border-teal-500 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none" />
+                    <button type="submit"
+                        class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition">
+                        🔍 Search
+                    </button>
+                </form>
+            </div>
+
+            <table class="min-w-full overflow-y-auto bg-white border border-gray-300 shadow-sm rounded-lg">
+                <thead class="bg-teal-500 text-white">
+                    <tr>
+                        <th class="py-2 px-4 border">Admin</th>
+                        <th class="py-2 px-4 border">Action</th>
+                        <th class="py-2 px-4 border">Date</th>
+                        <th class="py-2 px-4 border">Last Recorded</th>
+                    </tr>
+                </thead>
+                <div class="max-h-96 overflow-y-auto pt-0 bg-teal-50">
+                    <tbody class="bg-teal-50">
+                        @foreach ($allauditTrails as $allaudit)
+                            <tr class="border-t-2 border-teal-100">
+                                <td class="py-2 px-4 text-gray-700">
+                                    {{ $allaudit->user->firstname ?? 'N/A' }}
+                                </td>
+                                <td class="py-2 px-4 text-gray-700">{{ $allaudit->action }}</td>
+                                <td class="py-2 px-4 text-gray-700">
+                                    {{ $allaudit->created_at->format('F j, Y g:i:s A') }}
+                                <td class="py-2 px-4 text-gray-700">
+                                    {{ $allaudit->created_at->diffForHumans() }}
+                            </tr>
+                        @endforeach
+                    </tbody>
+            </table>
+        </div>
+        </div>
+        <x-pagination :paginator="$allauditTrails->appends([
+            'auditModal' => 'true',
+            'search' => request('search'),
+        ])" />
+    </x-audit-modal>
+    <script></script>
     <div class="py-12">
         <div class="max-w-8xl mx-auto px-6 lg:px-8  lg:gap-8 gap-4 xl:grid grid-cols-4 lg:grid grid-cols-1   ">
             <!-- First Column: Avatar and Buttons (1/4 of the width) -->
@@ -15,14 +63,12 @@
                         </div>
                         <div
                             class="relative w-44 h-44 p-2 shadow-lg rounded-full bg-gradient-to-r from-teal-400  to-emerald-600">
-                            <img src="{{ $user->image_path ? asset('storage/' . $user->image_path) : asset('images/default-avatar.png') }}"
+                            <img src="{{ $user->image_path ? asset(path: 'storage/' . $user->image_path) : asset('images/default-avatar.png') }}"
                                 alt="Clinic Logo"
                                 class="w-full h-full bg-gradient-to-r from-teal-200  to-emerald-600 rounded-full object-cover p-2 
                                 border-4 shadow-lg border-white transform hover:scale-105 transition-transform duration-200">
                         </div>
-
                     </div>
-
 
                     <form action="{{ route('calendar') }}" method="GET" class="w-full">
                         <button
@@ -43,7 +89,6 @@
                     <h2 class="text-xl font-semibold text-teal-600 mb-4">
                         <i class="fa-solid fa-history text-teal-500 px-2 fa-spin"
                             style="--fa-animation-duration: 3s;"></i> Activity Logs
-
                     </h2>
                     <div class="relative rounded-lg border-l-4 border-teal-500 h-96 overflow-y-auto m-1 pl-6">
                         @foreach ($auditTrails as $audit)
@@ -76,13 +121,21 @@
                     </div>
                 </div>
 
+                <div class="p-5 pt-0">
+                    <button onclick="openModal('auditModal')"
+                        class="bg-gradient-to-r from-teal-500 to-teal-700 text-white px-4 py-2 rounded-lg w-full transform hover:scale-105 transition-transform duration-200">
+                        <i class="fas fa-history text-white font-bold"></i> View Full Audit
+                    </button>
+                </div>
+
                 <div class="relative flex flex-col rounded-xl bg-white bg-clip-border text-gray-700 ">
                     <div
                         class="relative mx-4 mt-4 flex flex-col gap-4 overflow-hidden rounded-none bg-transparent bg-clip-border text-gray-700 shadow-none md:flex-row md:items-center">
                         <div class="w-max rounded-lg bg-teal-500 p-5 text-white">
                             <i class="fa-solid fa-pie-chart fa-lg"></i>
                         </div>
-                        <div class="bg-teal-100 w-full shadow-lg rounded-lg p-2 border-b-4 border-teal-600">
+                        <div
+                            class="bg-teal-100 w-full shadow-lg rounded-lg p-2 border-b-4 border-teal-600 transform hover:scale-105 transition-transform duration-200">
                             <h6
                                 class="block text-base font-semibold leading-relaxed tracking-normal text-blue-gray-900 antialiased">
                                 Your Appointments
@@ -93,11 +146,17 @@
                         </div>
                     </div>
                     <div class="py-6 mt-4 grid place-items-center px-2">
+                        <div class="flex items-center justify-start gap-2 text-xl font-semibold text-teal-600 mx-2">
+                            <i class="fa-solid fa-calendar"></i>
+                            <p>Appointments Categories</p>
+                        </div>
                         @if ($appointmentCategories->isEmpty())
-                            <div class="bg-red-400 p-6 m-2 rounded-lg ">
-                                <p class="text-white">No appointment data available. Click <span
+                            <div class="bg-red-400 shadow-lg p-6 m-2 rounded-lg ">
+                                <p class="text-white">No attended appointments available. Click <span
                                         class="rounded-lg bg-teal-600 p-1 shadow cursor-pointer"
-                                        onclick="window.location.href='{{ route('calendar') }}'">here</span> to add one.
+                                        onclick="window.location.href='{{ route('calendar') }}'">here</span> to
+                                    add
+                                    one.
                                 </p>
                             </div>
                         @else
@@ -110,65 +169,21 @@
                     </div>
                 </div>
 
-                <script>
-                    const piechartConfig = {
-                        series: @json($appointmentCategories->values()),
-                        chart: {
-                            type: "pie",
-                            width: 300,
-                            height: 300,
-                            toolbar: {
-                                show: false,
-                            },
-                        },
-                        labels: @json($appointmentCategories->keys()), // appointment reasons as labels
-                        title: {
-                            show: "",
-                        },
-                        dataLabels: {
-                            enabled: false,
-                        },
-                        colors: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40"],
-                        legend: {
-                            show: true,
-                            position: 'bottom',
-                            labels: {
-                                colors: "#616161",
-                                fontSize: "14px",
-                                fontFamily: "Poppins",
-                                fontWeight: 400,
-                            }
-                        },
-                        tooltip: {
-                            style: {
-                                colors: "#616161",
-                                fontSize: "14px",
-                                fontFamily: "Poppins",
-                                fontWeight: 400,
-                            }
-                        }
-                    };
-
-                    const piechart = new ApexCharts(document.querySelector("#pie-chart"), piechartConfig);
-                    piechart.render();
-                </script>
 
 
             </div>
 
-
             <div
                 class="bg-white  border-t-4 border-teal-400 fade-up overflow-hidden sm:rounded-lg shadow-lg  col-span-2">
-
-                <div class="w-lg m-4 bg-teal-50 border border-teal-400 rounded-xl shadow-lg" role="alert"
+                <div class="w-lg m-4 bg-gradient-to-r from-teal-500 to-teal-700   rounded-xl shadow-lg" role="alert"
                     tabindex="-1" aria-labelledby="hs-toast-message-with-loading-indicator-label">
                     <div class="flex items-center w-full p-4">
                         <!-- Loading Spinner -->
-                        <i class="fa-solid fa-sync fa-spin text-teal-600 text-2xl"></i>
+                        <i class="fa-solid fa-sync fa-spin text-gray-100 text-2xl"></i>
 
                         <!-- Message -->
                         <p id="hs-toast-message-with-loading-indicator-label"
-                            class="ml-3 text-lg font-semibold  text-teal-700"
+                            class="ml-3 text-lg font-semibold  text-gray-100"
                             data-date="{{ isset($upcomingappointment) ? \Carbon\Carbon::parse($upcomingappointment->date)->format('F j, Y') : 'No Date Available' }}"
                             data-time="{{ $start_time ?? 'N/A' }}" data-end-time="{{ $end_time ?? 'N/A' }}">
                             Upcoming Appointment...
@@ -186,6 +201,7 @@
                             const now = new Date();
                             const appointmentStartTime = new Date(targetDate + ' ' + targetTime);
                             const appointmentEndTime = new Date(targetDate + ' ' + endTime);
+                            const interval = setInterval(updateCountdown, 1000);
 
                             if (!targetDate || !targetTime) {
                                 countdownElement.textContent = "No upcoming appointment.";
@@ -195,26 +211,21 @@
                             if (now >= appointmentEndTime) {
                                 countdownElement.textContent = "Appointment has ended!";
                                 clearInterval(interval);
-                                setTimeout(() => {
-                                    countdownElement.style.display = "none";
-                                }, 5000);
                                 return;
                             }
+
 
                             if (now >= appointmentStartTime) {
                                 countdownElement.textContent = "Appointment is happening now!";
                                 return;
                             }
-
                             const timeDiff = appointmentStartTime - now;
                             const hours = Math.floor((timeDiff / (1000 * 60 * 60)) % 24);
                             const minutes = Math.floor((timeDiff / (1000 * 60)) % 60);
                             const seconds = Math.floor((timeDiff / 1000) % 60);
                             countdownElement.textContent = `Upcoming Appointment in ${hours}h ${minutes}m ${seconds}s`;
                         }
-
                         updateCountdown();
-                        const interval = setInterval(updateCountdown, 1000);
                     }
 
                     document.addEventListener("DOMContentLoaded", function() {
@@ -222,16 +233,11 @@
                         const targetDate = countdownElement.getAttribute("data-date");
                         const targetTime = countdownElement.getAttribute("data-time");
                         const endTime = countdownElement.getAttribute("data-end-time");
-
                         startCountdown(targetDate, targetTime, endTime, "hs-toast-message-with-loading-indicator-label");
                     });
                 </script>
 
-
-
                 <div class="p-4  grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
-
-
                     <div
                         class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform duration-200">
                         <div class="flex justify-between items-start">
@@ -281,7 +287,7 @@
                         <div class="flex justify-between items-start">
                             <div>
                                 <p class="text-white/80 text-sm">Cancelled Appointments</p>
-                                <h3 class="text-4xl font-bold mt-2"> {{ $canceledAppointments }}
+                                <h3 class="text-4xl font-bold mt-2"> {{ $cancelledAppointments }}
                                 </h3>
                             </div>
                             <div class="bg-white/20 p-3 rounded-xl">
@@ -298,8 +304,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="w-full bg-gray-100 p-5 ">
-                    <!-- Welcome Section -->
+
+                <div class="w-full bg-gradient-to-r from-teal-100 to-blue-100 roundd-t-lg p-5 ">
                     <div
                         class="mb-2 bg-teal-50 p-4  rounded-lg border-l-4 border-teal-500 shadow-lg transform hover:scale-105 transition-transform duration-200">
                         <h1 class="text-3xl font-bold text-gray-800">Welcome back,
@@ -310,17 +316,17 @@
                     </div>
 
                 </div>
+                <!-- <div class="bg-gradient-to-r from-teal-500 to-teal-700 text-white p-3 rounded-lg"> -->
+
                 <div class="w-full">
-                    <h3 class="bg-teal-500 p-4 font-bold text-xl text-white">
-                        <i class="fas fa-user-md mx-2 fa-beat-fade" style="--fa-animation-duration: 3s;"></i> Quick
+                    <h3 class="bg-gradient-to-r from-teal-500 to-teal-700 p-4 font-bold text-xl text-white">
+                        <i class="fas fa-user-md mx-2 fa-beat-fade" style="--fa-animation-duration: 3s;"></i>
+                        Quick
                         Stats
                     </h3>
                 </div>
-                {{-- <iframe width="100%" height="300" style="border:0" loading="lazy" allowfullscreen
-                    referrerpolicy="no-referrer-when-downgrade"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.2050300674914!2d121.04021859999999!3d14.587389799999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c8312ce6011f%3A0x3b9575c6988133e6!2sANA%20FATIMA%20BARROSO%2C%20DMD%20Dental%20Clinic!5e0!3m2!1sen!2sph!4v1739887099838!5m2!1sen!2sph">
-                </iframe> --}}<div
-                    class="relative flex flex-col  bg-white bg-clip-border text-gray-700 shadow-md">
+
+                <div class="relative flex flex-col  bg-white bg-clip-border text-gray-700 shadow-md">
                     <div
                         class="relative mx-4 mt-4 flex flex-col gap-4 overflow-hidden rounded-none bg-transparent bg-clip-border text-gray-700 shadow-none md:flex-row md:items-center">
                         <div class="w-max rounded-lg bg-teal-500 shadow-lg p-5 text-white">
@@ -331,7 +337,8 @@
                                 </path>
                             </svg>
                         </div>
-                        <div class="bg-teal-100 shadow-lg rounded-lg p-2 border-b-4 border-teal-600">
+                        <div
+                            class="bg-teal-100 shadow-lg rounded-lg p-2 border-b-4 border-teal-600 transform hover:scale-105 transition-transform duration-200">
                             <h6
                                 class="block text-base font-semibold leading-relaxed tracking-normal text-blue-gray-900 antialiased">
                                 Monthly Appointments
@@ -341,7 +348,7 @@
                             </p>
                         </div>
                     </div>
-                    @if ($monthlyAppointments->isEmpty())
+                    @if ($monthlyData->isEmpty())
                         <div class="text-center p-6 bg-red-400 m-4 rounded-lg shadow-lg">
                             <p class="text-white text-lg">Still no appointments? Click <span
                                     class="rounded-lg bg-teal-600 p-1 shadow cursor-pointer"
@@ -354,8 +361,6 @@
                             <div id="line-chart"></div>
                         </div>
                     @endif
-
-
                     <div
                         class="relative mx-4 mt-4 flex flex-col gap-4 overflow-hidden rounded-none bg-transparent bg-clip-border text-gray-700 shadow-none md:flex-row md:items-center">
                         <div class="w-max rounded-lg bg-teal-500 shadow-lg p-5 text-white">
@@ -366,7 +371,8 @@
                                 </path>
                             </svg>
                         </div>
-                        <div class="bg-teal-100 shadow-lg rounded-lg p-2 border-b-4 border-teal-600">
+                        <div
+                            class="bg-teal-100 shadow-lg rounded-lg p-2 border-b-4 border-teal-600 transform hover:scale-105 transition-transform duration-200">
                             <h6
                                 class="block text-base font-semibold leading-relaxed tracking-normal text-blue-gray-900 antialiased">
                                 Daily Appointments
@@ -376,7 +382,7 @@
                             </p>
                         </div>
                     </div>
-                    @if ($monthlyAppointments->isEmpty())
+                    @if ($dailyAppointments->isEmpty())
                         <div class="text-center p-6 bg-red-400 m-4 rounded-lg shadow-lg">
                             <p class="text-white text-lg">Still no appointments? Click <span
                                     class="rounded-lg bg-teal-600 p-1 shadow cursor-pointer"
@@ -391,7 +397,8 @@
                     @endif
                 </div>
                 <div class="bg-white  overflow-hidden  col-span-2 ">
-                    <h3 class="bg-teal-500 p-4 font-bold text-xl text-white flex justify-between items-center">
+                    <h3
+                        class="bg-gradient-to-r from-teal-500 to-teal-700 p-4 font-bold text-xl text-white flex justify-between items-center">
                         <span><i class="fas fa-calendar-alt fa-beat-fade mx-2"
                                 style="--fa-animation-duration: 3s;"></i>
                             Appointments Today (9 AM - 6 PM)</span>
@@ -444,9 +451,9 @@
 
             <!-- Third Column: Additional Content (1/4 of the width) -->
             <div
-                class="bg-white border-t-4 border-teal-400 fade-up overflow-hidden sm:rounded-lg shadow-lg  xl:col-span-1 md:col-span-4 sm:col-span-2 col-span-2  ">
+                class="bg-teal-50 border-t-4 border-teal-400 fade-up overflow-hidden sm:rounded-lg shadow-lg  xl:col-span-1 md:col-span-4 sm:col-span-2 col-span-2  ">
                 <p class="text-gray-600 dark:text-gray-400 mt-2">
-                <div class="bg-white p-6 rounded-lg  max-w-xxl mx-auto flex flex-col items-center justify-center ">
+                <div class="bg-teal-50 p-6 rounded-lg  max-w-xxl mx-auto flex flex-col items-center justify-center ">
                     <div class="relative size-72 items-center justify-center">
                         <svg class="size-full rotate-180" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
                             <defs>
@@ -457,10 +464,23 @@
                                 </linearGradient>
                             </defs>
 
+                            <defs>
+                                <linearGradient id="tealGradient" x1="100%" y1="0%" x2="0%"
+                                    y2="0%">
+                                    <stop offset="0%" stop-color="#bae6fd" />
+                                    <!-- Lighter Blue (Tailwind blue-200) -->
+                                    <stop offset="100%" stop-color="#5eead4" />
+                                    <!-- Lighter Teal (Tailwind teal-300) -->
+                                </linearGradient>
+                            </defs>
+
+
+
+
+
                             <!-- Background Circle -->
-                            <circle cx="18" cy="18" r="16" fill="none"
-                                class="stroke-current text-gray-200" stroke-width="2" stroke-dasharray="50 100"
-                                stroke-linecap="round">
+                            <circle cx="18" cy="18" r="16" fill="none" stroke="url(#tealGradient)"
+                                stroke-width="2" stroke-dasharray="50 100" stroke-linecap="round">
                             </circle>
 
                             <!-- Gradient Progress Circle -->
@@ -472,7 +492,8 @@
                         <div class="absolute inset-0 flex flex-col items-center justify-center">
                             <span class="text-3xl font-bold text-teal-600 mt-20">{{ $attendedCount }} /
                                 {{ $totalEligible }}</span>
-                            <span class="text-sm text-teal-600">Are attended by {{ Auth::user()->firstname }}</span>
+                            <span class="text-sm text-teal-600">Are attended by
+                                {{ Auth::user()->firstname }}</span>
                             @php
 
                                 if ($totalAppointments == 0) {
@@ -509,9 +530,6 @@
 
                                 @if ($totalAppointments == 0)
                                     <p>Attendance Rate: N/A</p>
-                                    <a href="{{ route('appointments.create') }}" class="text-teal-600 underline">
-                                        Click here to add an appointment
-                                    </a>
                                 @else
                                     <p>Attendance Rate: {{ number_format($attendanceRate, 2) . '%' }}</p>
                                 @endif
@@ -519,45 +537,53 @@
                         </div>
                     </div>
 
+                    <div class="bg-gradient-to-r from-teal-50 to-teal-400 text-white p-3 rounded-lg ">
+                        <h2
+                            class="text-xl w-full font-bold text-teal-600 mb-4 flex items-center border-b-2 border-teal-500  pb-2">
+                            <i class="fas fa-address-card text-2xl mr-2"></i> Contact Details
+                        </h2>
+                        <div class="space-y-4">
+                            <div
+                                class="flex items-center bg-teal-50 shadow-lg p-4 border-l-4 border-teal-500 rounded-lg transform hover:scale-105 transition-transform duration-200">
+                                <i class="fas fa-user text-teal-500 text-xl mr-3"></i>
+                                <p class="text-gray-700"><strong>Name:</strong> ANA FATIMA BARROSO, DMD Dental
+                                    Clinic
+                                </p>
+                            </div>
 
-                    <h2
-                        class="text-xl w-full font-bold text-teal-600 mb-4 flex items-center border-b-2 border-teal-500  pb-2">
-                        <i class="fas fa-address-card text-2xl mr-2"></i> Contact Details
-                    </h2>
-                    <div class="space-y-4">
-                        <div
-                            class="flex items-center bg-teal-50 shadow-lg p-4 border-l-4 border-teal-500 rounded-lg transform hover:scale-105 transition-transform duration-200">
-                            <i class="fas fa-user text-teal-500 text-xl mr-3"></i>
-                            <p><strong>Name:</strong> ANA FATIMA BARROSO, DMD Dental Clinic</p>
+                            <div
+                                class="flex items-center bg-teal-50 border-l-4 border-teal-500  shadow-lg p-4 rounded-lg transform hover:scale-105 transition-transform duration-200">
+                                <i class="fas fa-map-marker-alt text-teal-500 text-xl mr-3"></i>
+                                <p class="text-gray-700"><strong>Address:</strong> H2PR+X34, Nueve de Febrero,
+                                    Mandaluyong, Kalakhang
+                                    Maynila</p>
+                            </div>
+
+                            <div
+                                class="flex items-center bg-teal-50 border-l-4 border-teal-500 shadow-lg p-4 rounded-lg transform hover:scale-105 transition-transform duration-200">
+                                <i class="fas fa-phone text-teal-500 text-xl mr-3"></i>
+                                <p class="text-gray-700"><strong>Phone:</strong> +63 912 345 6789</p>
+                            </div>
+
+                            <div
+                                class="flex items-center bg-teal-50 border-l-4 border-teal-500 shadow-lg p-4 rounded-lg transform hover:scale-105 transition-transform duration-200">
+                                <i class="fas fa-envelope text-teal-500 text-xl mr-3"></i>
+                                <p class="text-gray-700"><strong>Email:</strong>
+                                    <a href="mailto:contact@clinic.com"
+                                        class="text-blue-600 hover:underline">contact@clinic.com</a>
+                                </p>
+                            </div>
+
+                            <div
+                                class="flex items-center bg-teal-50  border-l-4 border-teal-500 shadow-lg p-4 rounded-lg transform hover:scale-105 transition-transform duration-200">
+                                <i class="fas fa-clock text-teal-500 text-xl mr-3"></i>
+                                <p class="text-gray-700"><strong>Opening Hours:</strong> Mon-Sat: 9 AM - 6 PM</p>
+                            </div>
                         </div>
 
-                        <div
-                            class="flex items-center bg-teal-50 border-l-4 border-teal-500  shadow-lg p-4 rounded-lg transform hover:scale-105 transition-transform duration-200">
-                            <i class="fas fa-map-marker-alt text-teal-500 text-xl mr-3"></i>
-                            <p><strong>Address:</strong> H2PR+X34, Nueve de Febrero, Mandaluyong, Kalakhang Maynila</p>
-                        </div>
-
-                        <div
-                            class="flex items-center bg-teal-50 border-l-4 border-teal-500 shadow-lg p-4 rounded-lg transform hover:scale-105 transition-transform duration-200">
-                            <i class="fas fa-phone text-teal-500 text-xl mr-3"></i>
-                            <p><strong>Phone:</strong> +63 912 345 6789</p>
-                        </div>
-
-                        <div
-                            class="flex items-center bg-teal-50 border-l-4 border-teal-500 shadow-lg p-4 rounded-lg transform hover:scale-105 transition-transform duration-200">
-                            <i class="fas fa-envelope text-teal-500 text-xl mr-3"></i>
-                            <p><strong>Email:</strong>
-                                <a href="mailto:contact@clinic.com"
-                                    class="text-blue-600 hover:underline">contact@clinic.com</a>
-                            </p>
-                        </div>
-
-                        <div
-                            class="flex items-center bg-teal-50  border-l-4 border-teal-500 shadow-lg p-4 rounded-lg transform hover:scale-105 transition-transform duration-200">
-                            <i class="fas fa-clock text-teal-500 text-xl mr-3"></i>
-                            <p><strong>Opening Hours:</strong> Mon-Sat: 9 AM - 6 PM</p>
-                        </div>
                     </div>
+
+
                 </div>
 
 
@@ -571,7 +597,8 @@
                         </div>
                         <div class="p-4">
                             <h3 class="text-lg font-bold">Expert Dentists</h3>
-                            <p class="text-center text-sm text-gray-600">Our professional team ensures quality dental
+                            <p class="text-center text-sm text-gray-600">Our professional team ensures quality
+                                dental
                                 care.
                             </p>
                         </div>
@@ -599,7 +626,8 @@
                         </div>
                         <div class="p-4">
                             <h3 class="text-lg font-bold">Quality Services</h3>
-                            <p class="text-center text-sm text-gray-600">Providing top-notch dental procedures and
+                            <p class="text-center text-sm text-gray-600">Providing top-notch dental procedures
+                                and
                                 care.
                             </p>
                         </div>
@@ -613,7 +641,8 @@
                         </div>
                         <div class="p-4">
                             <h3 class="text-lg font-bold">Accessible Location</h3>
-                            <p class="text-center text-sm text-gray-600">Easily reachable with parking available.</p>
+                            <p class="text-center text-sm text-gray-600">Easily reachable with parking
+                                available.</p>
                         </div>
                     </div>
 
@@ -626,6 +655,105 @@
 
 
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let urlParams = new URLSearchParams(window.location.search);
+
+            if (urlParams.has("auditModal") || "{{ session('audit_modal_open') }}" === "true") {
+                console.log("Opening Audit Modal");
+                openModal("auditModal");
+            }
+
+            document.addEventListener("DOMContentLoaded", function() {
+                let searchForm = document.querySelector("form#searchform");
+
+                if (searchForm) {
+                    searchForm.addEventListener("submit", function(event) {
+                        let searchInput = document.querySelector("input[name='search']");
+                        let auditModalInput = document.querySelector("input[name='auditModal']");
+                        let formAction = new URL(searchForm.action, window.location.origin);
+                        let currentParams = new URL(window.location.href).searchParams;
+
+                        if (searchInput && searchInput.value.trim()) {
+                            formAction.searchParams.set("search", searchInput.value.trim());
+                        }
+
+                        if (currentParams.has("auditModal")) {
+                            formAction.searchParams.set("auditModal", "true");
+                            auditModalInput.value = "true";
+
+                            console.log("Final Form Action URL:", formAction
+                                .toString()); // Debugging
+                            searchForm.action = formAction.toString();
+                        }
+                    });
+                }
+
+                let urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has("auditModal")) {
+                    openModal("auditModal");
+                }
+
+            });
+
+
+
+            let paginationLinks = document.querySelectorAll(".pagination a");
+            paginationLinks.forEach(link => {
+                link.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    let url = new URL(link.href);
+                    let currentParams = new URL(window.location.href).searchParams;
+
+                    if (currentParams.has("search")) {
+                        url.searchParams.set("search", currentParams.get("search"));
+                    }
+                    if (currentParams.has("auditModal")) {
+                        url.searchParams.set("auditModal", "true");
+                    }
+
+                    console.log("Navigating to:", url.toString());
+                    window.location.href = url.toString();
+                });
+            });
+        });
+
+        function closeAuditModal(modalId) {
+            fetch("{{ route('close.audit.modal') }}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                        "Content-Type": "application/json",
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Audit Modal Closed:", data.message);
+                    closeModal(modalId);
+                    removeQueryParams(["auditModal"]); // Removes only "auditModal", keeps "search"
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+        function closeModal(modalId) {
+            let modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('opacity-0', 'scale-95', 'transition', 'duration-300');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('opacity-0', 'scale-95');
+                }, 300);
+            }
+        }
+
+        function removeQueryParams(params) {
+            const url = new URL(window.location.href);
+            params.forEach(param => url.searchParams.delete(param));
+            window.history.replaceState({}, document.title, url);
+            console.log("Updated URL after removing params:", url.toString());
+        }
+
+
+        // COUNT DOWN
         document.addEventListener("DOMContentLoaded", function() {
             let timeSlots = document.querySelectorAll(".time-slot");
 
@@ -651,9 +779,6 @@
                 let [startStr, endStr] = timeRange.split(" - ");
                 let startTimeObj = new Date(`${appointmentDate} ${startStr}`);
                 let endTimeObj = new Date(`${appointmentDate} ${endStr}`);
-
-                console.log(`Start Time: ${startTimeObj}`);
-                console.log(`End Time: ${endTimeObj}`);
 
                 function updateCountdown() {
                     let now = new Date(new Date().toLocaleString("en-US", {
@@ -689,12 +814,23 @@
                 updateCountdown();
                 setInterval(updateCountdown, 1000);
             });
+
+            // if (closestAppointment) {
+            //     upcomingCountdown.innerHTML = closestAppointment;
+            //     upcomingCountdown.classList.add("text-blue-500");
+            // } else {
+            //     upcomingCountdown.innerHTML = "No upcoming appointments";
+            //     upcomingCountdown.classList.add("text-gray-500");
+            // }
         });
 
 
-        var monthlyappointmentsData = @json(array_values($monthlyAppointments->toArray()));
+        var monthlyappointmentsData = @json($monthlyData);
+        const monthlycategories = @json($monthlyCategories);
         const dailyappointmentsData = @json($dailyAppointments->values());
         const dailycategories = @json($dailyAppointments->keys());
+
+
 
         const linechartConfig = {
             series: [{
@@ -737,17 +873,7 @@
                         fontWeight: 400,
                     },
                 },
-                categories: [
-                    "Apr",
-                    "May",
-                    "Jun",
-                    "Jul",
-                    "Aug",
-                    "Sep",
-                    "Oct",
-                    "Nov",
-                    "Dec",
-                ],
+                categories: monthlycategories,
             },
             yaxis: {
                 tickAmount: 2,
@@ -791,8 +917,10 @@
             },
         };
 
-        const linechart = new ApexCharts(document.querySelector("#line-chart"), linechartConfig);
-        linechart.render();
+        if (document.querySelector("#line-chart")) {
+            const linechart = new ApexCharts(document.querySelector("#line-chart"), linechartConfig);
+            linechart.render();
+        }
 
         const linechartConfig2 = {
             series: [{
@@ -885,7 +1013,62 @@
                 }
             },
         };
-        const linechart2 = new ApexCharts(document.querySelector("#line-chart2"), linechartConfig2);
-        linechart2.render();
+        if (document.querySelector("#line-chart2")) {
+            const linechart2 = new ApexCharts(document.querySelector("#line-chart2"), linechartConfig2);
+            linechart2.render();
+        }
+
+
+        const piechartConfig = {
+            series: @json($appointmentCategories->values()),
+            chart: {
+                type: "pie",
+                width: 300,
+                height: 300,
+                toolbar: {
+                    show: false,
+                },
+            },
+            labels: @json($appointmentCategories->keys()), // appointment reasons as labels
+            title: {
+                show: "",
+            },
+            dataLabels: {
+                enabled: false,
+            },
+            colors: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40"],
+            legend: {
+                show: true,
+                position: 'bottom',
+                horizontalAlign: 'center',
+                fontSize: '14px',
+                fontFamily: 'Poppins, sans-serif',
+                fontWeight: 400,
+                width: 500,
+                itemMargin: {
+                    horizontal: 10,
+                    vertical: 5
+                },
+                markers: {
+                    width: 12,
+                    height: 12,
+                    radius: 12
+                }
+            },
+            tooltip: {
+                style: {
+                    colors: "#616161",
+                    fontSize: "14px",
+                    fontFamily: "Poppins, sans-serif",
+                    fontWeight: 400,
+                }
+            }
+        };
+
+
+        if (document.querySelector("#pie-chart")) {
+            const piechart = new ApexCharts(document.querySelector("#pie-chart"), piechartConfig);
+            piechart.render();
+        }
     </script>
 </x-patientnav-layout>

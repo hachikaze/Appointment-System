@@ -5,8 +5,6 @@
     <div class="py-12">
 
         <div class="max-w-8xl mx-auto  lg:px-8 grid lg:gap-8 gap-4 lg:grid-cols-1 md:grid-cols-1 sm:grid-cols-1">
-            <!-- First Column: Avatar and Buttons (1/4 of the width) -->
-
             <div
                 class="bg-teal-500 overflow-hidden mx-12 sm:rounded-t-lg shadow-lg xl:col-span-1 md:col-span-2 sm:col-span-2 col-span-2 relative">
                 <div class="flex flex-col sm:flex-row items-center justify-between py-4 gap-4 text-center">
@@ -28,18 +26,80 @@
                 <div class="bg-gray-200">
                     <div class="relative overflow-x-auto shadow-md ">
                         <table class="w-full text-sm text-left rtl:text-right text-gray-500">
-                            <caption class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white ">
+                            <caption
+                                class="p-5  text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white ">
                                 <div
                                     class="flex items-center justify-center text-lg sm:text-2xl lg:text-3xl font-bold text-teal-500 my-4 mx-4">
                                     <i class="fa-solid fa-history px-2"></i> APPOINTMENT HISTORY
                                 </div>
-                                <p
-                                    class="mt-1 text-lg text-teal-700 font-normal border-teal-500 border-2 rounded-lg  bg-teal-100 w-fit p-2">
-                                    Browse a
-                                    list
-                                    of
-                                    appointments of
-                                    patients. Kindly Click the "View" button to show the message.</p>
+                                <div class="flex flex-col items-center justify-center w-full space-y-4">
+
+
+                                    <!-- Filters Section -->
+                                    <form method="GET" action="{{ route('history') }}"
+                                        class="w-full flex flex-wrap items-center justify-center gap-10">
+                                        <p
+                                            class="mt-1 text-lg text-teal-700 font-normal border-teal-500 border-2 rounded-lg bg-teal-100 w-fit p-2">
+                                            Browse a list of appointments of patients. Kindly Click the "View" button to
+                                            show the message.
+                                        </p>
+                                        <!-- Date Filter -->
+                                        <div class="flex items-center space-x-2">
+                                            <label for="date" class="text-teal-700 font-semibold">Date:</label>
+                                            <input type="date" name="date"
+                                                class="p-2 border border-teal-500 rounded-lg bg-white text-gray-700"
+                                                value="{{ request('date') }}">
+                                        </div>
+
+                                        <!-- Status Filter -->
+                                        <div class="flex items-center space-x-2">
+                                            <label for="status" class="text-teal-700 font-semibold">Status:</label>
+                                            <select name="status"
+                                                class="p-2 border border-teal-500 rounded-lg bg-white text-gray-700">
+                                                <option value="">All</option>
+                                                <option value="Pending"
+                                                    {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending
+                                                </option>
+                                                <option value="Attended"
+                                                    {{ request('status') == 'Attended' ? 'selected' : '' }}>Attended
+                                                </option>
+                                                <option value="Approved"
+                                                    {{ request('status') == 'Approved' ? 'selected' : '' }}>Approved
+                                                </option>
+                                                <option value="Cancelled"
+                                                    {{ request('status') == 'Cancelled' ? 'selected' : '' }}>Cancelled
+                                                </option>
+                                                <option value="Unattended"
+                                                    {{ request('status') == 'Unattended' ? 'selected' : '' }}>Unattended
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Buttons -->
+                                        <div class="flex items-center space-x-2">
+                                            <button type="submit"
+                                                class="px-4 py-2 bg-teal-500 text-white rounded-lg shadow-md hover:bg-teal-700 transition">
+                                                Apply Filters
+                                            </button>
+                                            <a href="{{ route('history') }}"
+                                                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg shadow-md hover:bg-gray-400 transition">
+                                                Reset
+                                            </a>
+                                        </div>
+                                    </form>
+
+                                    <!-- Display Errors -->
+                                    @if ($errors->any())
+                                        <div class="bg-red-500 text-white text-md p-6 w-full rounded-lg my-5">
+                                            @foreach ($errors->all() as $error)
+                                                <p><i class="fas fa-exclamation-circle text-white"></i>
+                                                    {{ $error }}</p>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
+
+
                             </caption>
                             <thead class="text-lg text-center text-gray-700 uppercase bg-gray-50  ">
                                 <tr>
@@ -71,31 +131,39 @@
                             </thead>
                             <tbody class="text-lg">
                                 @forelse ($appointments as $appointment)
-                                    <tr class="bg-teal-50 border-teal-500 rounded-lg">
+                                    @php
+                                        $bgClass = match ($appointment->status) {
+                                            'Approved' => 'bg-green-100 text-green-700 border-green-500',
+                                            'Cancelled' => 'bg-red-100 text-red-700 border-red-500',
+                                            'Attended' => 'bg-blue-100 text-blue-700 border-blue-500',
+                                            'Unattended' => 'bg-red-100 text-red-700 border-red-500',
+                                            'Pending' => 'bg-orange-100 text-orange-700 border-orange-500',
+                                            default => 'bg-gray-100 text-gray-700 border-gray-500',
+                                        };
+                                        $statusClass = match ($appointment->status) {
+                                            'Approved' => 'bg-green-200 text-green-700 border-green-500',
+                                            'Cancelled' => 'bg-red-200 text-red-700 border-red-500',
+                                            'Attended' => 'bg-blue-200 text-blue-700 border-blue-500',
+                                            'Unattended' => 'bg-red-200 text-red-700 border-red-500',
+                                            'Pending' => 'bg-orange-200 text-orange-700 border-orange-500',
+                                            default => 'bg-gray-200 text-gray-700 border-gray-500',
+                                        };
+                                    @endphp
+                                    <tr class="{{ $bgClass }} text-center border-teal-500 rounded-lg">
                                         <th scope="row"
                                             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
                                             {{ $appointment->patient_name }}
                                         </th>
-                                        <td class="px-6 py-4">
+                                        <td class="px-6 py-4 text-black">
                                             {{ $appointment->phone }}
                                         </td>
-                                        <td class="px-6 py-4">
+                                        <td class="px-6 py-4 text-black">
                                             {{ Carbon::parse($appointment->date)->format('F j, Y') }}
                                         </td>
-                                        <td class="px-6 py-4">
+                                        <td class="px-6 py-4 text-black">
                                             {{ $appointment->time }}
                                         </td>
-                                        <td class="px-6 py-4">
-                                            @php
-                                                $statusClass = match ($appointment->status) {
-                                                    'Approved' => 'bg-green-100 text-green-700 border-green-500',
-                                                    'Cancelled' => 'bg-red-100 text-red-700 border-red-500',
-                                                    'Attended' => 'bg-blue-100 text-blue-700 border-blue-500',
-                                                    'Unattended' => 'bg-red-100 text-red-700 border-red-500',
-                                                    'Pending' => 'bg-orange-100 text-orange-700 border-orange-500',
-                                                    default => 'bg-gray-100 text-gray-700 border-gray-500',
-                                                };
-                                            @endphp
+                                        <td class="px-6 py-4 text-black">
 
                                             <span
                                                 class="p-4  py-3 text-md font-medium border rounded-lg {{ $statusClass }}">
@@ -104,36 +172,76 @@
                                         </td>
 
                                         <td class="px-6 py-4 text-center">
-                                            <div class="flex flex-col md:flex-row justify-start gap-2">
-                                                <!-- View Button -->
+                                            <div class="flex flex-col p-6 md:flex-row justify-start gap-2">
                                                 <button onclick="openModal('{{ $appointment->id }}')"
-                                                    class="bg-blue-500 font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-blue-600 transition w-full md:w-auto">
+                                                    class="bg-blue-500  font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-blue-600 transition w-full md:w-auto">
                                                     <i class="fa-solid fa-eye pr-2"></i> View
                                                 </button>
 
-                                                <!-- Reschedule Button (Only for Cancelled & Unattended) -->
-                                                @if (in_array($appointment->status, ['Cancelled', 'Unattended']))
-                                                    <button onclick="window.location.href='{{ route('calendar') }}'"
-                                                        class="bg-yellow-500 font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-yellow-600 transition w-full md:w-auto">
+                                                @if (in_array($appointment->status, ['Unattended']))
+                                                    <button data-modal-target="reschedule-appointment-modal-{{ $appointment->id }}"
+                                                        data-modal-toggle="reschedule-appointment-modal-{{ $appointment->id }}"
+                                                        class="bg-yellow-500 w-full font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-yellow-600 transition w-full md:w-auto">
                                                         <i class="fa-solid fa-calendar-alt pr-2"></i> Reschedule
                                                     </button>
                                                 @endif
 
-                                                <!-- Cancel Button (Only for Approved & Pending) -->
+                                                @if ($appointment->status === 'Attended')
+                                                    <button data-modal-target="review-appointment-modal-{{ $appointment->id }}"
+                                                        data-modal-toggle="review-appointment-modal-{{ $appointment->id }}"
+                                                        class="bg-blue-500 font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-blue-600 transition w-full md:w-auto">
+                                                        <i class="fa-solid fa-star pr-2"></i> Leave a Review
+                                                    </button>
+
+                                             <!-- Review Modal Component -->
+                                                <x-review-modal 
+                                                    :modalId="'review-appointment-modal-' . $appointment->id"
+                                                    :route="route('appointments.review', ['id' => $appointment->id])"
+                                                    :services="$appointment->appointments" 
+                                                    />
+
+
+                                                @endif
+
+                                                                                                
+
                                                 @if (in_array($appointment->status, ['Approved', 'Pending']))
-                                                    <button data-modal-target="update-appointment-modal"
-                                                        data-modal-toggle="update-appointment-modal"
+                                                    <button data-modal-target="cancel-appointment-modal-{{ $appointment->id }}"
+                                                        data-modal-toggle="cancel-appointment-modal-{{ $appointment->id }}"
                                                         class="bg-red-500 font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-red-600 transition w-full md:w-auto">
                                                         <i class="fa-solid fa-calendar-alt pr-2"></i> Cancel
                                                     </button>
                                                 @endif
+
+
+
+
+
+
+                                                {{-- @if ($appointment->status === 'Cancelled')
+                                                    <button disabled
+                                                        class="bg-red-500 font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-red-600 transition w-full md:w-auto">
+                                                        Cancelle
+                                                    </button>
+                                                @endif --}}
+
                                             </div>
 
                                             <!-- Cancel Modal -->
-                                            <x-modal modalId="update-appointment-modal" title="Cancel this Appointment?"
+
+                                            <x-modal modalId="cancel-appointment-modal-{{ $appointment->id }}"
+                                                title="Cancel this Appointment?"
                                                 message="Are you sure you want to cancel this appointment?"
                                                 route="{{ route('appointments.cancel', ['id' => $appointment->id]) }}"
-                                                method="PUT" buttonText="Confirm" />
+                                                method="PUT" buttonText="Cancel Appointment" />
+
+                                            <x-modal modalId="reschedule-appointment-modal-{{ $appointment->id }}"
+                                                title="Reschedule this Appointment?"
+                                                :data="$availableAppointments"
+                                                message="Are you sure you want to reschedule this appointment?"
+                                                route="{{ route('appointments.update', ['id' => $appointment->id]) }}"
+                                                method="PUT" buttonText="Reschedule" />
+    
                                         </td>
 
 

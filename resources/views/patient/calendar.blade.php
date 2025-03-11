@@ -1,6 +1,7 @@
 @php
     use Carbon\Carbon;
 @endphp
+
 <x-patientnav-layout>
     <!DOCTYPE html>
     <html lang="en">
@@ -18,12 +19,9 @@
                 class="mb-4 flex flex-col sm:flex-row bg-teal-50 p-5 shadow-lg rounded-lg border-2 border-teal-400 justify-between my-12 items-center space-y-4 sm:space-y-0">
                 <a href="{{ route('patient.dashboard') }}"
                     class="flex items-center sm:w-auto w-full bg-red-500 rounded-lg text-white p-2 text-lg shadow-lg font-semibold 
-                     hover:bg-red-600 transition duration-200">
+                        hover:bg-red-600 transition duration-200">
                     <i class="fa-solid fa-arrow-left mr-2"></i> Go Back
                 </a>
-
-
-
                 <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
                     <div class="flex flex-col">
                         <label for="monthSelect" class="text-teal-700 font-semibold mb-1">Month</label>
@@ -62,437 +60,356 @@
                 </div>
             @endif
 
-
             <div
-                class="flex-1 bg-teal-50 shadow-lg rounded-lg border-l-4 border-t-2  border-r-2 border-b-2 border-teal-400 p-6  mb-6">
-
-                <div class="flex grid-cols-2 justify-between">
-                    <div class="space-y-3 text-gray-600">
-                        <h3 class="text-lg font-semibold text-teal-700 mb-2">
-                            Important Disclaimer
-                        </h3>
-                        <p class="text-base">
-                            This resume parsing algorithm is designed to assist with the extraction and analysis of
-                            resume data. Please note:
-                        </p>
-                        <ul class="list-disc ml-5 space-y-2">
-                            <li>Results may vary in accuracy and completeness</li>
-                            <li>Parsing accuracy depends on resume formatting and data quality</li>
-                            <li>Language variations may affect parsing results</li>
-                        </ul>
-                        <div class="mt-4 flex items-center">
-                            <p class="text-sm bg-teal-100  rounded-lg">
-                                <span class="font-semibold">💡 Recommendation:</span>
-                                For best results, consider using our provided resume template
-                                <button type="button"
-                                    class="text-teal-600
-                                     hover:text-blue-800 underline
-                                    focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-sm ml-1">
-                                    Download Template
-                                </button>
+                class="relative flex bg-white flex-col w-full h-full text-gray-700 shadow-md rounded-xl bg-clip-border">
+                <div
+                    class="flex-1 bg-teal-50 shadow-lg rounded-lg border-l-4 border-t-2  border-r-2 border-b-2 border-teal-400 p-6  mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div class="space-y-3 text-gray-600">
+                            <h3 class="text-lg font-semibold text-teal-700 mb-2">
+                                Important Disclaimer
+                            </h3>
+                            <p class="text-base">
+                                Please note the following appointment booking guidelines:
                             </p>
-                        </div>
-                    </div>
-
-                    <div class="bg-teal-100 border-teal-500 border-b-4 border-l-2 border-r-2 rounded-lg shadow-lg ">
-                        <div class="p-2 flex items-center bg-teal-500 text-lg text-teal-50 font-semibold rounded-t-lg">
-                            <i class="fa-solid fa-thumbtack text-teal-50"></i>
-                            <h2 class="text-xl mx-2">Legend</h2>
-                        </div>
-
-                        <div class="p-2 space-y-2">
-                            <div class="flex items-center space-x-2">
-                                <div class="w-4 h-4 bg-red-500 rounded"></div>
-                                <span class="text-sm text-gray-700">High Priority</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <div class="w-4 h-4 bg-yellow-500 rounded"></div>
-                                <span class="text-sm text-gray-700">Medium Priority</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <div class="w-4 h-4 bg-green-500 rounded"></div>
-                                <span class="text-sm text-gray-700">Low Priority</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <div class="w-4 h-4 bg-green-500 rounded"></div>
-                                <span class="text-sm text-gray-700">Low Priority</span>
-                            </div>
-                        </div>
-
-
-                        <div class="p-2">
-
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-
-
-            <div class="justify-center ">
-                <div class="border-2 border-teal-500 p-2 rounded-lg relative animate-border" id="divborder">
-                    <div class="bg-teal-500 w-full text-center text-3xl text-white p-4 font-bold rounded-t-lg">
-                        APPOINTMENT CALENDAR
-                    </div>
-                    <div class="bg-teal-200 p-4 content-center rounded-b-lg shadow-lg flex flex-wrap gap-1 sm:grid sm:grid-cols-7"
-                        id="calendar">
-                        <div
-                            class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
-                            Sun</div>
-                        <div
-                            class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
-                            Mon</div>
-                        <div
-                            class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
-                            Tue</div>
-                        <div
-                            class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
-                            Wed</div>
-                        <div
-                            class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
-                            Thu</div>
-                        <div
-                            class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
-                            Fri</div>
-                        <div
-                            class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
-                            Sat</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-2 flex items-start">
-            <div class="flex items-center  justify-center m-4" id="dateformSection">
-                <form id="dateForm" class="w-full">
-                    <h2 id="selectedDate" class="text-lg font-bold hidden"></h2>
-                    <input type="hidden" id="hiddenselectedDate" name="hiddenselectedDate" value="">
-
-                    <div
-                        class="bg-teal-100 relative overflow-x-auto border-2 border-l-4 border-teal-500   shadow-lg sm:rounded-lg  p-5 w-full">
-                        <div class="flex flex-wrap gap-4">
-                            <!-- Choose a Time Slot Header -->
-                            <div class="bg-teal-500 rounded-lg w-full md:w-auto ">
-                                <h2 class="text-xl font-bold text-white p-6 shadow-lg " id="modal-title">
-                                    <i class="fa-solid fa-clock text-white px-2"></i> Choose a Time Slot
-                                </h2>
-                            </div>
-
-                            <!-- Available Slots Counter -->
-                            <div
-                                class="bg-teal-50 border border-gray-800 w-full md:w-auto rounded-lg px-6 py-4 flex items-center shadow-lg">
-                                <i class="fa-solid fa-user-clock text-teal-600 text-2xl mr-2"></i>
-                                <span class="text-lg font-bold text-gray-900">
-                                    Slots Available: {{ $availableslots }}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-wrap gap-2 mt-4">
-                            @if ($selectedDate && count($availableappointments) > 0)
-                                @foreach ($availableappointments as $appointment)
-                                    @if ($appointment->remaining_slots > 0)
-                                        <button type="button"
-                                            class="appointment-button md:w-auto w-full px-4 py-2 text-md shadow-lg font-medium text-gray-900 bg-gray-100 border border-gray-800 rounded-lg hover:bg-teal-600 hover:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                            data-time="{{ $appointment->time_slot }}"
-                                            onclick="selectAppointmentTime(this)">
-                                            {{ $appointment->time_slot }}
-                                            ({{ $appointment->remaining_slots }}
-                                            slots left)
-                                        </button>
-                                    @endif
-                                @endforeach
-                            @else
-                                <div class="flex items-center space-x-2 ">
-                                    <i class="fa-solid fa-xmark text-red-500 text-2xl"></i>
-                                    <p class="text-lg font-bold text-teal-600">
-                                        No available time slots for
-                                        @if (!empty($selectedDate))
-                                            {{ date('F j, Y', strtotime($selectedDate)) }}
-                                        @else
-                                            {{ 'Choose a date in the Calendar.' }}
-                                        @endif
-                                    </p>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                </form>
-            </div>
-            @if (!empty($selectedDate))
-                <form id="appointmentForm" action="{{ route('appointment.store') }}" method="POST"
-                    class="space-y-4">
-                    @csrf
-                    <div class="flex items-center border-teal-400 justify-center mx-4 mt-10">
-                        <div
-                            class="bg-teal-100 border-teal-500 border-2  relative overflow-x-auto w-full  mb-12 shadow-lg sm:rounded-lg ">
-                            <div class="bg-teal-600    rounded-t-lg text-white p-3">
-                                <p class="text-xl font-semibold">
-                                    Please fill in the details to set your dental appointment.
+                            <ul class="list-disc ml-5 space-y-2">
+                                <li>Users can only have one active approved appointment at a time.</li>
+                                <li>If an approved appointment is not attended, it will be marked as unattended.
+                                </li>
+                                <li>Users can reschedule an appointment if it is marked as unattended.</li>
+                                <li>Approved appointments can be canceled, and users may reschedule afterward.</li>
+                            </ul>
+                            <div class="mt-4 flex items-center">
+                                <p class="text-sm bg-teal-100 rounded-lg p-2">
+                                    <span class="font-semibold">💡 Note:</span>
+                                    Ensure you attend or manage your appointments promptly to avoid scheduling
+                                    conflicts.
                                 </p>
                             </div>
-
-                            <!-- Two-Column Input Fields -->
-                            <div class="grid p-6 grid-cols-1 md:grid-cols-2 gap-4 ">
-
-                                <div>
-                                    <label for="date" class="block mb-2 text-lg font-medium text-teal-800">Date
-                                        Selected</label>
-                                    <div class="flex">
-                                        <span
-                                            class="inline-flex items-center px-3 text-md text-gray-900 bg-teal-200 border rounded-e-0 border-gray-800 border-e-0 rounded-s-md">
-                                            <i class="fa-solid fa-calendar text-teal-700 shadow-lg"></i>
-                                        </span>
-                                        <input type="text" id="date" name="date"
-                                            value="{{ $selectedDate }}" readonly
-                                            class="rounded-none rounded-e-lg bg-gray-50 border text-gray-500 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-md border-gray-800 p-2.5 placeholder-gray-500"
-                                            placeholder="2025-02-20">
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label for="time" class="block mb-2 text-lg font-medium text-teal-800">Chosen
-                                        Timeslot</label>
-                                    <div class="flex">
-                                        <span
-                                            class="inline-flex items-center px-3 text-md text-teal-800 bg-teal-200 border rounded-b-0 border-gray-800 border-e-0 rounded-s-md">
-                                            <i class="fa-solid fa-calendar text-teal-700 shadow-lg"></i>
-                                        </span>
-                                        <input type="text" id="time" name="time" value="" readonly
-                                            class="rounded-none rounded-e-lg bg-gray-50 border text-teal-800 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-md border-gray-800 p-2.5 placeholder-gray-500"
-                                            placeholder="Select a Time.">
-                                    </div>
-                                </div>
-
-
-                                <div>
-                                    <label for="phone" class="block mb-2 text-lg font-medium text-teal-800">Phone
-                                        Number</label>
-                                    <div class="flex">
-                                        <span
-                                            class="inline-flex items-center px-3 text-sm text-teal-800 bg-teal-200 border rounded-e-0 border-gray-800 border-e-0 rounded-s-md">
-                                            <i class="fa-solid fa-phone text-teal-700 shadow-lg"></i>
-                                        </span>
-                                        <input type="text" id="phone" name="phone" maxlength="11"
-                                            class="rounded-none rounded-e-lg bg-gray-50 border text-teal-800 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-md border-gray-800 p-2.5 placeholder-gray-500"
-                                            placeholder="Ex. 09123456789">
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label for="appointment-reason"
-                                        class="block mb-2 text-teal-800 text-lg font-medium text-gray-900">
-                                        Reason for Appointment
-                                    </label>
-                                    <div class="flex">
-                                        <span
-                                            class="inline-flex items-center px-3 text-sm text-gray-900 bg-teal-200 border rounded-e-0 border-gray-800 border-e-0 rounded-s-md">
-                                            <i class="fa-solid fa-calendar text-teal-700 shadow-lg"></i>
-                                        </span>
-                                        <select id="appointment_reason" name="appointment_reason"
-                                            class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-md border-gray-800 p-2.5 placeholder-gray-500">
-                                            <option value="">Select Reason</option>
-                                            <option value="Tooth Restoration">Tooth Restoration</option>
-                                            <option value="Extraction">Extraction</option>
-                                            <option value="Teeth Whitening">Teeth Whitening</option>
-                                            <option value="Oral Prophylaxis">Oral Prophylaxis</option>
-                                            <option value="Odontectomy">Odontectomy</option>
-                                            <option value="Orthodontics">Orthodontics</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div class=" p-4 sm:mt-2 flex flex-col sm:flex-row-reverse gap-3 sm:gap-2">
-                                <button type="button" data-modal-target="create-appointment-modal"
-                                    data-modal-toggle="create-appointment-modal"
-                                    class="inline-flex items-center justify-center rounded-md border border-transparent px-4 py-2 bg-teal-600 font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none transition ease-in-out duration-150 text-md">
-                                    <i class="fa-solid fa-check-circle mr-2"></i>
-                                    Set Appointment
-                                </button>
-
-                                <x-modal modalId="create-appointment-modal" title="Create this Appointment"
-                                    message="Are you sure you want to create this appointment?"
-                                    route="{{ route('appointments.store') }}" method="POST" buttonText="Create" />
-                            </div>
                         </div>
-                    </div>
-                @else
-                    <div class="flex items-start justify-center mt-10">
-                        <div
-                            class="bg-teal-100 border-2 border-teal-500 flex justify-center items-start relative mb-10  p-6 text-teal-600 overflow-x-auto container shadow-lg sm:rounded-lg mx-auto">
-                            <p class="text-xl font-bold">
-                                <i class="fa-solid fa-calendar-check"></i> No Date Selected
-                            </p>
+
+
+                        <div class="bg-teal-100 border-teal-500 border-b-4 border-l-2 border-r-2 rounded-lg shadow-lg">
+                            <div
+                                class="p-2 flex items-center bg-teal-500 text-lg text-teal-50 font-semibold rounded-t-lg">
+                                <i class="fa-solid fa-thumbtack text-teal-50"></i>
+                                <h2 class="text-xl mx-2">Legend</h2>
+                            </div>
+
+                            <div class="p-2 space-y-5">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-4 h-4 bg-blue-300 border-2 border-blue-500 rounded"></div>
+                                    <span class="text-sm text-gray-700"><span
+                                            class="font-bold text-blue-500">Attended</span> - The participant has
+                                        successfully attended
+                                        the event.</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-4 h-4 bg-gray-300 border-2 border-gray-500 rounded"></div>
+                                    <span class="text-sm text-gray-700"><span
+                                            class="font-bold text-gray-500">Unattended</span> - The participant was
+                                        expected
+                                        but did
+                                        not attend.</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-4 h-4 bg-orange-300 border-2 border-orange-500 rounded"></div>
+                                    <span class="text-sm text-gray-700"><span
+                                            class="font-bold text-orange-500">Pending</span> - Attendance status is
+                                        not
+                                        yet
+                                        confirmed.</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-4 h-4 bg-red-300 border-2 border-red-500  rounded"></div>
+                                    <span class="text-sm text-gray-700"><span
+                                            class="font-bold text-red-500">Cancelled</span>- The event or attendance
+                                        was
+                                        canceled.</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-4 h-4 bg-teal-300 border-2 border-teal-500  rounded"></div>
+                                    <span class="text-sm text-gray-700"><span
+                                            class="font-bold text-teal-500">Approved</span> - Attendance has been
+                                        approved or
+                                        confirmed.</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-        @endif
-        </form>
-        <div class="flex items-center  justify-center m-10 mb-0 mt-10  ">
-            <div class="relative overflow-x-auto  my-5 container shadow-lg sm:rounded-lg  pt-0 pr-0 pl-0 mx-auto">
-                <table
-                    class="w-full rounded-lg text-lg text-left rtl:text-right text-white dark:text-gray-400 shadow-lg">
-                    <thead class="text-lg text-white uppercase bg-teal-600  dark:text-white">
-                        <tr>
-                            <th scope="col" class="px-6 py-3">Patient Name</th>
-                            <th scope="col" class="px-6 py-3">Phone Number</th>
-                            <th scope="col" class="px-6 py-3">Date</th>
-                            <th scope="col" class="px-6 py-3">Time</th>
-                            <th scope="col" class="px-6 py-3">Status</th>
-                            <th scope="col" class="px-6 py-3"></th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white border">
-                        @foreach ($appointments as $appointment)
-                            <tr class="border-b text-black hover:bg-teal-200">
-                                <td class="px-6 py-4">{{ $appointment->patient_name }}</td>
-                                <td class="px-6 py-4">{{ $appointment->phone }}</td>
-                                <td class="px-6 py-4">{{ Carbon::parse($appointment->date)->format('F j, Y') }}</td>
-                                <td class="px-6 py-4">{{ $appointment->time }}</td>
-                                <td class="px-6 py-4">
-                                    @php
-                                        $buttonClass = match (strtolower($appointment->status)) {
-                                            'cancelled',
-                                            'delete'  => 'bg-red-600 hover:bg-red-700', // Red for cancelled states
-                                            'approved'=> 'bg-green-600 hover:bg-green-700',
-                                            'pending' => 'bg-orange-600 hover:bg-orange-700',
-                                            'attended'=> 'bg-blue-600 hover:bg-blue-700',
-                                            'unattended' => 'bg-red-600 hover:bg-red-700', // You can adjust as needed
-                                            default   => 'bg-gray-600 hover:bg-gray-700',
-                                        };
-                                    @endphp
-                                    <span class="px-2 py-1 font-semibold leading-tight {{ $buttonClass }} rounded-full text-white">
-                                        {{ ucfirst($appointment->status) }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    @php
-                                        $status = strtolower($appointment->status);
-                                    @endphp
-                                    @if ($status === 'cancelled')
-                                        <!-- If cancelled, show text -->
-                                        <span class="text-red-600 font-bold">Cancelled</span>
-                                    @elseif ($status === 'unattended')
-                                        <!-- If unattended, show Reschedule button -->
-                                        <button data-modal-target="reschedule-appointment-modal-{{ $appointment->id }}"
-                                            data-modal-toggle="reschedule-appointment-modal-{{ $appointment->id }}"
-                                            class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold p-2 rounded-xl shadow-lg">
-                                            Reschedule
-                                        </button>
 
-                                        <!-- Reschedule Modal Markup -->
-                                        <div id="reschedule-appointment-modal-{{ $appointment->id }}" class="modal hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                                            <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full relative">
-                                                <h2 class="text-xl font-bold mb-4">Reschedule Appointment</h2>
-                                                <form action="{{ route('appointments.reschedule', ['id' => $appointment->id]) }}" method="POST" id="rescheduleForm-{{ $appointment->id }}">
-                                                    @csrf
-                                                    @method('PUT')
+                <div class="justify-center ">
+                    <div class="border-2 border-teal-500 p-2 rounded-lg relative animate-border" id="divborder">
+                        <div class="bg-teal-500 w-full text-center text-3xl text-white p-4 font-bold rounded-t-lg">
+                            APPOINTMENT CALENDAR
+                        </div>
+                        <div class="bg-teal-200 p-4 content-center rounded-b-lg shadow-lg flex flex-wrap gap-1 sm:grid sm:grid-cols-7"
+                            id="calendar">
+                            <div
+                                class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
+                                Sun</div>
+                            <div
+                                class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
+                                Mon</div>
+                            <div
+                                class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
+                                Tue</div>
+                            <div
+                                class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
+                                Wed</div>
+                            <div
+                                class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
+                                Thu</div>
+                            <div
+                                class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
+                                Fri</div>
+                            <div
+                                class="text-center font-bold text-base text-gray-700 uppercase tracking-wide bg-gray-200 p-2 rounded">
+                                Sat</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                                                    <!-- Hidden Fields for Existing Data -->
-                                                    <input type="hidden" name="phone" value="{{ $appointment->phone }}">
-                                                    <input type="hidden" name="appointment_reason" value="{{ $appointment->appointment_reason }}">
 
-                                                    <!-- Date Picker -->
-                                                    <div class="mb-4">
-                                                        <label for="reschedule-date-{{ $appointment->id }}" class="block text-md font-medium text-gray-900">Select New Date</label>
-                                                        <input type="date" id="reschedule-date-{{ $appointment->id }}" name="selectedDate" class="mt-1 block w-full border-gray-300 rounded-md" required onchange="handleDateSelection({{ $appointment->id }})" min="{{ date('Y-m-d') }}">
-                                                    </div>
+            <div
+                class="relative flex my-10 flex-col w-full h-full  text-gray-700 bg-teal-50 border-2 border-teal-500 shadow-md rounded-xl bg-clip-border">
+                <div
+                    class="relative mx-4 mt-4 overflow-hidden shadow-lg text-gray-700 p-4 bg-teal-100 rounded-lg border-2 border-teal-500 bg-clip-border">
+                    <div class="flex items-center justify-between gap-8 mb-8">
+                        <div>
+                            <h5
+                                class="block text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+                                Appointments List
+                            </h5>
+                            <p class="block mt-1 text-base antialiased font-normal leading-relaxed text-gray-700">
+                                See information about all appointments
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+                        <div class="block w-full overflow-hidden md:w-max">
+                            <nav class="flex items-center gap-3">
+                                <input type="date" id="dateFilter" onchange="filterDate()"
+                                    class="h-full rounded-[7px]  border-teal-600 border-4 bg-teal-50 px-3 py-2.5 text-sm font-normal text-blue-gray-700 outline-none transition-all focus:border-2 focus:border-teal-600">
 
-                                                    <!-- Hidden Input for Time -->
-                                                    <input type="hidden" name="time" id="reschedule-time-{{ $appointment->id }}">
+                                <div class="flex">
+                                    <button onclick="resetFilter()"
+                                        class="px-4 py-3 text-white bg-teal-600 rounded-lg shadow-md transition-all hover:bg-teal-700">
+                                        Reset
+                                    </button>
+                                </div>
+                            </nav>
+                        </div>
 
-                                                    <!-- Time Slots Selection -->
-                                                    <div id="time-slots-{{ $appointment->id }}" class="flex flex-wrap gap-2 mt-4">
-                                                        <!-- Time slots will be dynamically populated here -->
-                                                    </div>
 
-                                                    <!-- Submit Button -->
-                                                    <button type="submit"
-                                                        class="inline-flex items-center justify-center rounded-md border border-transparent px-4 py-2 bg-teal-600 font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none transition ease-in-out duration-150 text-md">
-                                                        <i class="fa-solid fa-check-circle mr-2"></i>
-                                                        Reschedule Appointment
-                                                    </button>
-                                                </form>
-                                                <button class="absolute top-0 right-0 m-4 text-gray-500 hover:text-gray-700" onclick="closeRescheduleModal({{ $appointment->id }})">&times;</button>
+                        <div class="w-full md:w-72">
+                            <div class="relative h-10 w-full min-w-[200px]">
+                                <div
+                                    class="absolute grid w-5 h-5 top-2/4 right-3 -translate-y-2/4 place-items-center text-blue-gray-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="w-5 h-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z">
+                                        </path>
+                                    </svg>
+                                </div>
+
+                                <input oninput="filterAppointments()" id="searchInput"
+                                    class="peer h-full w-full rounded-[7px]  border-teal-600 border-4 bg-teal-50 px-3 py-2.5 !pr-9 text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-teal-600 focus:border-2 focus:border-teal-600 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                                    placeholder=" " />
+
+
+                                <label
+                                    class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-teal-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-teal-600 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-teal-600 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                                    Search
+                                </label>
+
+                                <script></script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 px-0  overflow-x-auto">
+
+                    <table class="w-full mt-4  text-left table-auto min-w-max">
+                        <thead>
+                            <tr>
+                                <th
+                                    class="p-4 border-r-0 border-l-0 bg-teal-100 border-2 border-teal-600 bg-blue-gray-50/50">
+                                    <p class="flex text-lg justify-center font-semibold text-teal-600 leading-none ">
+                                        Date
+                                    </p>
+                                </th>
+                                <th
+                                    class="p-4 border-r-0 border-l-0 bg-teal-100 border-2 border-teal-600 bg-blue-gray-50/50">
+                                    <p class="block text-lg  font-semibold text-teal-600 leading-none ">
+                                        Time Slot
+                                    </p>
+                                </th>
+                                <th
+                                    class="p-4 border-r-0 border-l-0 bg-teal-100 border-2 border-teal-600 bg-blue-gray-50/50">
+                                    <p class="block text-lg  font-semibold text-teal-600 leading-none ">
+                                        Max Slot
+                                    </p>
+                                </th>
+                                <th
+                                    class="p-4 border-r-0 border-l-0 bg-teal-100 border-2 border-teal-600 bg-blue-gray-50/50">
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointmentsTableBody">
+                            @foreach ($allData as $slots)
+                                @php
+                                    $appointmentExists = App\Models\Appointment::where('date', $slots->date)
+                                        ->where('time', $slots->time_slot)
+                                        ->whereIn('status', ['Pending', 'Approved', 'Attended', 'Unattended'])
+                                        ->exists();
+
+                                    $remainingSlots =
+                                        $slots->remaining_slots ??
+                                        $slots->max_slots -
+                                            App\Models\Appointment::where('date', $slots->date)
+                                                ->where('time', $slots->time_slot)
+                                                ->whereIn('status', ['Pending', 'Approved'])
+                                                ->count();
+                                @endphp
+
+                                <tr data-date="{{ Carbon::parse($slots->date)->format('F j, Y') }}">
+                                    <td class="p-4 border-b border-teal-100">
+                                        <div class="flex items-center justify-center gap-3">
+                                            <img src="{{ Auth::user()->image_path ? asset('storage/' . Auth::user()->image_path) : asset('images/logo.png') }}"
+                                                alt="Avatar"
+                                                class="relative shadow-lg inline-block h-9 w-9 !rounded-full object-cover object-center" />
+                                            <div class="flex flex-col">
+                                                <p
+                                                    class="block text-md antialiased font-normal leading-normal text-blue-gray-900">
+                                                    {{ Carbon::parse($slots->date)->format('F j, Y') }}
+                                                </p>
                                             </div>
                                         </div>
-                                    @elseif ($status === 'attended')
-                                        <!-- If attended, show Completed text in blue -->
-                                        <span class="text-blue-600 font-bold">Completed</span>
-                                    @else
-                                        <!-- Default action: show Cancel button -->
-                                        <button data-modal-target="update-appointment-modal-{{ $appointment->id }}"
-                                            data-modal-toggle="update-appointment-modal-{{ $appointment->id }}"
-                                            class="bg-red-500 hover:bg-red-700 text-white font-bold p-2 rounded-xl shadow-lg">
-                                            Cancel
-                                        </button>
-                                        <x-modal modalId="update-appointment-modal-{{ $appointment->id }}" title="Cancel this Appointment?"
-                                            message="Are you sure you want to cancel this appointment?"
-                                            route="{{ route('appointments.cancel', ['id' => $appointment->id]) }}"
-                                            method="PUT" buttonText="Cancel" />
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                    </td>
+                                    <td class="p-4 border-b border-teal-100">
+                                        <div class="flex flex-col">
+                                            <p
+                                                class="block text-md antialiased font-normal leading-normal text-blue-gray-900">
+                                                {{ $slots->time_slot }}
+                                            </p>
+                                        </div>
+                                    </td>
+                                    <td class="p-4 border-b border-teal-100">
+                                        <div class="w-max">
+                                            <div
+                                                class="relative grid items-center px-2 py-1 text-md font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
+                                                <span>{{ $remainingSlots }} Slots Remaining</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="p-4 border-b w-full flex justify-center border-teal-100">
+                                        @if (!$appointmentExists)
+                                            <a href="{{ route('patient.bookappointment', ['id' => $slots->id]) }}"
+                                                class="relative flex p-2 bg-teal-500 flex-row space-x-2 items-center justify-center h-12 w-44 select-none rounded-lg text-center align-middle text-xs font-medium uppercase hover:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
+                                                <i class="fa-solid fa-pen fa-lg text-white"></i>
+                                                <span class="mt-1 text-lg font-semibold text-white">CREATE</span>
+                                            </a>
+                                        @else
+                                            <a href="{{ route('history') }}"
+                                                class="flex flex-col items-center text-center px-5 py-2 text-white bg-teal-600 rounded-lg hover:bg-teal-700 transition">
+                                                <span class="text-lg font-semibold">Appointment Already Set</span>
+                                                <div class="flex flex-row items-center justify-center mt-1">
+                                                    <p class="text-sm text-gray-200 mx-2">Click to view</p>
+                                                    <i class="fa-solid fa-arrow-right mt-0.5"></i>
+                                                </div>
+                                            </a>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+
+                        </tbody>
+
+                    </table>
+                </div>
+
             </div>
         </div>
+
+
     </body>
 
     </html>
 
     <script>
-        function handleDateSelection(appointmentId) {
-            const dateInput = document.getElementById(`reschedule-date-${appointmentId}`);
-            const timeSlotsContainer = document.getElementById(`time-slots-${appointmentId}`);
+        function resetFilter() {
+            document.getElementById("dateFilter").value = "";
+            filterDate();
+        }
 
-            if (dateInput.value) {
-                // Fetch available time slots for the selected date
-                fetch(`{{ route('appointments.available-slots') }}?date=${dateInput.value}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        timeSlotsContainer.innerHTML = ''; // Clear previous slots
-
-                        if (data.length > 0) {
-                            data.forEach(slot => {
-                                if (slot.remaining_slots > 0) {
-                                    const button = document.createElement('button');
-                                    button.type = 'button';
-                                    button.className = 'appointment-button px-4 py-2 text-md shadow-lg font-medium text-gray-900 bg-gray-100 border border-gray-800 rounded-lg hover:bg-teal-600 hover:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none';
-                                    button.dataset.time = slot.time_slot;
-                                    button.textContent = `${slot.time_slot} (${slot.remaining_slots} slots left)`;
-                                    button.onclick = () => selectRescheduleTime(button);
-                                    timeSlotsContainer.appendChild(button);
-                                }
-                            });
-                        } else {
-                            // Display a message if no slots are available
-                            const noSlotsMessage = document.createElement('div');
-                            noSlotsMessage.className = 'flex items-center space-x-2';
-                            noSlotsMessage.innerHTML = `
-                                <i class="fa-solid fa-xmark text-red-500 text-2xl"></i>
-                                <p class="text-lg font-bold text-teal-600">
-                                    No available time slots for ${dateInput.value}
-                                </p>
-                            `;
-                            timeSlotsContainer.appendChild(noSlotsMessage);
-                        }
-
-                        timeSlotsContainer.classList.remove('hidden');
-                    })
-                    .catch(error => {
-                        console.error('Error fetching time slots:', error);
-                    });
-            } else {
-                timeSlotsContainer.classList.add('hidden');
+        function filterAppointments() {
+            let input = document.getElementById("searchInput").value.toLowerCase();
+            let tableBody = document.getElementById("appointmentsTableBody");
+            let rows = tableBody.getElementsByTagName("tr");
+            for (let row of rows) {
+                let text = row.textContent.toLowerCase();
+                row.style.display = text.includes(input) ? "" : "none";
             }
         }
-    </script>
 
-    <script>
+        function filterDate() {
+            let dateValue = document.getElementById("dateFilter").value;
+            console.log("Selected Date:", dateValue);
+            let tableBody = document.getElementById("appointmentsTableBody");
+            let rows = tableBody.getElementsByTagName("tr");
+
+            for (let row of rows) {
+                let rowDateText = row.getAttribute("data-date");
+                let rowDate = convertDate(rowDateText);
+                console.log(`Row Date (Converted): ${rowDate} | Original: ${rowDateText}`);
+
+                if (!dateValue || rowDate === dateValue) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            }
+        }
+
+        function convertDate(dateString) {
+            let dateObj = new Date(dateString);
+            if (isNaN(dateObj)) {
+                console.log(`⚠️ Invalid date format: ${dateString}`);
+                return "";
+            }
+
+            let year = dateObj.getFullYear();
+            let month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
+            let day = dateObj.getDate().toString().padStart(2, "0");
+
+            return `${year}-${month}-${day}`;
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const checkboxes = document.querySelectorAll(".checkbox-item");
+            const clearButton = document.getElementById("clear-checkboxes");
+
+            checkboxes.forEach((checkbox) => {
+                checkbox.addEventListener("change", function() {
+                    let checkedBoxes = document.querySelectorAll(".checkbox-item:checked");
+
+                    if (checkedBoxes.length > 3) {
+                        this.checked = false;
+                        alert("You can only select up to 3 checkboxes.");
+                    }
+                });
+            });
+
+            clearButton.addEventListener("click", function(event) {
+                event.preventDefault();
+                checkboxes.forEach(checkbox => checkbox.checked = false);
+            });
+        });
+
         function selectAppointmentTime(button) {
             const selectedTime = button.getAttribute('data-time');
             document.getElementById('time').value = selectedTime;
@@ -506,28 +423,103 @@
             button.classList.add('bg-teal-600', 'text-white');
         }
 
-        function selectRescheduleTime(button) {
-            const selectedTime = button.getAttribute('data-time');
-            // Retrieve the appointment ID from the modal's ID
-            const modalId = button.closest('.modal').id.split('-').pop();
-            document.getElementById(`reschedule-time-${modalId}`).value = selectedTime;
+        function fetchAppointments(selectedDate) {
+            console.log("Fetching appointments for:", selectedDate);
 
-            // Highlight the selected time slot only within the reschedule modal
-            document.querySelectorAll(`#time-slots-${modalId} .appointment-button`).forEach(btn => {
-                btn.classList.remove('bg-teal-600', 'text-white');
-                btn.classList.add('bg-gray-100', 'text-gray-900');
-            });
-            button.classList.remove('bg-gray-100', 'text-gray-900');
-            button.classList.add('bg-teal-600', 'text-white');
+            fetch(`/appointments/${selectedDate}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch appointments");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Fetched Appointments Data:", data); // Debugging output
+                    updateAppointmentsTable(data);
+                })
+                .catch(error => {
+                    console.error("Error fetching appointments:", error);
+                    document.getElementById("appointmentsTableBody").innerHTML =
+                        `<tr><td colspan="4" class="text-center p-4 text-red-500">Failed to load appointments.</td></tr>`;
+                });
         }
 
+        function updateAppointmentsTable(appointments) {
+            const tableBody = document.getElementById("appointmentsTableBody");
+            tableBody.innerHTML = ""; // Clear existing rows
+
+            // If no appointments are available, show a message
+            if (!appointments || appointments.length === 0) {
+                tableBody.innerHTML =
+                    `<tr><td colspan="4" class="text-center p-4 text-gray-500">No appointments available.</td></tr>`;
+                return;
+            }
+
+            console.log(appointments); // Debugging: Log the appointments array
+
+            // Loop through each appointment slot
+            appointments.forEach(slot => {
+                const appointmentExists = slot.appointment_exists; // Check if an appointment exists
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td class="p-4 border-b border-teal-100">
+                        <div class="flex items-center justify-center gap-3">
+                            <img src="/images/logo.png" alt="Logo"
+                                class="relative shadow-lg inline-block h-9 w-9 rounded-full object-cover object-center" />
+                            <div class="flex flex-col">
+                                <p class="block text-md antialiased font-normal leading-normal text-blue-gray-900">
+                                    ${new Date(slot.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                                </p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-4 border-b border-teal-100">
+                        <div class="flex flex-col">
+                            <p class="block text-md antialiased font-normal leading-normal text-blue-gray-900">
+                                ${slot.time_slot}
+                            </p>
+                        </div>
+                    </td>
+                    <td class="p-4 border-b border-teal-100">
+                        <div class="w-max">
+                            <div class="relative grid items-center px-2 py-1 text-md font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
+                                <span>${slot.remaining_slots} Slots Remaining</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-4 border-b w-full flex justify-center border-teal-100">
+                        ${!appointmentExists ? 
+                            `<a href="/patient/bookappointment/${slot.id}" 
+                                        class="relative flex p-2 bg-teal-500 flex-row space-x-2 items-center justify-center h-12 w-44 select-none rounded-lg text-center align-middle text-xs font-medium uppercase hover:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
+                                        <i class="fa-solid fa-pen fa-lg text-white"></i>
+                                        <span class="mt-1 text-lg font-semibold text-white">CREATE</span>
+                                    </a>`
+                            :
+                            `<a href="/patient/history">
+                                        <span class="px-5 py-2 text-white bg-teal-600 rounded-lg flex flex-col items-center text-center hover:bg-teal-700 transition">
+                                            <span class="text-lg font-semibold">Appointment Already Set</span>
+                                            <div class="flex flex-row items-center justify-center mt-1">
+                                                <p class="text-sm text-gray-200 mx-2">Click to view</p>
+                                                <i class="fa-solid fa-arrow-right mt-0.5"></i>
+                                            </div>
+                                        </span>
+                                    </a>`
+                        }
+                    </td>
+                `;
+
+                console.log(appointmentExists); // Debugging: Log if an appointment exists
+                tableBody.appendChild(row);
+            });
+        }
 
         document.addEventListener("DOMContentLoaded", function() {
             const appointments = @json($appointments);
+            var remainingSlotsByDate = @json($remainingSlotsByDate);
             const calendar = document.querySelector('#calendar');
             const monthSelect = document.getElementById('monthSelect');
             const yearSelect = document.getElementById('yearSelect');
-
             const currentDate = new Date();
             const currentMonth = currentDate.getMonth();
             const currentYear = currentDate.getFullYear();
@@ -549,23 +541,21 @@
                 const firstDayOfMonth = new Date(year, month, 1).getDay();
                 const daysInMonth = new Date(year, month + 1, 0).getDate();
                 const today = new Date();
-
                 const isSmallScreen = window.matchMedia("(max-width: 640px)").matches;
-
                 calendar.innerHTML = ""; // This removes previous months if the function is run multiple times
-
                 if (isSmallScreen) {
                     const listContainer = document.createElement("ul"); // List for better structure
                     listContainer.className = "space-y-2 w-full";
 
                     for (let day = 1; day <= daysInMonth; day++) {
-                        const currentDate = new Date(year, month, day);
+                        const currentDate = new Date(Date.UTC(year, month, day));
+                        const dateString = currentDate.toISOString().split("T")[0];
 
                         const dayOfWeek = currentDate.getDay();
                         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
                             "Saturday"
                         ];
-                        const dayName = daysOfWeek[dayOfWeek]; // Convert index to day name
+                        const dayName = daysOfWeek[dayOfWeek];
 
                         const listItem = document.createElement("li");
                         listItem.className =
@@ -591,72 +581,220 @@
                         listItem.appendChild(dateText);
 
                         listItem.addEventListener("click", () => {
-                            // const modal = document.getElementById("modal");
                             const modalDate = document.getElementById("selectedDate");
-                            const hiddenmodalDate = document.getElementById("hiddenselectedDate");
-
-                            if (!hiddenmodalDate) {
-                                console.error("Hidden input field 'hiddenselectedDate' not found.");
+                            fetchAppointments(dateString);
+                            if (!modalDate) {
+                                console.error("selecter'hiddenselectedDate' not found.");
                                 return;
                             }
 
+
+                            console.log(modalDate);
                             modalDate.innerText = `Selected Date: ${dayName}, ${formattedDate}`;
                             hiddenmodalDate.value = formattedDate;
+                            console.log("Selected Date:", formattedDate);
                             document.getElementById("dateForm").submit();
-
-                            // modal.classList.remove("hidden");
-                            // modal.classList.add("block");
                         });
 
                         listContainer.appendChild(listItem);
                     }
 
                     calendar.appendChild(listContainer);
-                } else {
+                } else { // FOR DESKTOP VIEW
                     calendar.innerHTML = `
-                     <div class="hidden sm:block text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Sun</div>
-                    <div class="hidden sm:block text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Mon</div>
-                    <div class="hidden sm:block text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Tue</div>
-                    <div class="hidden sm:block text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Wed</div>
-                    <div class="hidden sm:block text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Thu</div>
-                    <div class="hidden sm:block text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Fri</div>
-                    <div class="hidden sm:block text-center font-bold text-base text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Sat</div>
-                `;
+                        
+                        <div class="hidden sm:block mb-4 text-center font-bold text-lg text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Sun</div>
+                        <div class="hidden sm:block mb-4 text-center font-bold text-lg text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Mon</div>
+                        <div class="hidden sm:block mb-4 text-center font-bold text-lg text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Tue</div>
+                        <div class="hidden sm:block mb-4 text-center font-bold text-lg text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Wed</div>
+                        <div class="hidden sm:block mb-4 text-center font-bold text-lg text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Thu</div>
+                        <div class="hidden sm:block mb-4 text-center font-bold text-lg text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Fri</div>
+                        <div class="hidden sm:block mb-4 text-center font-bold text-lg text-white uppercase tracking-wide bg-teal-500 p-2 rounded-md">Sat</div>
+                    `;
 
 
-                    // Add a wrapper div for scrolling effect
                     const scrollWrapper = document.createElement("div");
                     scrollWrapper.className =
                         "sm:grid sm:grid-cols-7 gap-2 overflow-x-auto flex flex-row sm:flex-wrap w-full";
 
+                    const daysInPrevMonth = new Date(year, month, 0).getDate();
+
                     for (let i = 0; i < firstDayOfMonth; i++) {
+                        const prevDate = daysInPrevMonth - (firstDayOfMonth - 1) +
+                            i; // Calculate previous month's last dates
                         const emptySlot = document.createElement('div');
-                        emptySlot.className = "w-full rounded-lg border-teal-400 bg-teal-500 shadow-lg border-2";
+                        emptySlot.className =
+                            "hidden sm:flex flex-col items-center justify-center bg-teal-700 opacity-60 shadow-lg border-l-4 border-teal-500 rounded-lg text-2xl font-semibold text-white transition-all duration-300 hover:bg-teal-300 hover:text-gray-700 cursor-pointer shadow-md w-full h-16 sm:h-20 md:h-18 lg:h-28 xl:h-24 2xl:h-28"; // Style previous dates
+                        emptySlot.innerText = prevDate;
                         calendar.appendChild(emptySlot);
                     }
 
+
                     for (let day = 1; day <= daysInMonth; day++) {
                         const daySlot = document.createElement('div');
-                        const currentDate = new Date(year, month, day);
+                        const currentDate = new Date(Date.UTC(year, month, day));
+                        const dateString = currentDate.toISOString().split("T")[0];
+
+                        const totalSlots = remainingSlotsByDate[dateString] || 0;
+                        const appointment = appointments.find(app => app.date === dateString);
+
+
+                        var bgColor = "bg-white";
+                        var borderColor = "border-teal-500";
+                        var textColor = "text-teal-700";
+                        var tooltipText = "No appointment";
+
+
                         daySlot.className =
-                            "hidden sm:flex flex-col items-center justify-center bg-white shadow-lg border-l-4 border-teal-500 rounded-lg text-xl font-semibold text-teal-700 transition-all duration-300 hover:bg-teal-100 hover:text-gray-700 cursor-pointer shadow-md w-full h-16 sm:h-20 md:h-18 lg:h-28 xl:h-24 2xl:h-28";
+                            `hidden sm:flex flex-col items-center justify-center shadow-lg border-l-4 rounded-lg text-xl font-semibold transition-all duration-300 hover:bg-teal-100 hover:text-gray-700 cursor-pointer shadow-md w-full h-16 sm:h-20 md:h-18 lg:h-28 xl:h-24 2xl:h-28 ${bgColor} ${borderColor} ${textColor}`;
+                        daySlot.title = tooltipText;
 
-
+                        // DAY NUMBER ELEMENTS
                         const dayNumber = document.createElement('span');
-                        dayNumber.className = "xl:text-3xl lg:text-2xl font-bold";
+                        dayNumber.className = "text-center xl:text-3xl lg:text-2xl font-bold";
                         dayNumber.innerText = day;
+
+                        daySlot.addEventListener("click", function() {
+                            const tableBody = document.getElementById("appointmentsTableBody");
+
+                            if (tableBody) {
+                                tableBody.innerHTML = "";
+                            }
+
+                            fetchAppointments(dateString);
+                        });
+
+                        const slotsContainer = document.createElement('div');
+                        slotsContainer.className = "text-sm text-black font-light flex flex-col items-center";
+
+                        if (totalSlots > 0) {
+                            const slotsDropdownContainer = document.createElement('div');
+                            slotsDropdownContainer.className = "relative inline-block";
+
+                            const toggleButton = document.createElement('button');
+                            toggleButton.type = "button";
+                            toggleButton.className =
+                                "bg-teal-600 text-white shadow-lg mt-2 font-semibold px-4 py-2 rounded-lg focus:outline-none";
+
+                            toggleButton.innerHTML = `
+                                <span class="hidden lg:inline">Slots Availability</span>
+                                <i class='fas fa-chevron-down ml-2'></i>
+                            `;
+
+
+                            const slotsInfoContainer = document.createElement('div');
+                            slotsInfoContainer.className =
+                                "absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-lg p-4 hidden";
+
+                            const icon = document.createElement('i');
+                            icon.className = "fas fa-circle-check text-lg text-teal-600 mr-2";
+
+                            // Create text span
+                            const totalSlotsInfo = document.createElement('span');
+                            totalSlotsInfo.className = "font-semibold text-lg text-teal-800";
+                            totalSlotsInfo.innerText = `Available: ${totalSlots}`;
+
+                            slotsInfoContainer.appendChild(icon);
+                            slotsInfoContainer.appendChild(totalSlotsInfo);
+
+                            slotsDropdownContainer.appendChild(toggleButton);
+                            slotsDropdownContainer.appendChild(slotsInfoContainer);
+
+                            slotsContainer.appendChild(slotsDropdownContainer);
+
+                            toggleButton.addEventListener('click', (event) => {
+                                event.stopPropagation();
+                                event.preventDefault();
+                                const isHidden = slotsInfoContainer.classList.contains('hidden');
+                                slotsInfoContainer.classList.toggle('hidden', !isHidden);
+                                toggleButton.innerHTML = isExpanded ?
+                                    `<span class="hidden lg:inline">Hide Slot</span> <i class='fas fa-chevron-up ml-2'></i>` :
+                                    `<span class="hidden lg:inline">Slots Availability</span> <i class='fas fa-chevron-down ml-2'></i>`;
+
+                            });
+                        } else {
+                            const noSlotText = document.createElement('span');
+                            noSlotText.className = "font-semibold text-red-700"
+                            const icon = document.createElement('i');
+                            icon.className = "fas fa-exclamation-circle text-red-400 mx-2";
+                            noSlotText.innerHTML = `<span class="hidden lg:inline">No Slots Available</span>`;
+                            noSlotText.prepend(icon);
+                            slotsContainer.appendChild(noSlotText);
+                            bgColor = "bg-gray-100";
+                            borderColor = "border-teal-600";
+                            textColor = "text-teal-700";
+                            tooltipText = "No appointment";
+                        }
+
+
+                        if (appointment) {
+                            var isClickable = false;
+                            var cursorStyle = "cursor-not-allowed";
+                            var pointerEvents = "pointer-events-none"; // Prevents all interactions
+
+                            switch (appointment.status) {
+                                case "Attended":
+                                    bgColor = "bg-blue-300";
+                                    borderColor = "border-blue-700 border-2";
+                                    textColor = "text-blue-700";
+                                    tooltipText = "Attended";
+                                    isClickable = true;
+                                    break;
+                                case "Unattended":
+                                    bgColor = "bg-gray-300";
+                                    borderColor = "border-gray-700 border-2";
+                                    textColor = "text-gray-600";
+                                    tooltipText = "Unattended";
+                                    isClickable = true;
+                                    break;
+                                case "Pending":
+                                    bgColor = "bg-orange-300 hover:bg-orange-400";
+                                    borderColor = "border-orange-700 border-2";
+                                    textColor = "text-orange-600 font-semibold";
+                                    tooltipText = "Pending - Click to take action";
+                                    isClickable = true;
+                                    break;
+                                case "Cancelled":
+                                    bgColor = "bg-red-300";
+                                    borderColor = "border-red-600 border-2";
+                                    textColor = "text-red-600";
+                                    tooltipText = "Cancelled";
+                                    isClickable = true;
+                                    break;
+                                case "Approved":
+                                    bgColor = "bg-teal-200 hover:bg-teal-300";
+                                    borderColor = "border-teal-600 border-2";
+                                    textColor = "text-teal-600 font-semibold";
+                                    tooltipText = "Approved - Click to view details";
+                                    isClickable = true;
+                                    break;
+                                default:
+                                    bgColor = "bg-gray-200";
+                                    borderColor = "border-teal-600";
+                                    textColor = "text-teal-700";
+                                    tooltipText = "No appointment";
+                                    isClickable = false;
+                                    break;
+                            }
+
+                            if (isClickable) {
+                                cursorStyle = "cursor-pointer";
+                                pointerEvents = "pointer-events-auto";
+                            }
+
+                        }
+                        daySlot.className =
+                            `hidden sm:flex flex-col items-center justify-center shadow-lg border-l-4 rounded-lg text-xl font-semibold transition-all duration-300 hover:bg-teal-100 hover:text-gray-700 cursor-pointer shadow-md w-full h-16 sm:h-20 md:h-18 lg:h-28 xl:h-24 2xl:h-28 ${bgColor} ${borderColor} ${textColor} ${pointerEvents}`;
+                        daySlot.setAttribute("data-date", dateString);
                         daySlot.appendChild(dayNumber);
+                        dayNumber.appendChild(slotsContainer);
+                        calendar.appendChild(daySlot);
                         daySlot.addEventListener('click', (event) => {
                             event.preventDefault();
-
-                            // const modal = document.getElementById('modal');
                             const modalDate = document.getElementById('selectedDate');
                             const hiddenmodalDate = document.getElementById('hiddenselectedDate');
                             const targetSection = document.getElementById("dateformSection");
 
-
-
-                            // Check if the hidden input exists before updating it
                             if (!hiddenmodalDate) {
                                 console.error("Hidden input field 'hiddenselectedDate' not found.");
                                 return;
@@ -672,81 +810,18 @@
                             document.getElementById('hiddenselectedDate').value = formattedDate;
                             document.getElementById('dateForm').submit();
 
-
-                            // if (targetSection) {
-                            //     targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
-
-                            //     targetSection.classList.add("bg-yellow-100");
-                            //     setTimeout(() => {
-                            //         targetSection.classList.remove("bg-yellow-100");
-                            //     }, 1500);
-                            // }
-
-                            // modal.classList.remove('hidden');
-                            // modal.classList.add('block');
-
                         });
-                        window.onload = () => {
-                            const targetSection = document.getElementById("dateformSection");
-                            if (targetSection) {
-                                targetSection.scrollIntoView({
-                                    behavior: "smooth",
-                                    block: "start"
-                                });
-
-                                targetSection.classList.add("highlight");
-
-                                setTimeout(() => {
-                                    targetSection.classList.remove("highlight");
-                                }, 1500);
-                            }
-                        };
-
 
                         if (currentDate < today.setHours(0, 0, 0, 0)) {
                             daySlot.classList.remove("border-teal-500", "text-teal-700");
+                            daySlot.classList =
+                                "hidden sm:flex flex-col items-center justify-center shadow-lg border-l-4 rounded-lg text-xl font-semibold transition-all duration-300 hover:bg-teal-100 hover:text-gray-700 cursor-pointer shadow-md w-full h-16 sm:h-20 md:h-18 lg:h-28 xl:h-24 2xl:h-28 ${bgColor} ${borderColor} ${textColor}";
                             daySlot.classList.add("border-red-500", "bg-gray-300", "text-red-500", "relative",
                                 "cursor-not-allowed", "border-l-4");
 
-                            // Ensure the daySlot has position relative
                             daySlot.style.position = "relative";
 
-                            // Common styles for both diagonal lines
-                            const lineStyles = `
-                                position: absolute;
-                                top: 50%;
-                                left: 50%;
-                                width: 60%;
-                                height: 2px;
-                                opacity:40%;
-                                background-color: red;
-                                transform-origin: center;
-                            `;
-                            // Create the first diagonal line (/)
-                            let line1 = document.createElement("div");
-                            line1.style.cssText = lineStyles;
-                            line1.style.transform = "translate(-50%, -50%) rotate(45deg)";
-
-                            // Create the second diagonal line (\)
-                            let line2 = document.createElement("div");
-                            line2.style.cssText = lineStyles;
-                            line2.style.transform = "translate(-50%, -50%) rotate(-45deg)";
-                            daySlot.appendChild(line1);
-                            daySlot.appendChild(line2);
-                            daySlot.style.pointerEvents = "none";
                         }
-
-                        if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-                            daySlot.classList.add("text-black", "ring-4", "ring-green-500");
-
-                            const todayLabel = document.createElement('span');
-                            todayLabel.className =
-                                "text-sm font-bold text-white bg-green-500 px-2 py-0.5 rounded-md mt-1";
-                            todayLabel.innerText = "Today";
-
-                            daySlot.appendChild(todayLabel);
-                        }
-
                         daySlot.appendChild(dayNumber);
 
                         function formatTimeTo12Hour(time) {
@@ -767,45 +842,9 @@
                             return appDate.getDate() === day && appDate.getMonth() === month && appDate
                                 .getFullYear() === year;
                         });
-
-                        if (dailyAppointments.length > 0) {
-                            const appointmentList = document.createElement('div');
-
-                            let bgColor = "";
-                            switch (dailyAppointments[0].status) {
-                                case 'Pending':
-                                    bgColor = "bg-yellow-200 shadow-lg";
-                                    break;
-                                case 'Approved':
-                                    bgColor = "bg-blue-200 shadow-lg";
-                                    break;
-                                case 'Attended':
-                                    bgColor = "bg-green-200 shadow-lg";
-                                    break;
-                                case 'Unattended':
-                                    bgColor = "bg-red-200 shadow-lg";
-                                    break;
-                                default:
-                                    bgColor = "bg-gray-200 shadow-lg";
-                            }
-                            appointmentList.className =
-                                `${bgColor} mt-1 text-sm px-2 py-1 rounded-lg overflow-auto`;
-                            dailyAppointments.forEach(res => {
-                                const item = document.createElement('p');
-                                item.className = "text-gray-800 text-sm font-semibold";
-                                const formattedTime = formatTimeTo12Hour(res.time);
-                                item.innerText = `${res.status} - ${formattedTime}`;
-                                appointmentList.appendChild(item);
-                            });
-                            appointmentList.classList.add("relative");
-                            daySlot.appendChild(appointmentList);
-                        }
                         calendar.appendChild(daySlot);
                     }
                 }
-
-
-
             }
             window.addEventListener("resize", () => renderCalendar(new Date().getMonth(), new Date()
                 .getFullYear()));
@@ -833,16 +872,6 @@
                 opacity: 1;
                 transform: scale(1) translateY(0);
             }
-        }
-
-        #create-appointment-modal:target {
-            display: flex;
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        #create-appointment-modal:target .modal-content {
-            animation: modalFadeIn 2s ease-in;
         }
 
         @keyframes borderAnimation {
