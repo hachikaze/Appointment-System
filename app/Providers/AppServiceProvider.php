@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use App\Models\Appointment;
 use Illuminate\Support\ServiceProvider;
 
@@ -41,6 +42,14 @@ class AppServiceProvider extends ServiceProvider
                     'notifcount' => $notifcount
                 ]);
             }
+        });
+
+        Gate::define('view-logHistory', function ($user) {
+            return $user->user_type === 'admin';
+        });
+
+        Gate::define('view-users', function ($user) {
+            return $user->user_type === 'admin';
         });
     }
 }

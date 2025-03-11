@@ -21,8 +21,8 @@
         <div class="flex items-center space-x-3">
             <img src="/Images/doctor1.jpg" alt="User Avatar" class="h-9 w-9 rounded-full object-cover border-2 border-teal-200" />
             <div>
-                <span class="block text-teal-800 font-medium text-sm">John Doe</span>
-                <span class="block text-teal-500 text-xs">Administrator</span>
+                <span class="block text-teal-800 font-medium text-sm">{{ \Auth::user()->firstname }} {{ \Auth::user()->middleinitial }}. {{ \Auth::user()->lastname }}</span>
+                <span class="block text-teal-500 text-xs">@if (Auth::user()->user_type === 'admin') Administrator @else Staff @endif</span>
             </div>
         </div>
         <button type="button"
@@ -46,8 +46,8 @@
             </div>
             <img src="/Images/doctor1.jpg" alt="Admin Avatar" class="h-24 w-24 rounded-full object-cover border-4 border-teal-100 shadow" />
             <div class="mt-4 text-center">
-                <h2 class="text-lg font-semibold text-teal-800">John Doe</h2>
-                <p class="text-sm text-teal-500">Administrator</p>
+                <h2 class="text-lg font-semibold text-teal-800">{{ \Auth::user()->firstname }} {{ \Auth::user()->middleinitial }}. {{ \Auth::user()->lastname }}</h2>
+                <p class="text-sm text-teal-500">@if (Auth::user()->user_type === 'admin') Administrator @else Staff @endif</p>
             </div>
         </div>
         <!-- Navigation -->
@@ -160,25 +160,30 @@
                 </div>
             </div>
             <!-- Log History -->
-            <a href="#" class="flex items-center p-3 rounded-lg hover:bg-teal-50 hover:text-teal-600 text-gray-600 mb-1">
-                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z">
-                    </path>
-                </svg>
-                Log History
-            </a>
-            <!-- Users -->
-            <a href="{{ route('admin.users') }}" 
-                class="flex items-center p-3 rounded-lg hover:bg-teal-50 hover:text-teal-600 text-gray-600 mb-1
-                @if (request()->routeIs('admin.users')) bg-teal-50 text-teal-600 font-medium @endif">
-                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
-                    </path>
-                </svg>
-                Users
-            </a>
+            @can('view-logHistory')
+                <a href="{{ route('admin.log-history') }}" class="flex items-center p-3 rounded-lg hover:bg-teal-50 hover:text-teal-600 text-gray-600 mb-1">
+                    <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z">
+                        </path>
+                    </svg>
+                    Log History
+                </a>
+            @endcan
+
+            @can('view-users')
+                <!-- Users -->
+                <a href="{{ route('admin.users') }}" 
+                    class="flex items-center p-3 rounded-lg hover:bg-teal-50 hover:text-teal-600 text-gray-600 mb-1
+                    @if (request()->routeIs('admin.users')) bg-teal-50 text-teal-600 font-medium @endif">
+                    <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                        </path>
+                    </svg>
+                    Users
+                </a>
+            @endcan
         </nav>
         <!-- Logout at the bottom -->
         <div class="border-t border-teal-100 px-4 py-3">
