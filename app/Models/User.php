@@ -13,8 +13,6 @@ class User extends Authenticatable implements MustVerifyEmail
     /* The attributes that are mass assignable. */
     protected $table = 'users';
     protected $fillable = [
-        'id',
-        'name', // Add the name field to fillable
         'firstname',
         'middleinitial',
         'lastname',
@@ -115,5 +113,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function appointments()
     {
         return $this->hasMany(Appointment::class);
+    }
+
+    public function auditTrails()
+    {
+        return $this->hasMany(AuditTrail::class, 'user_id');
     }
 }

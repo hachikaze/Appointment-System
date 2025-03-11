@@ -54,12 +54,15 @@ class LoginController extends Controller
 
     public function create(Request $request)
     {
+        $user = null;
+
         // Redirect authenticated users to the dashboard
         if (Auth::check()) {
             $user = Auth::user(); // Use Auth::user() to get the authenticated user
 
             switch ($user->user_type) {
                 case 'admin':
+                case 'staff':
                     return redirect()->route('admin.dashboard');
                 case 'patient':
                     return redirect()->route('patient.dashboard');
@@ -68,7 +71,7 @@ class LoginController extends Controller
             }
         }
 
-        return view('login');
+        return view('login', compact('user'));
     }
 
     public function store(Request $request)
