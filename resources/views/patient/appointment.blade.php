@@ -13,30 +13,25 @@
             </div>
         @endif
 
-
         <form id="appointmentForm" action="{{ route('appointment.store') }}" method="POST" class="space-y-4">
             @csrf
             <div>
                 <label class="block font-semibold">Phone Number:</label>
                 <input type="text" name="phone" required class="w-full border p-2 rounded" maxlength="11">
             </div>
-
             <div>
                 <label class="block font-semibold">Doctor:</label>
                 <input type="text" name="doctor" value="Ana Fatima Barroso" readonly
                     class="w-full border p-2 rounded bg-gray-100">
             </div>
-
             <div>
                 <label class="block font-semibold">Preferred Date:</label>
                 <input type="date" name="date" required class="w-full border p-2 rounded">
             </div>
-
             <div>
                 <label class="block font-semibold">Preferred Time:</label>
                 <input type="time" name="time" required class="w-full border p-2 rounded">
             </div>
-
             <div>
                 <label class="block font-semibold">Reason for Appointment:</label>
                 <select name="appointments" required class="w-full border p-2 rounded">

@@ -16,6 +16,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Middleware\PreventBackHistory;
+use App\Http\Controllers\PatientRecordsExportController;
 use App\Http\Middleware\PreventUpdateOnSentMessages;
 use App\Mail\ForgotPassword;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -45,6 +46,7 @@ Route::get('/doctor', [HomeController::class, 'doctor'])->name('doctor');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/service', [HomeController::class, 'service'])->name('service');
 
+
 Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(function () {
     // FOR PATIENT USERS
     Route::middleware(['patientMiddleware'])->group(function () {
@@ -54,17 +56,48 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::get('/patient/notifications', [PatientController::class, 'notifications'])->name('notifications');
         Route::get('/patient/history', [PatientController::class, 'history'])->name('history');
         Route::get('/view-history/{appointmentId}', [PatientController::class, 'viewHistory'])->name('viewhistory');
-        Route::put('/patient/appointments/{id}', [PatientController::class, 'cancel'])->name('appointments.cancel');
+
+        Route::put('/patient/appointments/update/{id}', [PatientController::class, 'updateAppointment'])->name('appointments.update');
+        Route::put('/patient/appointments/cancel/{id}', [PatientController::class, 'cancelAppointment'])->name('appointments.cancel');
         Route::get('/patient/profile', [LoginController::class, 'profile'])->name('profile');
-        Route::put('patient/users/{id}', [LoginController::class, 'update'])->name('profile.update');
-        
-        //FOR RESCHEDULING
-        Route::get('/patient/appointments/available-slots', [PatientController::class, 'getAvailableSlots'])
-            ->name('appointments.available-slots');
-        Route::get('/get-available-slots', [PatientController::class, 'getAvailableSlots']);
-        Route::put('/patient/appointments/reschedule/{id}', [PatientController::class, 'reschedule'])
-            ->name('appointments.reschedule');
+        Route::put('/patient/users/{id}', [LoginController::class, 'update'])->name('profile.update');
+
+        Route::get('/patient/pricing', [PatientController::class, 'pricing'])->name('pricing');
+
+        //FOR GETTING MESSAGES
+        Route::get('/patient/messaging', [MessageController::class, 'getMessages'])->name('messages');
+
+        // REDIRECT TO BOOK APPOINTMENT
+        Route::get('/patient/bookappointment/{id}', [PatientController::class, 'bookappointment'])
+            ->name('patient.bookappointment');
+
+
+        //FOR GETTING REPLIES
+        Route::get('/patient/messages/{messageId}/replies', [MessageController::class, 'getReplies'])->name('messages.replies');
+
+        //FOR POSTING A MESSAGE
+        Route::post('/patient/messages/{messageId}/messages', [MessageController::class, 'postMessage'])->name('messages.create.post');
+
+        //FOR POSTING A REPLY
+        Route::post('/patient/messages/{messageId}/replies', [MessageController::class, 'postReply'])->name('messages.replies.post');
+        Route::get('/api/upcoming-appointment', [PatientController::class, 'getUpcomingAppointment']);
+
+        // FOR UPDATING THE READ_aT
+        Route::post('/update-seen-status/{id}', [MessageController::class, 'updateSeenStatus']);
+
+        // FOR FETCHING APPOINTMENTS
+        Route::get('/appointments/{date}', action: [PatientController::class, 'fetchAppointments']);
+
+
+        Route::post('/close-audit-modal', function (Request $request) {
+            session()->forget('audit_modal_open');
+            return response()->json(['message' => 'Audit modal session closed']);
+        })->name('close.audit.modal');
+
+        Route::post('/appointments/{id}/review', [PatientController::class, 'storeReview'])->name('appointments.review');
+        // Route::get('/appointments', [PatientController::class, 'getAppointments'])->name('appointments.get');
     });
+
 
     // FOR APPOINTMENT
     Route::get('/patient/appointment', function () {
@@ -169,18 +202,20 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         // Delete a specific patient record
         Route::delete('/admin/patient-records/{id}', [AdminPatientRecordsController::class, 'destroy'])
             ->name('admin.patient_records.destroy');
-        
-        // New routes for patient history
-        Route::get('/admin/patient-history/{email}', [AdminPatientRecordsController::class, 'patientHistory'])
-            ->name('admin.patient.history');
-        
-        Route::delete('/admin/patient-records/delete-all/{email}', [AdminPatientRecordsController::class, 'destroyAllByEmail'])
-            ->name('admin.patient_records.destroy_all');
-        
-        Route::get('/admin/appointment/{id}/view', [AdminPatientRecordsController::class, 'viewAppointment'])
-            ->name('admin.appointment.view');
 
-            
+        //FOR RESCHEDULING APPOINTMENTD
+        Route::get('/admin/appointments/slots', [ManageAppointmentController::class, 'getAvailableSlots'])
+        ->name('admin.appointments.slots');
+                    
+        Route::get('/get-available-slots', [ManageAppointmentController::class, 'getAvailableSlots']);
+
+        Route::put('/admin/appointments/reschedule/{id}', [ManageAppointmentController::class, 'reschedule'])
+        ->name('admin.appointments.reschedule');
+
+        //EXPORTING FILES
+        Route::get('/patient/export-pdf/{patientName}', [PatientRecordsExportController::class, 'exportPdf'])
+        ->name('patient.export.pdf');
+
     });
 });
 

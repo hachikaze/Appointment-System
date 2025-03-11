@@ -331,7 +331,7 @@
                 </td>
                 <!-- Time slot column -->
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-teal-900">
+                  <!-- <div class="text-sm text-teal-900">
                     @php
                     $timeSlot = $appointment->time_slot;
                     $times = explode(' - ', $timeSlot);
@@ -351,7 +351,48 @@
                       echo $timeSlot;
                     }
                     @endphp
+                  </div> -->
+
+                  <div class="text-sm text-teal-900">
+                    @php
+                      $timeSlot = $appointment->time_slot;
+                      $times = explode(' - ', $timeSlot);
+                      if (count($times) == 2) {
+                        // Check if the start time already contains "AM" or "PM"
+                        if (stripos($times[0], 'AM') !== false || stripos($times[0], 'PM') !== false) {
+                          // The stored times are in 12-hour format already.
+                          $startParts = explode(':', $times[0]);
+                          $startHour = (int) trim($startParts[0]);
+                          $startMinuteFormat = trim($startParts[1]); // e.g. "00 PM"
+                          $startFormat = strtoupper(trim(substr($startMinuteFormat, 2))); // extract "PM"
+                          
+                          $endParts = explode(':', $times[1]);
+                          $endHour = (int) trim($endParts[0]);
+                          $endMinuteFormat = trim($endParts[1]); // e.g. "00 PM"
+                          $endFormat = strtoupper(trim(substr($endMinuteFormat, 2))); // extract "PM"
+                          
+                          // In 12-hour format, keep the hour as is.
+                          $startHour12 = $startHour;
+                          $endHour12 = $endHour;
+                        } else {
+                          // Otherwise assume the times are in 24-hour (military) format and convert.
+                          $startTime = explode(':', trim($times[0]))[0];
+                          $endTime = explode(':', trim($times[1]))[0];
+                          $startHour = (int)$startTime;
+                          $endHour = (int)$endTime;
+                          $startFormat = $startHour < 12 ? 'AM' : 'PM';
+                          $endFormat = $endHour < 12 ? 'AM' : 'PM';
+                          $startHour12 = $startHour > 12 ? $startHour - 12 : ($startHour == 0 ? 12 : $startHour);
+                          $endHour12 = $endHour > 12 ? $endHour - 12 : ($endHour == 0 ? 12 : $endHour);
+                        }
+                        $timeSlot12h = sprintf('%d:00 %s - %d:00 %s', $startHour12, $startFormat, $endHour12, $endFormat);
+                        echo $timeSlot12h;
+                      } else {
+                        echo $timeSlot;
+                      }
+                    @endphp
                   </div>
+
                   <div class="text-xs text-teal-500">
                     @if($appointment->is_past_time && !$appointment->is_past_date)
                     <span class="text-red-500">(Past)</span>

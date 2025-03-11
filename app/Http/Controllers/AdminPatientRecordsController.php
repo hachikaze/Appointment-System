@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PatientRecords;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class AdminPatientRecordsController extends Controller
@@ -18,33 +19,33 @@ class AdminPatientRecordsController extends Controller
     {
         $search = $request->query('search', '');
         $perPage = $request->query('perPage', 10);
-        
-        // Build the base query
-        $query = PatientRecords::query();
-        
-        // Apply search filter if provided
-        if (!empty($search)) {
-            $query->where(function($q) use ($search) {
-                $q->where('patient_name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
-            });
-        }
-        
-        // Get unique patients (grouped by email)
-        $uniquePatients = $query->select(
-                'email',
-                DB::raw('MAX(id) as id'),
-                'patient_name',
-                'phone',
-                DB::raw('MAX(date) as last_appointment_date'),
-                DB::raw('COUNT(*) as appointment_count')
-            )
-            ->groupBy('email', 'patient_name', 'phone')
-            ->orderBy('last_appointment_date', 'desc')
+
+        // Fetch patients from the users table where user_type is 'patient'
+        $patients = User::select('id', 'firstname', 'middleinitial', 'lastname', 'user_type', 'email')
+            ->where('user_type', 'patient')
+            ->when($search, function ($query, $search) {
+                // Use SQLite string concatenation operator (||)
+                return $query->whereRaw("firstname || ' ' || middleinitial || ' ' || lastname like ?", ["%{$search}%"]);
+            })
+            ->orderBy('firstname', 'asc')
             ->paginate($perPage);
-        
-        return view('admin.patient_records', compact('uniquePatients', 'search'));
+
+        // Build an array of full names in the same format stored in the appointments table
+        $patientNames = $patients->map(function ($patient) {
+            return trim($patient->firstname . ' ' . $patient->middleinitial . ' ' . $patient->lastname);
+        })->toArray();
+
+        // Fetch all appointments for these patients (using the constructed full names)
+        $allRecords = PatientRecords::whereIn('patient_name', $patientNames)
+            ->where('status', 'Attended')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy('patient_name');
+
+        return view('admin.patient_records', [
+            'distinctPatients' => $patients,  
+            'allRecords'       => $allRecords,  
+        ]);
     }
     
     /**
@@ -89,7 +90,7 @@ class AdminPatientRecordsController extends Controller
             'time'         => 'required',
             'doctor'       => 'required|string|max:255',
             'appointments' => 'required|string|max:255',
-            // 'status'       => 'required|string|in:Pending,Approved,Attended,Unattended,Cancelled',
+            'status'       => 'required|string|in:Pending,Approved,Attended,Unattended,Cancelled',
         ]);
         
         $patient = PatientRecords::findOrFail($id);
@@ -105,6 +106,7 @@ class AdminPatientRecordsController extends Controller
      * @param  int  $id  Patient record ID
      * @return \Illuminate\Http\RedirectResponse
      */
+    
     public function destroy($id)
     {
         $patient = PatientRecords::findOrFail($id);
