@@ -336,6 +336,7 @@
                     $timeSlot = $appointment->time_slot;
                     $times = explode(' - ', $timeSlot);
                     if (count($times) == 2) {
+                      $times = explode(' - ', $timeSlot);
                       $startTime = explode(':', $times[0])[0];
                       $endTime = explode(':', $times[1])[0];
                       $startHour = (int)$startTime;
@@ -534,7 +535,7 @@
                 $timeSlot24h = sprintf('%02d:00 - %02d:00', $startHour, $endHour);
                 $timeSlot12h = sprintf('%d:00 %s - %d:00 %s', $startHour12, $startFormat, $endHour12, $endFormat);
               @endphp
-              <option value="{{ $timeSlot24h }}">{{ $timeSlot12h }}</option>
+              <option value="{{ $timeSlot12h }}">{{ $timeSlot12h }}</option>
             @endforeach
           </select>
           <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-teal-500">
@@ -641,7 +642,7 @@
                 $timeSlot24h = sprintf('%02d:00 - %02d:00', $startHour, $endHour);
                 $timeSlot12h = sprintf('%d:00 %s - %d:00 %s', $startHour12, $startFormat, $endHour12, $endFormat);
               @endphp
-              <option value="{{ $timeSlot24h }}">{{ $timeSlot12h }}</option>
+              <option value="{{ $timeSlot12h }}">{{ $timeSlot12h }}</option>
             @endforeach
           </select>
           <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-teal-500">
