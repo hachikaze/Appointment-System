@@ -14,7 +14,7 @@
     <script>
         function analyzeSentiment() {
             let text = document.getElementById("textInput").value;
-            fetch("http://127.0.0.1:5000/analyze", {
+            fetch("https://sentiment-analysis-ibst.onrender.com/analyze", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
