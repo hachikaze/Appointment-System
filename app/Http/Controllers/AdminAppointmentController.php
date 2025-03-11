@@ -70,6 +70,35 @@ class AdminAppointmentController extends Controller
     }
 
     // Store a new available appointment slot
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'date' => 'required|date',
+    //         'time_slot' => 'required|string',
+    //         'max_slots' => 'required|integer|min:1'
+    //     ]);
+        
+    //     $existingSlot = AvailableAppointment::where('date', $request->date)
+    //         ->where('time_slot', $request->time_slot)
+    //         ->first();
+        
+    //     if ($existingSlot) {
+    //         return redirect()->route('admin.appointments.create')
+    //             ->with('error', 'An appointment slot already exists for this date and time.')
+    //             ->withInput();
+    //     }
+        
+    //     AvailableAppointment::create([
+    //         'date' => $request->date,
+    //         'time_slot' => $request->time_slot,
+    //         'max_slots' => $request->max_slots,
+    //     ]);
+
+    //     return redirect()->route('admin.appointments.create')
+    //         ->with('success', 'Available appointment added successfully.');
+    // }
+
+    //12-HOUR FORMAT
     public function store(Request $request)
     {
         $request->validate([
@@ -77,26 +106,41 @@ class AdminAppointmentController extends Controller
             'time_slot' => 'required|string',
             'max_slots' => 'required|integer|min:1'
         ]);
-        
+
+        // Convert the time_slot to a 12-hour format with AM/PM.
+        // Assuming the input is a range like "14:00 - 15:00" or similar.
+        $timeSlot = $request->time_slot;
+        $times = explode(' - ', $timeSlot);
+
+        if (count($times) === 2) {
+            $startTime = date("g:i A", strtotime($times[0]));
+            $endTime   = date("g:i A", strtotime($times[1]));
+            $formattedTimeSlot = $startTime . " - " . $endTime;
+        } else {
+            $formattedTimeSlot = date("g:i A", strtotime($timeSlot));
+        }
+
         $existingSlot = AvailableAppointment::where('date', $request->date)
-            ->where('time_slot', $request->time_slot)
+            ->where('time_slot', $formattedTimeSlot)
             ->first();
-        
+
         if ($existingSlot) {
             return redirect()->route('admin.appointments.create')
                 ->with('error', 'An appointment slot already exists for this date and time.')
                 ->withInput();
         }
-        
+
         AvailableAppointment::create([
             'date' => $request->date,
-            'time_slot' => $request->time_slot,
+            'time_slot' => $formattedTimeSlot,
             'max_slots' => $request->max_slots,
         ]);
 
         return redirect()->route('admin.appointments.create')
             ->with('success', 'Available appointment added successfully.');
     }
+
+
 
     // Show edit form for an appointment slot
     public function edit($id)
@@ -288,20 +332,6 @@ class AdminAppointmentController extends Controller
         });
 
         return response()->json($formattedAppointments);
-    }
-
-    /**
-     * Get available appointment slots (for patient booking)
-     */
-    public function getAvailableSlots(Request $request)
-    {
-        $date = $request->input('date');
-
-        $availableSlots = AvailableAppointment::where('date', $date)
-            ->orderBy('time_slot', 'asc')
-            ->get();
-
-        return response()->json($availableSlots);
     }
 
     /**
