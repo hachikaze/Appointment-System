@@ -149,7 +149,6 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::put('/admin/appointments/{id}', [AdminAppointmentController::class, 'update'])->name('admin.appointments.update');
         Route::get('/admin/appointments/available-slots', [AdminAppointmentController::class, 'getAvailableSlots'])->name('admin.appointments.available-slots');
 
-
         // General appointments route
         Route::get('/admin/appointments', [AdminAppointmentController::class, 'index'])->name('admin.appointments.index');
 
@@ -163,15 +162,14 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::post('/admin/inventory/{id}/adjust', [InventoryController::class, 'adjustQuantity'])->name('admin.inventory.adjust');
         Route::post('/admin/inventory/order-critical', [InventoryController::class, 'orderCriticalItem'])->name('admin.inventory.order-critical');
         Route::put('/admin/inventory/categories/{category}', [InventoryController::class, 'updateCategory'])->name('admin.inventory.categories.update');
+        
         // Jez
         Route::post('/admin/inventory/record-usage', [InventoryController::class, 'recordUsage'])->name('admin.inventory.record-usage');
-
 
         // Category Management Routes - UPDATED
         Route::post('/admin/inventory/categories', [InventoryController::class, 'storeCategory'])->name('admin.inventory.categories.store');
         Route::delete('/admin/inventory/categories/{category}', [InventoryController::class, 'destroyCategory'])->name('admin.inventory.categories.destroy');
         Route::put('/admin/inventory/categories/{category}', [InventoryController::class, 'updateCategory'])->name('admin.inventory.categories.update');
-
 
         // JEZ
         Route::get('/admin/graphs/inventory', [\App\Http\Controllers\Admin\GraphController::class, 'inventoryGraphs'])->name('admin.graphs.inventory');

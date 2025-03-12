@@ -186,8 +186,16 @@
 
                                         @foreach ($notifications as $notifs)
                                                                                 <div
-                                                                                    class="m-4 p-3 bg-gradient-to-r from-blue-100 to-teal-100 justify-center  border border-teal-500 border-l-4 border-t-0 border-b-0 border-r-0 shadow-lg rounded-md">
+                                                                                    class="relative m-4 p-3 bg-gradient-to-r from-blue-100 to-teal-100 justify-center  border border-teal-500 border-l-4 border-t-0 border-b-0 border-r-0 shadow-lg rounded-md">
+                                                                                    <!-- Pulsating Background -->
+                                                                                    <span
+                                                                                        class="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-red-500 opacity-75 animate-ping"></span>
 
+                                                                                    <!-- Notification Badge -->
+                                                                                    <span
+                                                                                        class="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white text-sm font-bold shadow-md">
+                                                                                        1
+                                                                                    </span>
                                                                                     <div class="p-4 pl-0 text-start">
                                                                                         <p class="font-bold text-xl text-center text-teal-600">
                                                                                             <i

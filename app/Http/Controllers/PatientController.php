@@ -16,8 +16,6 @@ use function Pest\Laravel\get;
 use Illuminate\Support\Facades\File;
 use App\Models\Review;
 
-
-
 class PatientController extends Controller
 {
     public function index(Request $request)
@@ -48,8 +46,8 @@ class PatientController extends Controller
         $availableDates = AvailableAppointment::count();
         $currentAppointments = AvailableAppointment::whereDate('date', (Carbon::today()))->count();
         $cancelledAppointments = Appointment::where('status', 'Cancelled')
-        ->where('user_id', $user->id)
-        ->count();
+            ->where('user_id', $user->id)
+            ->count();
 
         $auditTrails = AuditTrail::where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
@@ -110,7 +108,7 @@ class PatientController extends Controller
             ->orderByRaw("time ASC")
             ->first();
 
-        $timeRange = $upcomingappointment->time ?? ''; 
+        $timeRange = $upcomingappointment->time ?? '';
         $times = explode(' - ', $timeRange);
 
         $start_time = $times[0] ?? null;
@@ -218,12 +216,12 @@ class PatientController extends Controller
         $now = Carbon::now();
 
         $appointments = AvailableAppointment::where(function ($query) use ($date, $now) {
-            $query->whereDate('date', '>', $now->toDateString()) 
+            $query->whereDate('date', '>=', $now->toDateString())
                 ->orWhere(function ($q) use ($now) {
-                    $q->whereDate('date', $now->toDateString()) 
-                        ->whereTime('time_slot', '>', $now->toTimeString()); 
+                    $q->whereDate('date', $now->toDateString())
+                        ->whereTime('time_slot', '>', $now->toTimeString());
                 });
-            })
+        })
             ->where('date', $date)
             ->get()
             ->map(function ($slot) use ($userEmail) {
@@ -255,10 +253,10 @@ class PatientController extends Controller
         $timezone = 'Asia/Singapore';
         $now = Carbon::now()->format('H:i:s');
 
-        $selectedDate = $request->input('hiddenselectedDate'); 
+        $selectedDate = $request->input('hiddenselectedDate');
         Log::info('Received Selected Date: ' . ($selectedDate ?? 'None'));
         if (!empty($selectedDate)) {
-            $selectedDate = date('Y-m-d', strtotime($selectedDate)); 
+            $selectedDate = date('Y-m-d', strtotime($selectedDate));
         } else {
             $selectedDate = null;
         }
@@ -281,21 +279,24 @@ class PatientController extends Controller
                 })
             : collect();
 
-        $now = Carbon::now('Asia/Manila')->format('Y-m-d H:i:s'); 
+
+        $now = Carbon::now('Asia/Manila')->format('Y-m-d H:i:s');
         $allData = AvailableAppointment::all()->filter(function ($slot) use ($now) {
             [$start, $end] = explode(' - ', $slot->time_slot);
             $date = Carbon::parse($slot->date)->format('Y-m-d'); // Ensure correct format
-        
+
             try {
                 $endDateTime = Carbon::createFromFormat('Y-m-d g:i A', "$date " . trim($end), 'Asia/Manila')
                     ->format('Y-m-d H:i:s');
             } catch (\Exception $e) {
                 dump("Error in conversion:", $slot->time_slot, $date, $end, $e->getMessage());
-                return false; 
+                return false;
             }
-            return $endDateTime > $now; 
+            return $endDateTime > $now;
         });
-        
+
+
+
         $remainingSlotsByDate = [];  //FOR SLOTS AVAILABILITY
         foreach ($allData as $appointment) {
             $date = $appointment['date'];
@@ -347,17 +348,17 @@ class PatientController extends Controller
         $userEmail = Auth::user()->email;
         $filterDate = $request->input('date');
         $filterStatus = $request->input('status');
-        $now = Carbon::now('Asia/Manila')->format('Y-m-d H:i:s'); 
+        $now = Carbon::now('Asia/Manila')->format('Y-m-d H:i:s');
 
         $appointments = Appointment::where('email', $userEmail)
-        ->when($filterDate, function ($query, $filterDate) {
-            return $query->whereDate('date', $filterDate);
-        })
-        ->when($filterStatus, function ($query, $filterStatus) {
-            return $query->where('status', $filterStatus);
-        })
-        ->select('id', 'patient_name', 'phone', 'date', 'time', 'status', 'appointments')
-        ->get();
+            ->when($filterDate, function ($query, $filterDate) {
+                return $query->whereDate('date', $filterDate);
+            })
+            ->when($filterStatus, function ($query, $filterStatus) {
+                return $query->where('status', $filterStatus);
+            })
+            ->select('id', 'patient_name', 'phone', 'date', 'time', 'status', 'appointments')
+            ->get();
 
         $isEmpty = $appointments->isEmpty();
 
@@ -366,26 +367,26 @@ class PatientController extends Controller
             ->get()
             ->filter(function ($slot) use ($now) {
                 [$start, $end] = explode(' - ', $slot->time_slot);
-                $date = Carbon::parse($slot->date)->format('Y-m-d'); 
+                $date = Carbon::parse($slot->date)->format('Y-m-d');
 
                 try {
                     $endDateTime = Carbon::createFromFormat('Y-m-d g:i A', "$date " . trim($end), 'Asia/Manila')
                         ->format('Y-m-d H:i:s');
                 } catch (\Exception $e) {
                     dump("Error in conversion:", $slot->time_slot, $date, $end, $e->getMessage());
-                    return false; 
+                    return false;
                 }
 
-                return $endDateTime > $now; 
+                return $endDateTime > $now;
             })
             ->map(function ($slot) {
                 $pendingCount = Appointment::whereDate('date', $slot->date)
-                    ->where('time', $slot->time_slot) 
+                    ->where('time', $slot->time_slot)
                     ->whereIn('status', ['Pending', 'Approved', 'Attended'])
                     ->count();
 
                 $remainingSlots = max($slot->max_slots - $pendingCount, 0); // Ensure no negative values
-
+    
                 return [
                     'id' => $slot->id,
                     'date' => $slot->date,

@@ -136,10 +136,7 @@
                 <thead>
                     <tr class="bg-gradient-to-r from-teal-50 to-teal-100 text-left">
                         <th class="px-6 py-3.5 text-xs font-semibold text-teal-700 uppercase tracking-wider border-r border-teal-200">User</th>
-                        <th class="px-6 py-3.5 text-xs font-semibold text-teal-700 uppercase tracking-wider border-r border-teal-200">Action</th>
-                        <th class="px-6 py-3.5 text-xs font-semibold text-teal-700 uppercase tracking-wider border-r border-teal-200">Model</th>
-                        <th class="px-6 py-3.5 text-xs font-semibold text-teal-700 uppercase tracking-wider border-r border-teal-200">Changes</th>
-                        <th class="px-6 py-3.5 text-xs font-semibold text-teal-700 uppercase tracking-wider border-r border-teal-200">IP Address</th>
+                        <th class="px-6 py-3.5 text-xs font-semibold text-teal-700 uppercase tracking-wider border-r border-teal-200">Action</th>                        <th class="px-6 py-3.5 text-xs font-semibold text-teal-700 uppercase tracking-wider border-r border-teal-200">IP Address</th>
                         <th class="px-6 py-3.5 text-xs font-semibold text-teal-700 uppercase tracking-wider">Timestamp</th>
                     </tr>
                 </thead>
@@ -153,12 +150,6 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-teal-900 font-medium border-r border-teal-50">
                                 {{ $audit->action }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-teal-900 font-medium border-r border-teal-50">
-                                {{ $audit->model }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-teal-900 font-medium border-r border-teal-50">
-                                {{ $audit->changes }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-teal-900 font-medium border-r border-teal-50">
                                 {{ $audit->ip_address }}

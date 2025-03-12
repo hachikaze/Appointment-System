@@ -353,7 +353,7 @@
                     @endphp
                   </div> -->
 
-                  <div class="text-sm text-teal-900">
+                  <!-- <div class="text-sm text-teal-900">
                     @php
                       $timeSlot = $appointment->time_slot;
                       $times = explode(' - ', $timeSlot);
@@ -391,13 +391,49 @@
                         echo $timeSlot;
                       }
                     @endphp
+                  </div> -->
+
+                  <div class="text-sm text-teal-900">
+                    @php
+                        // Parse the appointment date.
+                        $date = \Carbon\Carbon::parse($appointment->date);
+
+                        // Assume time_slot is something like "13:00 - 14:00" or "1:00 PM - 2:00 PM"
+                        $times = explode(' - ', $appointment->time_slot);
+                        $isPastTime = false;
+
+                        if (count($times) == 2) {
+                            // Check if the times include AM/PM.
+                            if (stripos($times[0], 'AM') !== false || stripos($times[0], 'PM') !== false) {
+                                // Times are in 12-hour format.
+                                $startTime = \Carbon\Carbon::parse($date->format('Y-m-d') . ' ' . trim($times[0]));
+                                $endTime = \Carbon\Carbon::parse($date->format('Y-m-d') . ' ' . trim($times[1]));
+                            } else {
+                                // Assume the times are in 24-hour format.
+                                $startTime = \Carbon\Carbon::createFromFormat('Y-m-d H:i', $date->format('Y-m-d') . ' ' . trim($times[0]));
+                                $endTime = \Carbon\Carbon::createFromFormat('Y-m-d H:i', $date->format('Y-m-d') . ' ' . trim($times[1]));
+                            }
+
+                            // Check if the current time is after the appointment's end time.
+                            $isPastTime = \Carbon\Carbon::now()->greaterThan($endTime);
+
+                            // Format the timeslot for display in 12-hour format.
+                            $timeSlot12h = $startTime->format('g:i A') . ' - ' . $endTime->format('g:i A');
+                        } else {
+                            $timeSlot12h = $appointment->time_slot;
+                        }
+                    @endphp
+
+                    {{ $timeSlot12h }}
                   </div>
 
                   <div class="text-xs text-teal-500">
-                    @if($appointment->is_past_time && !$appointment->is_past_date)
-                    <span class="text-red-500">(Past)</span>
-                    @endif
+                      {{-- Show "(Past)" only if the appointment time has ended and the date is not marked as past --}}
+                      @if($isPastTime && !$appointment->is_past_date)
+                          <span class="text-red-500">(Past)</span>
+                      @endif
                   </div>
+
                 </td>
                 <!-- Max slots column -->
                 <td class="px-6 py-4 whitespace-nowrap">
