@@ -537,7 +537,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-gradient-to-r from-teal-50 to-teal-400 text-white p-3 rounded-lg ">
+                    <div class="bg-gradient-to-r from-teal-100 to-blue-100 text-white p-5 rounded-lg shadow-lg">
                         <h2
                             class="text-xl w-full font-bold text-teal-600 mb-4 flex items-center border-b-2 border-teal-500  pb-2">
                             <i class="fas fa-address-card text-2xl mr-2"></i> Contact Details
@@ -554,23 +554,22 @@
                             <div
                                 class="flex items-center bg-teal-50 border-l-4 border-teal-500  shadow-lg p-4 rounded-lg transform hover:scale-105 transition-transform duration-200">
                                 <i class="fas fa-map-marker-alt text-teal-500 text-xl mr-3"></i>
-                                <p class="text-gray-700"><strong>Address:</strong> H2PR+X34, Nueve de Febrero,
-                                    Mandaluyong, Kalakhang
-                                    Maynila</p>
+                                <p class="text-gray-700"><strong>Address:</strong>605 9 de Febrero St. Brgy Pleasant
+                                    Hills, Mandaluyong City</p>
                             </div>
 
                             <div
                                 class="flex items-center bg-teal-50 border-l-4 border-teal-500 shadow-lg p-4 rounded-lg transform hover:scale-105 transition-transform duration-200">
                                 <i class="fas fa-phone text-teal-500 text-xl mr-3"></i>
-                                <p class="text-gray-700"><strong>Phone:</strong> +63 912 345 6789</p>
+                                <p class="text-gray-700"><strong>Phone:</strong> +63 919 467 7338</p>
                             </div>
 
                             <div
                                 class="flex items-center bg-teal-50 border-l-4 border-teal-500 shadow-lg p-4 rounded-lg transform hover:scale-105 transition-transform duration-200">
                                 <i class="fas fa-envelope text-teal-500 text-xl mr-3"></i>
                                 <p class="text-gray-700"><strong>Email:</strong>
-                                    <a href="mailto:contact@clinic.com"
-                                        class="text-blue-600 hover:underline">contact@clinic.com</a>
+                                    <a href="mailto:anafatima0717@gmail.com"
+                                        class="text-blue-600 hover:underline">anafatima0717@gmail.com</a>
                                 </p>
                             </div>
 
@@ -653,7 +652,6 @@
         </div>
     </div>
 
-
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             let urlParams = new URLSearchParams(window.location.search);
@@ -682,7 +680,7 @@
                             auditModalInput.value = "true";
 
                             console.log("Final Form Action URL:", formAction
-                                .toString()); // Debugging
+                                .toString());
                             searchForm.action = formAction.toString();
                         }
                     });
@@ -814,14 +812,6 @@
                 updateCountdown();
                 setInterval(updateCountdown, 1000);
             });
-
-            // if (closestAppointment) {
-            //     upcomingCountdown.innerHTML = closestAppointment;
-            //     upcomingCountdown.classList.add("text-blue-500");
-            // } else {
-            //     upcomingCountdown.innerHTML = "No upcoming appointments";
-            //     upcomingCountdown.classList.add("text-gray-500");
-            // }
         });
 
 

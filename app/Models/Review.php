@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Review extends Model
 {
     use HasFactory;
-    protected $fillable = ['appointment_id', 'user_id', 'rating', 'review', 'service', 'sentiment'];
+    protected $fillable = ['appointment_id', 'user_id', 'rating', 'review', 'service', 'sentiment','probability'];
 
     public function appointment()
     {

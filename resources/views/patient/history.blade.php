@@ -250,7 +250,7 @@
                                             <div
                                                 class="modal-content  relative w-full max-w-md mx-auto rounded-lg overflow-hidden shadow-lg bg-white">
                                                 <div
-                                                    class="relative flex flex-col items-center justify-center text-white h-20 sm:h-24 bg-teal-500 rounded-t-md px-4 sm:px-6">
+                                                    class="relative flex flex-col items-center justify-center text-white h-20 sm:h-24 bg-gradient-to-r from-teal-500 to-teal-700 rounded-t-md px-4 sm:px-6">
                                                     <h3 class="text-lg sm:text-2xl text-center break-words">
                                                         <i class="fa-solid fa-calendar px-2"></i> Appointment Details
                                                     </h3>
@@ -357,4 +357,5 @@
             </div>
         </div>
     </div>
+
 </x-patientnav-layout>

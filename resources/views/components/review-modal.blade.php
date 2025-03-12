@@ -11,26 +11,15 @@
         <div class="p-8">
             <form action="{{ $route }}" method="POST">
                 @csrf
-
-                <div class="my-4">
-                    <label for="service_type" class="block text-lg font-semibold text-teal-600 text-left">Service
-                        Type:</label>
-                    <select name="service_type" id="service_type"
-                        class="w-full text-teal-600 p-2 border border-teal-600 rounded-lg mb-4">
-                        <option value="Dental Checkup">Dental Checkup</option>
-                        <option value="Tooth Extraction">Tooth Extraction</option>
-                        <option value="Dental Cleaning">Dental Cleaning</option>
-                        <option value="Dental Filling">Dental Filling</option>
-                        <option value="Root Canal Treatment">Root Canal Treatment</option>
-                        <option value="Dental Crown">Dental Crown</option>
-                        <option value="Dental Implant">Dental Implant</option>
-                        <option value="Orthodontic Treatment">Orthodontic Treatment</option>
-                        <option value="Teeth Whitening">Teeth Whitening</option>
-                        <option value="Dental Surgery">Dental Surgery</option>
-                        <option value="Other">Other</option>
-                    </select>
+                <div class="my-6">
+                    <label for="service" class="block text-xl font-semibold text-teal-600 text-left">Services:</label>
+                    <ul
+                        class="list-disc font-semibold text-left space-y-2 border-teal-500 border-r-4 bg-gradient-to-r from-blue-50 to-teal-100  list-inside text-teal-600 shadow-lg  rounded-lg p-2">
+                        @foreach (explode(',', $services) as $service)
+                            <li>{{ trim($service) }}</li>
+                        @endforeach
+                    </ul>
                 </div>
-
 
                 <div id="star-rating" class="flex mb-4 space-x-8 justify-center">
                     <i class="fas fa-star fa-2x text-gray-400 cursor-pointer" data-value="1"></i>
@@ -40,6 +29,9 @@
                     <i class="fas fa-star fa-2x text-gray-400 cursor-pointer" data-value="5"></i>
                 </div>
 
+                <input type="hidden" name="rating_input" id="rating_input" value="">
+
+
                 <!-- Add Sad and Happy Faces for Rating -->
                 <div id="face-rating" class="flex  space-x-28    justify-center mt-4">
                     <i class="fas fa-frown fa-2x text-gray-400 cursor-pointer" data-value="1"></i>
@@ -47,75 +39,14 @@
                     <i class="fas fa-smile fa-2x text-gray-400 cursor-pointer" data-value="5"></i>
                 </div>
 
-                <p id="star-count" class="text-center text-lg text-teal-600 font-semibold mt-2">0 Stars</p>
-
-                <script>
-                    const stars = document.querySelectorAll('#star-rating i');
-                    const faces = document.querySelectorAll('#face-rating i');
-                    const starCountDisplay = document.getElementById('star-count');
-                    let rating = 0; 
-
-                    stars.forEach(star => {
-                        star.addEventListener('mouseover', () => {
-                            stars.forEach(star => {
-                                if (star.getAttribute('data-value') <= hoveredRating) {
-                                    star.classList.add('text-yellow-400');
-                                    star.classList.remove('text-gray-400');
-                                } else {
-                                    star.classList.remove('text-yellow-400');
-                                    star.classList.add('text-gray-400');
-                                }
-                            });
-                            updateFaceRating(hoveredRating); // Update faces based on star value
-                        });
-
-                        star.addEventListener('mouseout', () => {
-                            updateStarColors(rating);
-                            updateFaceRating(rating);
-                        });
-
-                        star.addEventListener('click', () => {
-                            rating = star.getAttribute('data-value');
-                            updateStarColors(rating);
-                            updateFaceRating(rating);
-                            starCountDisplay.textContent = `${rating} Star${rating > 1 ? 's' : ''} out of 5 stars`;
-                        });
-                    });
-
-                    function updateStarColors(rating) {
-                        stars.forEach(star => {
-                            const starValue = parseFloat(star.getAttribute('data-value'));
-                            if (starValue <= rating) {
-                                star.classList.add('text-yellow-400');
-                                star.classList.remove('text-gray-400');
-                            } else {
-                                star.classList.remove('text-yellow-400');
-                                star.classList.add('text-gray-400');
-                            }
-                        });
-                    }
-
-                    function updateFaceRating(rating) {
-                        faces.forEach(face => {
-                            const faceValue = parseFloat(face.getAttribute('data-value'));
-                            if (faceValue <= rating) {
-                                face.classList.add('text-teal-400');
-                                face.classList.remove('text-gray-400');
-                            } else {
-                                face.classList.remove('text-teal-400');
-                                face.classList.add('text-gray-400');
-                            }
-                        });
-                    }
-                </script>
-
+                <p id="star-count" class="text-center text-lg text-teal-600 font-semibold mt-2"></p>
                 <!-- Review Textarea -->
                 <div class="mt-8">
                     <label for="review" class="block text-lg font-semibold text-teal-600 text-left">Write a
                         Review:</label>
                     <textarea name="review" id="review" rows="4"
-                        class="w-full p-2 border border-teal-600 rounded-lg mb-4"
-                        placeholder="Share your experience..."></textarea>
+                        class="w-full text-teal-600 p-2 border border-teal-600 rounded-lg mb-4 focus:ring-teal-500"
+                        placeholder="Share your experience from this appointment..."></textarea>
                 </div>
         </div>
 
@@ -133,3 +64,75 @@
         </form>
     </div>
 </div>
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const stars = document.querySelectorAll("#star-rating i");
+        const faces = document.querySelectorAll("#face-rating i");
+        const ratingInput = document.getElementById("rating_input");
+        let rating = 0;
+
+        // Function to update star colors
+        function updateStarColors(value) {
+            stars.forEach(star => {
+                let starValue = parseInt(star.getAttribute("data-value"));
+                if (starValue <= value) {
+                    star.classList.add("text-yellow-400");
+                    star.classList.remove("text-gray-400");
+                } else {
+                    star.classList.remove("text-yellow-400");
+                    star.classList.add("text-gray-400");
+                }
+            });
+        }
+
+        // Function to update face colors
+        function updateFaceColors(value) {
+            faces.forEach(face => {
+                let faceValue = parseInt(face.getAttribute("data-value"));
+                if (
+                    (value <= 2 && faceValue === 1) || // Sad face for 1-2 stars
+                    (value === 3 && faceValue === 3) || // Neutral face for 3 stars
+                    (value >= 4 && faceValue === 5) // Happy face for 4-5 stars
+                ) {
+                    face.classList.add("text-teal-400");
+                    face.classList.remove("text-gray-400");
+                } else {
+                    face.classList.remove("text-teal-400");
+                    face.classList.add("text-gray-400");
+                }
+            });
+        }
+
+        // Add event listeners to stars
+        stars.forEach(star => {
+            star.addEventListener("mouseover", function() {
+                let hoveredRating = parseInt(this.getAttribute("data-value"));
+                updateStarColors(hoveredRating);
+                updateFaceColors(hoveredRating);
+                document.getElementById("star-count").textContent =
+                    `${rating} Star${rating > 1 ? 's' : ''} out of 5`;
+            });
+
+            star.addEventListener("mouseout", function() {
+                updateStarColors(rating);
+                updateFaceColors(rating);
+                document.getElementById("star-count").textContent =
+                    `${rating} Star${rating > 1 ? 's' : ''} out of 5`;
+
+            });
+
+            star.addEventListener("click", function() {
+                rating = parseInt(this.getAttribute("data-value"));
+                updateStarColors(rating);
+                updateFaceColors(rating);
+                ratingInput.value = rating; // Store rating in input field
+                document.getElementById("star-count").textContent =
+                    `${rating} Star${rating > 1 ? 's' : ''} out of 5`;
+
+            });
+        });
+    });
+</script>

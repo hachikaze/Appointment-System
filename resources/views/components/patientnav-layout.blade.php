@@ -13,6 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js" defer></script>
     <link rel="stylesheet" href="/fontawesome/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <x-toastr-notification />
 </head>
 
@@ -105,7 +106,8 @@
                 <!-- Clinic Name with Vertical Line -->
                 <div class="hidden md:flex items-center mx-2 space-x-2">
                     <div class="h-12 border-l-2 border-teal-300"></div> <!-- Vertical Line -->
-                    <p class="flex flex-col font-bold text-xl ml-4 leading-tight 
+                    <p
+                        class="flex flex-col font-bold text-xl ml-4 leading-tight 
                         bg-gradient-to-r from-teal-500 to-cyan-400 bg-clip-text text-transparent animate-gradient">
                         ANA FATIMA BARROSO
                         <span class="whitespace-nowrap">DENTAL CLINIC</span>
@@ -115,7 +117,8 @@
 
                 <!-- Centered Navigation Links -->
                 <div class="hidden sm:flex flex-grow  justify-center space-x-8 pr-28">
-                    <a href="/patient/dashboard" class="relative flex items-center gap-2 text-lg font-semibold 
+                    <a href="/patient/dashboard"
+                        class="relative flex items-center gap-2 text-lg font-semibold 
                bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent
                hover:from-teal-600 hover:to-cyan-500 transition duration-300 
                after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-full after:h-0.5 
@@ -123,7 +126,8 @@
                after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">
                         <i class="fas fa-home"></i> HOME
                     </a>
-                    <a href="{{ route('pricing') }}" class="relative flex items-center gap-2 text-lg font-semibold 
+                    <a href="{{ route('pricing') }}"
+                        class="relative flex items-center gap-2 text-lg font-semibold 
                bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent
                hover:from-teal-600 hover:to-cyan-500 transition duration-300 
                after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-full after:h-0.5 
@@ -134,15 +138,16 @@
                 </div>
             </div>
 
-
-
+            <x-notification-modal :approvedApplications="$approvedApplications" />
+            
             <div class="flex items-center justify-between space-x-4">
                 <div class="relative inline-block text-left">
                     <div>
                         <div class="flex items-center gap-3">
                             <a type="button" data-drawer-target="drawer-right-example"
                                 data-drawer-show="drawer-right-example" data-drawer-placement="right"
-                                aria-controls="drawer-right-example" class="relative p-2 rounded-full bg-white shadow-xs ring-1 ring-gray-300
+                                aria-controls="drawer-right-example"
+                                class="relative p-2 rounded-full bg-white shadow-xs ring-1 ring-gray-300
                                 hover:bg-gray-50">
                                 <i class="fa-solid fa-bell  text-teal-600 fa-shake"
                                     style="--fa-animation-duration: 3s;"></i>
@@ -185,50 +190,59 @@
                                         </div>
 
                                         @foreach ($notifications as $notifs)
-                                                                                <div
-                                                                                    class="m-4 p-3 bg-gradient-to-r from-blue-100 to-teal-100 justify-center  border border-teal-500 border-l-4 border-t-0 border-b-0 border-r-0 shadow-lg rounded-md">
+                                            <div
+                                                class="relative m-4 p-3 bg-gradient-to-r from-blue-100 to-teal-100 justify-center  border border-teal-500 border-l-4 border-t-0 border-b-0 border-r-0 shadow-lg rounded-md">
+                                                <!-- Pulsating Background -->
+                                                <span
+                                                    class="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-red-500 opacity-75 animate-ping"></span>
 
-                                                                                    <div class="p-4 pl-0 text-start">
-                                                                                        <p class="font-bold text-xl text-center text-teal-600">
-                                                                                            <i
-                                                                                                class="fa-solid fa-tooth fa-lg px-2 "></i>{{ $notifs->appointments }}
-                                                                                        </p>
-                                                                                    </div>
-                                                                                    <div
-                                                                                        class="rounded-lg bg-teal-600 flex items-center justify-center w-fit font-bold text-white mb-2 p-2 mx-auto">
-                                                                                        <p>{{ date('F d, Y', strtotime($notifs->date)) }}</p>
-                                                                                    </div>
+                                                <!-- Notification Badge -->
+                                                <span
+                                                    class="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white text-sm font-bold shadow-md">
+                                                    1
+                                                </span>
+                                                <div class="p-4 pl-0 text-start">
+                                                    <p class="font-bold text-xl text-center text-teal-600">
+                                                        <i
+                                                            class="fa-solid fa-tooth fa-lg px-2 "></i>{{ $notifs->appointments }}
+                                                    </p>
+                                                </div>
+                                                <div
+                                                    class="rounded-lg bg-teal-600 flex items-center justify-center w-fit font-bold text-white mb-2 p-2 mx-auto">
+                                                    <p>{{ date('F d, Y', strtotime($notifs->date)) }}</p>
+                                                </div>
 
-                                                                                    <p class="text-center">{{ $notifs->time }}</p>
-                                                                                    <br>
+                                                <p class="text-center">{{ $notifs->time }}</p>
+                                                <br>
 
-                                                                                    <?php
-                                            $statusClass = match ($notifs->status) {
-                                                'Approved' => ' p-2 bg-green-100 text-green-700 border-green-500',
-                                                'Cancelled' => 'p-2 bg-red-100 text-red-700 border-red-500',
-                                                'Attended' => 'p-2 bg-blue-100 text-blue-700 border-blue-500',
-                                                'Unattended' => 'p-2 bg-red-100 text-red-700 border-red-500',
-                                                'Pending' => 'p-2 bg-orange-100 text-orange-700 border-orange-500',
-                                                default => 'p-2 bg-gray-100 text-gray-700 border-gray-500',
-                                            }                                                                                                                 ?>
-                                                                                    <p class="rounded-lg shadow-lg border-l-4 text-center {{ $statusClass }}">
-                                                                                        {{ $notifs->status }} Appointment
-                                                                                    </p>
+                                                <?php
+                                                $statusClass = match ($notifs->status) {
+                                                    'Approved' => ' p-2 bg-green-100 text-green-700 border-green-500',
+                                                    'Cancelled' => 'p-2 bg-red-100 text-red-700 border-red-500',
+                                                    'Attended' => 'p-2 bg-blue-100 text-blue-700 border-blue-500',
+                                                    'Unattended' => 'p-2 bg-red-100 text-red-700 border-red-500',
+                                                    'Pending' => 'p-2 bg-orange-100 text-orange-700 border-orange-500',
+                                                    default => 'p-2 bg-gray-100 text-gray-700 border-gray-500',
+                                                }; ?>
+                                                <p
+                                                    class="rounded-lg shadow-lg border-l-4 text-center {{ $statusClass }}">
+                                                    {{ $notifs->status }} Appointment
+                                                </p>
 
-                                                                                    <button onclick="window.location.href='{{ route('history') }}'"
-                                                                                        class="rounded-lg justify-center text-center bg-blue-500 font-bold p-2 w-full my-5 mb-0 text-white transform hover:scale-105 transition-transform duration-200">
-                                                                                        <i class="fa-solid fa-arrow-right px-2"></i> Visit
-                                                                                    </button>
-                                                                                    <button
-                                                                                        onclick="window.location.href='{{ route('appointment.markAsRead', $notifs->id) }}'"
-                                                                                        class="rounded-lg justify-center text-center bg-red-500 font-bold p-2 w-full my-5 mt-2 text-white transform hover:scale-105 transition-transform duration-200">
-                                                                                        <i class="fa-solid fa-eye px-2"></i> Mark As Read
-                                                                                    </button>
-                                                                                    <div
-                                                                                        class="bg-teal-500 border-l-4 border-r-4 border-teal-700 text-center justify-center flex items-center text-white rounded-lg p-2">
-                                                                                        {{ $notifs->created_at->format('F j, Y g:i A') }}
-                                                                                    </div>
-                                                                                </div>
+                                                <button onclick="window.location.href='{{ route('history') }}'"
+                                                    class="rounded-lg justify-center text-center bg-blue-500 font-bold p-2 w-full my-5 mb-0 text-white transform hover:scale-105 transition-transform duration-200">
+                                                    <i class="fa-solid fa-arrow-right px-2"></i> Visit
+                                                </button>
+                                                <button
+                                                    onclick="window.location.href='{{ route('appointment.markAsRead', $notifs->id) }}'"
+                                                    class="rounded-lg justify-center text-center bg-red-500 font-bold p-2 w-full my-5 mt-2 text-white transform hover:scale-105 transition-transform duration-200">
+                                                    <i class="fa-solid fa-eye px-2"></i> Mark As Read
+                                                </button>
+                                                <div
+                                                    class="bg-teal-500 border-l-4 border-r-4 border-teal-700 text-center justify-center flex items-center text-white rounded-lg p-2">
+                                                    {{ $notifs->created_at->format('F j, Y g:i A') }}
+                                                </div>
+                                            </div>
                                         @endforeach
                                     </div>
                                 </div>
