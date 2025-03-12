@@ -1,6 +1,6 @@
 <div id="{{ $modalId }}" tabindex="-1" aria-hidden="true"
     class="fixed top-0 left-0 right-0 z-50 flex items-center justify-center w-full h-full backdrop-blur-sm bg-black bg-opacity-25 hidden">
-    <div class="bg-teal-50 rounded-lg shadow-xl w-full max-w-lg ">
+    <div class="bg-teal-50 rounded-lg shadow-xl w-full max-w-lg">
         <div
             class="bg-gradient-to-r from-teal-400 to-teal-600 p-6 pt-4 pb-2 flex items-center justify-center rounded-t-lg">
             <i class="fas fa-star pr-2 text-white"></i>
@@ -9,7 +9,7 @@
 
 
         <div class="p-8">
-            <form action="{{ $route }}" method="POST">
+            <form action="{{ $route }}" method="POST" id="reviewForm">
                 @csrf
                 <div class="my-6">
                     <label for="service" class="block text-xl font-semibold text-teal-600 text-left">Services:</label>

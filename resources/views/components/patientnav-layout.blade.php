@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="/fontawesome/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="{{ asset('js/loader.js') }}"></script>
     <x-toastr-notification />
 </head>
 
@@ -139,7 +140,7 @@
             </div>
 
             <x-notification-modal :approvedApplications="$approvedApplications" />
-            
+
             <div class="flex items-center justify-between space-x-4">
                 <div class="relative inline-block text-left">
                     <div>
@@ -312,6 +313,14 @@
         </header>
         <div>
             {{ $slot }}
+        </div>
+        <!-- Universal Loader -->
+        <div id="loader"
+            class="fixed inset-0 flex items-center justify-center bg-teal-100/30 backdrop-blur-sm z-50 hidden">
+            <div class="bg-white shadow-lg rounded-lg px-6 py-4 flex flex-col items-center">
+                <i class="fas fa-spinner fa-spin text-teal-400 text-5xl animate-pulse"></i>
+                <p class="mt-3 text-teal-500 text-base font-semibold animate-pulse">Loading...</p>
+            </div>
         </div>
     </div>
 </body>

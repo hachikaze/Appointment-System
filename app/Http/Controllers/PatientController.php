@@ -336,8 +336,6 @@ class PatientController extends Controller
         // ]);
 
         $appointment = Appointment::findOrFail($id);
-
-        // Call sentiment analysis API
         $response = Http::post('https://johndoee-sentiment-analysis.hf.space/analyze/', [
             'text' => $request->review
         ]);
@@ -356,8 +354,7 @@ class PatientController extends Controller
             'probability' => $sentimentData['confidence_score'] ?? 0.0,
         ]);
 
-        
-
+    
         return back()->with('success', 'Review submitted successfully!');
     }
 
