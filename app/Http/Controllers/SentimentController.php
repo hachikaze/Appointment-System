@@ -11,3 +11,4 @@ class SentimentController extends Controller
         return view('admin.sentiment_analysis');
     }
 }
+
