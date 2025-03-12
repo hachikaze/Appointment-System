@@ -216,7 +216,7 @@ class PatientController extends Controller
         $now = Carbon::now();
 
         $appointments = AvailableAppointment::where(function ($query) use ($date, $now) {
-            $query->whereDate('date', '>', $now->toDateString())
+            $query->whereDate('date', '>=', $now->toDateString())
                 ->orWhere(function ($q) use ($now) {
                     $q->whereDate('date', $now->toDateString())
                         ->whereTime('time_slot', '>', $now->toTimeString());
