@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->text('review'); // User review
             $table->text('service');
             $table->string('sentiment')->nullable(); // Sentiment analysis result (e.g., 'positive', 'neutral', 'negative')
+            $table->decimal('probability', 5, 2)->nullable(); // Probability score for sentiment
             $table->timestamps();
         });
     }

@@ -98,9 +98,8 @@
                                         </div>
                                     @endif
                                 </div>
-
-
                             </caption>
+
                             <thead class="text-lg text-center text-gray-700 uppercase bg-gray-50  ">
                                 <tr>
                                     <th scope="col " class="bg-teal-100 border-2 border-teal-500 px-6 py-3">
@@ -179,7 +178,8 @@
                                                 </button>
 
                                                 @if (in_array($appointment->status, ['Unattended']))
-                                                    <button data-modal-target="reschedule-appointment-modal-{{ $appointment->id }}"
+                                                    <button
+                                                        data-modal-target="reschedule-appointment-modal-{{ $appointment->id }}"
                                                         data-modal-toggle="reschedule-appointment-modal-{{ $appointment->id }}"
                                                         class="bg-yellow-500 w-full font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-yellow-600 transition w-full md:w-auto">
                                                         <i class="fa-solid fa-calendar-alt pr-2"></i> Reschedule
@@ -187,36 +187,43 @@
                                                 @endif
 
                                                 @if ($appointment->status === 'Attended')
-                                                    <button data-modal-target="review-appointment-modal-{{ $appointment->id }}"
+                                                    <button
+                                                        data-modal-target="review-appointment-modal-{{ $appointment->id }}"
                                                         data-modal-toggle="review-appointment-modal-{{ $appointment->id }}"
                                                         class="bg-blue-500 font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-blue-600 transition w-full md:w-auto">
                                                         <i class="fa-solid fa-star pr-2"></i> Leave a Review
                                                     </button>
 
-                                             <!-- Review Modal Component -->
-                                                <x-review-modal 
-                                                    :modalId="'review-appointment-modal-' . $appointment->id"
-                                                    :route="route('appointments.review', ['id' => $appointment->id])"
-                                                    :services="$appointment->appointments" 
-                                                    />
+                                                    <x-review-modal :modalId="'review-appointment-modal-' . $appointment->id" :route="route('appointments.review', ['id' => $appointment->id])"
+                                                        :services="$appointment->appointments" />
 
 
                                                 @endif
 
-                                                                                                
+                                                <script>
+                                                    document.addEventListener("DOMContentLoaded", function() {
+                                                        document.querySelectorAll("form[id^='reviewForm']").forEach(form => {
+                                                            form.addEventListener("submit", function(event) {
+                                                                document.getElementById("loader").classList.remove("hidden");
+                                                                const modal = this.closest("[id^='review-appointment-modal']");
+                                                                if (modal) {
+                                                                    modal.classList.add("hidden");
+                                                                }
+                                                            });
+                                                        });
+                                                    });
+                                                </script>
+
+
 
                                                 @if (in_array($appointment->status, ['Approved', 'Pending']))
-                                                    <button data-modal-target="cancel-appointment-modal-{{ $appointment->id }}"
+                                                    <button
+                                                        data-modal-target="cancel-appointment-modal-{{ $appointment->id }}"
                                                         data-modal-toggle="cancel-appointment-modal-{{ $appointment->id }}"
                                                         class="bg-red-500 font-medium text-white p-2 rounded-lg px-6 shadow-lg hover:bg-red-600 transition w-full md:w-auto">
                                                         <i class="fa-solid fa-calendar-alt pr-2"></i> Cancel
                                                     </button>
                                                 @endif
-
-
-
-
-
 
                                                 {{-- @if ($appointment->status === 'Cancelled')
                                                     <button disabled
@@ -236,12 +243,11 @@
                                                 method="PUT" buttonText="Cancel Appointment" />
 
                                             <x-modal modalId="reschedule-appointment-modal-{{ $appointment->id }}"
-                                                title="Reschedule this Appointment?"
-                                                :data="$availableAppointments"
+                                                title="Reschedule this Appointment?" :data="$availableAppointments"
                                                 message="Are you sure you want to reschedule this appointment?"
                                                 route="{{ route('appointments.update', ['id' => $appointment->id]) }}"
                                                 method="PUT" buttonText="Reschedule" />
-    
+
                                         </td>
 
 
@@ -357,5 +363,4 @@
             </div>
         </div>
     </div>
-
 </x-patientnav-layout>

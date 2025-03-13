@@ -51,7 +51,7 @@
                 </div>
             @endif
             <div class="p-0 bg-teal-500 p-4 text-2xl text-white font-bold rounded-t-lg ">
-                <i class="fa-solid fa-pen ml-4 mr-4"></i> Profile Update
+                <i class="fa-solid fa-pen ml-4 mr-4"></i> Edit Profile
             </div>
             <div class="grid grid-cols-1 p-4 md:grid-cols-2 gap-6 ">
                 <div class="border-l-4 p-4 shadow-lg rounded-lg border-teal-500">

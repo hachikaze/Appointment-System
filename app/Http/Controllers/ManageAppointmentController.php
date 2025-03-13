@@ -48,11 +48,14 @@ class ManageAppointmentController extends Controller
         $messageContent = $request->input('message'); // ✅ Capture the message input
 
         if ($action === 'approve') {
-            DB::table('appointments')->where('id', $request->id)->update(['status' => 'Approved']);
+            DB::table('appointments')->where('id', $request->id)
+                ->update(['status' => 'Approved', 'updated_at' => Carbon::now()]);
         } elseif ($action === 'cancel') {
-            DB::table('appointments')->where('id', $request->id)->update(['status' => 'Unattended']);
+            DB::table('appointments')->where('id', $request->id)
+                ->update(['status' => 'Unattended', 'updated_at' => Carbon::now()]);
         } elseif ($action === 'attended') {
-            DB::table('appointments')->where('id', $request->id)->update(['status' => 'Attended']);
+            DB::table('appointments')->where('id', $request->id)
+                ->update(['status' => 'Attended', 'updated_at' => Carbon::now()]);
         } elseif ($action === 'delete') {
             DB::table('appointments')->where('id', $request->id)->delete();
             return redirect()->route('appointments.index')->with('success', 'Appointment deleted.');
