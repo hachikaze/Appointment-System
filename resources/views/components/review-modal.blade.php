@@ -9,6 +9,7 @@
 
 
         <div class="p-8">
+
             <form action="{{ $route }}" method="POST" id="reviewForm">
                 @csrf
                 <div class="my-6">
@@ -31,7 +32,6 @@
 
                 <input type="hidden" name="rating_input" id="rating_input" value="">
 
-
                 <!-- Add Sad and Happy Faces for Rating -->
                 <div id="face-rating" class="flex  space-x-28    justify-center mt-4">
                     <i class="fas fa-frown fa-2x text-gray-400 cursor-pointer" data-value="1"></i>
@@ -42,11 +42,13 @@
                 <p id="star-count" class="text-center text-lg text-teal-600 font-semibold mt-2"></p>
                 <!-- Review Textarea -->
                 <div class="mt-8">
-                    <label for="review" class="block text-lg font-semibold text-teal-600 text-left">Write a
-                        Review:</label>
-                    <textarea name="review" id="review" rows="4"
-                        class="w-full text-teal-600 p-2 border border-teal-600 rounded-lg mb-4 focus:ring-teal-500"
-                        placeholder="Share your experience from this appointment..."></textarea>
+                    <label for="review" class="block text-lg font-semibold text-teal-600 text-left">
+                        Write a Review:
+                    </label>
+                    <textarea name="review" id="review" rows="4" class="w-full text-teal-600 p-2 border border-teal-600 rounded-lg mb-4 
+                focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                            </textarea>
+
                 </div>
         </div>
 
@@ -68,7 +70,7 @@
 
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         const stars = document.querySelectorAll("#star-rating i");
         const faces = document.querySelectorAll("#face-rating i");
         const ratingInput = document.getElementById("rating_input");
@@ -108,7 +110,7 @@
 
         // Add event listeners to stars
         stars.forEach(star => {
-            star.addEventListener("mouseover", function() {
+            star.addEventListener("mouseover", function () {
                 let hoveredRating = parseInt(this.getAttribute("data-value"));
                 updateStarColors(hoveredRating);
                 updateFaceColors(hoveredRating);
@@ -116,7 +118,7 @@
                     `${rating} Star${rating > 1 ? 's' : ''} out of 5`;
             });
 
-            star.addEventListener("mouseout", function() {
+            star.addEventListener("mouseout", function () {
                 updateStarColors(rating);
                 updateFaceColors(rating);
                 document.getElementById("star-count").textContent =
@@ -124,7 +126,7 @@
 
             });
 
-            star.addEventListener("click", function() {
+            star.addEventListener("click", function () {
                 rating = parseInt(this.getAttribute("data-value"));
                 updateStarColors(rating);
                 updateFaceColors(rating);

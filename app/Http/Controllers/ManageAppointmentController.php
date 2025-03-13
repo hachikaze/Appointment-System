@@ -61,37 +61,18 @@ class ManageAppointmentController extends Controller
             case 'approve':
                 $appointment->update(['status' => 'Approved']);
 
-                // $paymentId = Payment::where('appointment_id', $appointment->id)->value('id');
-            
-                // Generate a receipt number
-                // $receiptNumber = 'RCPT-' . strtoupper(uniqid());
-            
-                // Store the receipt info in the payments table
-                // Receipt::create([
-                //     'payment_id' => $paymentId,
-                //     'email' => $appointment->email,
-                //     'file_path' => 'bowrat', // optional, since there's no uploaded file
-                //     'receipt_number' => $receiptNumber,
-                // ]);
-
-                return redirect()->route('appointments.index')->with('error', 'Appointment not found.');
-                break;
-            case 'reschedule':
-                $appointment->update([
-                    'date'   => $request->date,
-                    'time'   => $request->time,
-                    'status' => 'Pending' // Or use a custom status like 'Rescheduled' if desired
-                ]);
-                break;
-            case 'cancel':
-                $appointment->update(['status' => 'Unattended']);
-                break;
-            case 'attended':
-                $appointment->update(['status' => 'Attended']);
-                break;
-            case 'delete':
-                $appointment->delete();
-                return redirect()->route('appointments.index')->with('success', 'Appointment deleted.');
+        if ($action === 'approve') {
+            DB::table('appointments')->where('id', $request->id)
+                ->update(['status' => 'Approved', 'updated_at' => Carbon::now()]);
+        } elseif ($action === 'cancel') {
+            DB::table('appointments')->where('id', $request->id)
+                ->update(['status' => 'Unattended', 'updated_at' => Carbon::now()]);
+        } elseif ($action === 'attended') {
+            DB::table('appointments')->where('id', $request->id)
+                ->update(['status' => 'Attended', 'updated_at' => Carbon::now()]);
+        } elseif ($action === 'delete') {
+            DB::table('appointments')->where('id', $request->id)->delete();
+            return redirect()->route('appointments.index')->with('success', 'Appointment deleted.');
         }
 
         if ($request->filled('message')) {

@@ -1,4 +1,5 @@
-<div x-data="{ showModal: false }" x-init="@if (!session()->has('hide_modal') && $approvedApplications > 0) showModal = true; @endif">
+<div x-data="{ showModal: false }"
+    x-init="@if (!session()->has('hide_modal') && $approvedApplications > 0) showModal = true; @endif">
     @if ($approvedApplications > 0 && !session()->has('hide_modal'))
         <div id="notificationModal" x-show="showModal" x-transition.opacity
             class="fixed inset-0 overflow-y-auto h-full w-full z-50 flex items-center justify-center"
@@ -9,7 +10,7 @@
                         <i class="fas fa-calendar text-3xl text-teal-600 "></i>
                     </div>
                     <h3 class="text-2xl leading-6 font-bold text-gray-900  mt-6 mb-4">
-                        Pending Applications
+                        Approved Appointments
                     </h3>
                     <div class="mt-4 px-7 py-3">
                         <p class="text-lg text-gray-600">

@@ -12,8 +12,8 @@ use App\Models\Appointment;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use function Pest\Laravel\get;
-use Illuminate\Http\Request; 
-use Illuminate\Support\Facades\Http; 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 use Illuminate\Support\Facades\File;
 use App\Models\Review;
@@ -244,7 +244,7 @@ class PatientController extends Controller
 
                 return $slot;
             });
-                    
+
         return response()->json($appointments);
     }
 
@@ -306,7 +306,7 @@ class PatientController extends Controller
             $maxSlots = $appointment['max_slots'];
             $bookedSlots = Appointment::where('date', $date)
                 ->where('time', $timeSlot)
-                ->whereIn('status',['Pending', 'Approved', 'Attended'])
+                ->whereIn('status', ['Pending', 'Approved', 'Attended'])
                 ->count();
             $remainingSlots = max(0, $maxSlots - $bookedSlots);
 
@@ -328,20 +328,18 @@ class PatientController extends Controller
 
     public function storeReview(Request $request, $id)
     {
-        // $request->validate([
-        //     'fullname' => 'required|string|max:255',
-        //     'service' => 'required|string|max:255',
-        //     'review' => 'required|string',
-        //     'rating' => 'required|integer|min:1|max:5',
-        // ]);
+        $request->validate([
+            'review' => 'required|string',
+            'rating_input' => 'required|integer|min:1|max:5',
+        ]);
 
         $appointment = Appointment::findOrFail($id);
-        $response = Http::post('https://johndoee-sentiment-analysis.hf.space/analyze/', [
+        $response = Http::post(env('HUGGINGFACE_API_URL'), [
             'text' => $request->review
         ]);
 
-        $sentimentData = $response->json();
 
+        $sentimentData = $response->json();
         // Create review
         $values = Review::create([
             'user_id'           => Auth::id(),
@@ -354,7 +352,7 @@ class PatientController extends Controller
             'probability'       => $sentimentData['confidence_score'] ?? 0.0,
         ]);
 
-    
+
         return back()->with('success', 'Review submitted successfully!');
     }
 
