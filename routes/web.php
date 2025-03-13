@@ -99,7 +99,12 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         })->name('close.audit.modal');
 
         Route::post('/appointments/{id}/review', [PatientController::class, 'storeReview'])->name('appointments.review');
-        // Route::get('/appointments', [PatientController::class, 'getAppointments'])->name('appointments.get');
+
+        Route::post('/hide-modal', function () {
+            session(['hide_modal' => true]); // Store session to hide modal
+            return redirect()->back();
+        })->name('hide.modal');
+        
     });
 
 
