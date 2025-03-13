@@ -344,14 +344,14 @@ class PatientController extends Controller
 
         // Create review
         $values = Review::create([
-            'user_id' => Auth::id(),
-            'appointment_id' => $appointment->id,
-            'fullname' => $appointment->patient_name,
-            'service' => $appointment->appointments,
-            'review' => $request->review,
-            'rating' => $request->rating_input,
-            'sentiment' => $sentimentData['sentiment'] ?? 'neutral',
-            'probability' => $sentimentData['confidence_score'] ?? 0.0,
+            'user_id'           => Auth::id(),
+            'appointment_id'    => $appointment->id,
+            'fullname'          => $appointment->patient_name,
+            'service'           => $appointment->appointments,
+            'review'            => $request->review,
+            'rating'            => $request->rating_input,
+            'sentiment'         => $sentimentData['sentiment'] ?? 'neutral',
+            'probability'       => $sentimentData['confidence_score'] ?? 0.0,
         ]);
 
     
