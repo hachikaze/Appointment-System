@@ -197,18 +197,6 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
         Route::prefix('admin/reports')->name('admin.reports.')->middleware(['auth'])->group(function () {
         Route::get('/status-during-period', [App\Http\Controllers\Admin\AppointmentReportController::class, 'statusDuringPeriod'])->name('status_during_period');
         Route::get('/status-during-period/pdf', [App\Http\Controllers\Admin\AppointmentReportController::class, 'exportPdf'])->name('status_during_period.pdf');});
-        
-        // Patient Records
-        Route::get('/admin/patient-records', [AdminPatientRecordsController::class, 'records'])
-            ->name('admin.patient_records');
-        
-        // Update a specific patient record (triggered from your edit modal)
-        Route::put('/admin/patient-records/{id}', [AdminPatientRecordsController::class, 'update'])
-            ->name('admin.patient_records.update');
-        
-        // Delete a specific patient record
-        Route::delete('/admin/patient-records/{id}', [AdminPatientRecordsController::class, 'destroy'])
-            ->name('admin.patient_records.destroy');
 
         //FOR RESCHEDULING APPOINTMENTD
         Route::get('/admin/appointments/slots', [ManageAppointmentController::class, 'getAvailableSlots'])
@@ -216,13 +204,9 @@ Route::middleware(['auth', 'verified', PreventBackHistory::class])->group(functi
                     
         Route::get('/get-available-slots', [ManageAppointmentController::class, 'getAvailableSlots']);
 
-        Route::put('/admin/appointments/reschedule/{id}', [ManageAppointmentController::class, 'reschedule'])
-        ->name('admin.appointments.reschedule');
-
-        //EXPORTING FILES
-        Route::get('/patient/export-pdf/{patientName}', [PatientRecordsExportController::class, 'exportPdf'])
-        ->name('patient.export.pdf');
-
+        //PATIENT RECORDS
+        Route::get('/admin/patient-records', [AdminPatientRecordsController::class, 'index'])->name('admin.patient-records');
+        Route::get('/admin/patient-records/{id}', [AdminPatientRecordsController::class, 'show'])->name('admin.patient-records.show');
     });
 });
 
