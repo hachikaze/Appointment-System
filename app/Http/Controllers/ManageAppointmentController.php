@@ -61,43 +61,44 @@ class ManageAppointmentController extends Controller
             case 'approve':
                 $appointment->update(['status' => 'Approved']);
 
-        if ($action === 'approve') {
-            DB::table('appointments')->where('id', $request->id)
-                ->update(['status' => 'Approved', 'updated_at' => Carbon::now()]);
-        } elseif ($action === 'cancel') {
-            DB::table('appointments')->where('id', $request->id)
-                ->update(['status' => 'Unattended', 'updated_at' => Carbon::now()]);
-        } elseif ($action === 'attended') {
-            DB::table('appointments')->where('id', $request->id)
-                ->update(['status' => 'Attended', 'updated_at' => Carbon::now()]);
-        } elseif ($action === 'delete') {
-            DB::table('appointments')->where('id', $request->id)->delete();
-            return redirect()->route('appointments.index')->with('success', 'Appointment deleted.');
+                if ($action === 'approve') {
+                    DB::table('appointments')->where('id', $request->id)
+                        ->update(['status' => 'Approved', 'updated_at' => Carbon::now()]);
+                } elseif ($action === 'cancel') {
+                    DB::table('appointments')->where('id', $request->id)
+                        ->update(['status' => 'Unattended', 'updated_at' => Carbon::now()]);
+                } elseif ($action === 'attended') {
+                    DB::table('appointments')->where('id', $request->id)
+                        ->update(['status' => 'Attended', 'updated_at' => Carbon::now()]);
+                } elseif ($action === 'delete') {
+                    DB::table('appointments')->where('id', $request->id)->delete();
+                    return redirect()->route('appointments.index')->with('success', 'Appointment deleted.');
+                }
+
+                if ($request->filled('message')) {
+                    DB::table('messages')->insert([
+                        'appointment_id' => $request->id,
+                        'message' => $request->message,
+                        // 'created_at' => now(),
+                        // 'updated_at' => now(),
+                    ]);
+                
+                    if (!empty($appointment->email)) {
+                        $status = match ($request->action) {
+                            'approve' => 'Approved',
+                            'cancel' => 'Cancelled',
+                            'attended' => 'Attended',
+                            default => 'Unattended',
+                        };
+
+                        $patientName = Appointment::where('id', $appointment->id)->value('patient_name');
+                
+                        Mail::to($appointment->email)->send(new MessageNotification($request->message, $status, $patientName));
+                    }
+                }
+
+            return redirect()->route('appointments.index')->with('success', 'Status updated and message sent.');
         }
-
-        if ($request->filled('message')) {
-            DB::table('messages')->insert([
-                'appointment_id' => $request->id,
-                'message' => $request->message,
-                // 'created_at' => now(),
-                // 'updated_at' => now(),
-            ]);
-        
-            if (!empty($appointment->email)) {
-                $status = match ($request->action) {
-                    'approve' => 'Approved',
-                    'cancel' => 'Cancelled',
-                    'attended' => 'Attended',
-                    default => 'Unattended',
-                };
-
-                $patientName = Appointment::where('id', $appointment->id)->value('patient_name');
-        
-                Mail::to($appointment->email)->send(new MessageNotification($request->message, $status, $patientName));
-            }
-        }
-
-        return redirect()->route('appointments.index')->with('success', 'Status updated and message sent.');
     }
 
     public function sendMessage(Request $request)
