@@ -41,13 +41,24 @@ class AppServiceProvider extends ServiceProvider
                 $messagecount = UserMessages::where('receiver_id', $userId)
                     ->whereNull('read_at')
                     ->count();
+
+                    $approvedApplications = Appointment::where('status', 'Approved')->count();
+
+                    if (Auth::check()) {
+                        $showModal = !session()->has('hide_modal') && $approvedApplications > 0;
+                    } else {
+                        $showModal = $approvedApplications > 0;
+                    }
+
                 $view->with([
                     'fullname' => $fullname,
                     'userImage' => $userImage,
                     'notifications' => $notifications,
                     'notifcount' => $notifcount,
                     'messagenotif' => $messagesnotif,
-                    'messagecount' => $messagecount
+                    'messagecount' => $messagecount,
+                    'approvedApplications' => $approvedApplications,
+                    'showModal'=> $showModal
                 ]);
             }
         });

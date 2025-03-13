@@ -8,11 +8,13 @@ use App\Models\AvailableAppointment;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Appointment;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use function Pest\Laravel\get;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+
 use Illuminate\Support\Facades\File;
 use App\Models\Review;
 
@@ -214,6 +216,7 @@ class PatientController extends Controller
     {
         $userEmail = auth()->user()->email;
         $now = Carbon::now();
+        $date = '2025-03-12';
 
         $appointments = AvailableAppointment::where(function ($query) use ($date, $now) {
             $query->whereDate('date', '>=', $now->toDateString())
@@ -241,7 +244,6 @@ class PatientController extends Controller
 
                 return $slot;
             });
-
 
         return response()->json($appointments);
     }
@@ -304,7 +306,7 @@ class PatientController extends Controller
             $maxSlots = $appointment['max_slots'];
             $bookedSlots = Appointment::where('date', $date)
                 ->where('time', $timeSlot)
-                ->where('status', 'Pending')
+                ->whereIn('status', ['Pending', 'Approved', 'Attended'])
                 ->count();
             $remainingSlots = max(0, $maxSlots - $bookedSlots);
 
@@ -314,6 +316,7 @@ class PatientController extends Controller
             $remainingSlotsByDate[$date] += $remainingSlots;
         }
         $availableslots = $availableappointments->sum('remaining_slots');
+
         return view('patient.calendar', compact('appointments', 'allData', 'remainingSlotsByDate', 'availableappointments', 'selectedDate', 'availableslots'));
     }
 
@@ -326,18 +329,29 @@ class PatientController extends Controller
     public function storeReview(Request $request, $id)
     {
         $request->validate([
-            'rating' => 'required|integer|min:1|max:5',
-            'review' => 'required|string|max:1000',
-            'service' => 'required|string',
+            'review' => 'required|string',
+            'rating_input' => 'required|integer|min:1|max:5',
+        ]);
 
+        $appointment = Appointment::findOrFail($id);
+        $response = Http::post(env('HUGGINGFACE_API_URL'), [
+            'text' => $request->review
         ]);
-        Review::create([
-            'appointment_id' => $id,
-            'user_id' => auth()->id(),
-            'service' => $request->service,
-            'rating' => $request->rating,
-            'review' => $request->review,
+
+
+        $sentimentData = $response->json();
+        // Create review
+        $values = Review::create([
+            'user_id'           => Auth::id(),
+            'appointment_id'    => $appointment->id,
+            'fullname'          => $appointment->patient_name,
+            'service'           => $appointment->appointments,
+            'review'            => $request->review,
+            'rating'            => $request->rating_input,
+            'sentiment'         => $sentimentData['sentiment'] ?? 'neutral',
+            'probability'       => $sentimentData['confidence_score'] ?? 0.0,
         ]);
+
 
         return back()->with('success', 'Review submitted successfully!');
     }

@@ -2,147 +2,74 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\PatientRecords;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use App\Models\Appointment;
+use Illuminate\Http\Request;
 
 class AdminPatientRecordsController extends Controller
 {
-    /**
-     * Display a listing of patient records (grouped by email).
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\View\View
-     */
-    public function records(Request $request)
+    public function index(Request $request)
     {
-        $search = $request->query('search', '');
-        $perPage = $request->query('perPage', 10);
+        $query = User::where('user_type', '!=', 'admin')
+            ->where('user_type', '!=', 'staff');
 
-        // Fetch patients from the users table where user_type is 'patient'
-        $patients = User::select('id', 'firstname', 'middleinitial', 'lastname', 'user_type', 'email')
-            ->where('user_type', 'patient')
-            ->when($search, function ($query, $search) {
-                // Use SQLite string concatenation operator (||)
-                return $query->whereRaw("firstname || ' ' || middleinitial || ' ' || lastname like ?", ["%{$search}%"]);
-            })
-            ->orderBy('firstname', 'asc')
-            ->paginate($perPage);
-
-        // Build an array of full names in the same format stored in the appointments table
-        $patientNames = $patients->map(function ($patient) {
-            return trim($patient->firstname . ' ' . $patient->middleinitial . ' ' . $patient->lastname);
-        })->toArray();
-
-        // Fetch all appointments for these patients (using the constructed full names)
-        $allRecords = PatientRecords::whereIn('patient_name', $patientNames)
-            ->where('status', 'Attended')
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->groupBy('patient_name');
-
-        return view('admin.patient_records', [
-            'distinctPatients' => $patients,  
-            'allRecords'       => $allRecords,  
-        ]);
-    }
-    
-    /**
-     * Display patient history with all appointments.
-     *
-     * @param  string  $email
-     * @return \Illuminate\View\View
-     */
-    public function patientHistory($email)
-    {
-        // Get the patient details from first appointment
-        $patient = PatientRecords::where('email', $email)->first();
-        
-        if (!$patient) {
-            return redirect()->route('admin.patient_records')
-                ->with('error', 'Patient not found');
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('firstname', 'like', "%{$search}%")
+                  ->orWhere('lastname', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
         }
-        
-        // Get all appointments for this patient
-        $appointments = PatientRecords::where('email', $email)
-                        ->orderBy('date', 'desc')
-                        ->orderBy('time', 'desc')
-                        ->get();
-        
-        return view('admin.patient-history', compact('patient', 'appointments'));
+
+        if ($request->has('gender') && !empty($request->gender)) {
+            $query->where('gender', $request->gender);
+        }
+
+        $patientIds = $query->pluck('id');
+
+        if ($request->has('status') && !empty($request->status)) {
+            $status = $request->status;
+            if ($status === 'No Appointments') {
+                $emailsWithAppointments = Appointment::distinct()->pluck('email')->toArray();
+                $query->whereNotIn('email', $emailsWithAppointments);
+            } else {
+                $emailsWithStatus = Appointment::where('status', $status)
+                    ->distinct()
+                    ->pluck('email')
+                    ->toArray();
+                $query->whereIn('email', $emailsWithStatus);
+            }
+        }
+
+        $perPage = ($request->has('perPage') && $request->perPage !== 'all')
+            ? (int)$request->perPage
+            : 10;
+
+        if ($request->perPage === 'all') {
+            $patients = $query->get();
+            $patients = new \Illuminate\Pagination\LengthAwarePaginator(
+                $patients,
+                $patients->count(),
+                $patients->count(),
+                1
+            );
+        } else {
+            $patients = $query->paginate($perPage)->withQueryString();
+        }
+
+        return view('admin.patient_records', compact('patients'));
     }
-    
-    /**
-     * Update the specified patient record.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id  Patient record ID
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function update(Request $request, $id)
+
+    public function show($id)
     {
-        $validated = $request->validate([
-            'patient_name' => 'required|string|max:255',
-            'email'        => 'required|email|max:255|unique:appointments,email,'.$id,
-            'phone'        => 'required|string|max:20',
-            'date'         => 'required|date',
-            'time'         => 'required',
-            'doctor'       => 'required|string|max:255',
-            'appointments' => 'required|string|max:255',
-            'status'       => 'required|string|in:Pending,Approved,Attended,Unattended,Cancelled',
-        ]);
+        $patient = User::findOrFail($id);
         
-        $patient = PatientRecords::findOrFail($id);
-        $patient->update($validated);
-        
-        return redirect()->route('admin.patient_records')
-            ->with('success', 'Patient record updated successfully.');
-    }
-    
-    /**
-     * Remove the specified patient record.
-     *
-     * @param  int  $id  Patient record ID
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    
-    public function destroy($id)
-    {
-        $patient = PatientRecords::findOrFail($id);
-        $patient->delete();
-        
-        return redirect()->route('admin.patient_records')
-            ->with('success', 'Patient record deleted successfully.');
-    }
-    
-    /**
-     * Delete all records for a patient with the given email.
-     *
-     * @param  string  $email
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function destroyAllByEmail($email)
-    {
-        $deleted = PatientRecords::where('email', $email)->delete();
-        
-        return redirect()->route('admin.patient_records')
-            ->with('success', "All records for patient with email {$email} deleted successfully.");
-    }
-    
-    /**
-     * View a specific appointment record.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function viewAppointment($id)
-    {
-        $appointment = PatientRecords::findOrFail($id);
-        
-        return response()->json([
-            'success' => true,
-            'data' => $appointment
-        ]);
+        $appointments = Appointment::where('email', $patient->email)
+            ->orderBy('date', 'desc')
+            ->orderBy('time', 'desc')
+            ->get();
+
+        return view('admin.patient_record_detail', compact('patient', 'appointments'));
     }
 }
